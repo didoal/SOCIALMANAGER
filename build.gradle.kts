@@ -1,10 +1,12 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+// build.gradle.kts (raíz)
 plugins {
-    alias(libs.plugins.android.application) apply false
+  // Aplica false para no “aplicar” aquí, solo declarar versión
+  id("com.android.application") version "8.13.0" apply false
+  id("org.jetbrains.kotlin.android") version "1.8.10" apply false
+  // Si tienes librerías o librerías de Android Library:
+  // id("com.android.library") version "8.13.0" apply false
 }
-plugins {
-    id 'com.android.application'
-}
+
 
 android {
     compileSdk 34
