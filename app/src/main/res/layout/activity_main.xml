@@ -32,6 +32,36 @@
             android:layout_marginBottom="16dp"/>
 
         <Button
+            android:id="@+id/btn_mensajes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Mensajes"
+            android:background="@drawable/card_background"
+            android:textColor="@color/gold"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"/>
+
+        <Button
+            android:id="@+id/btn_objetos_perdidos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Objetos Perdidos"
+            android:background="@drawable/card_background"
+            android:textColor="@color/gold"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"/>
+
+        <Button
+            android:id="@+id/btn_notificaciones"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Notificaciones"
+            android:background="@drawable/card_background"
+            android:textColor="@color/gold"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"/>
+
+        <Button
             android:id="@+id/btn_estadisticas"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

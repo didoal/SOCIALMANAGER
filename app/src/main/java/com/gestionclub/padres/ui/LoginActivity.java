@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.gestionclub.padres.R;
 import com.gestionclub.padres.model.Usuario;
 import com.gestionclub.padres.util.SessionManager;
+import com.gestionclub.padres.data.DataManager;
 import com.google.gson.Gson;
 
 public class LoginActivity extends AppCompatActivity {
@@ -29,6 +30,11 @@ public class LoginActivity extends AppCompatActivity {
                 Usuario user = new Usuario("admin", "Administrador", "administrador", "");
                 String userJson = new Gson().toJson(user);
                 new SessionManager(this).saveUser(userJson);
+                
+                // Guardar también en DataManager
+                DataManager dataManager = new DataManager(this);
+                dataManager.guardarUsuarioActual(user);
+                
                 startActivity(new Intent(this, MainActivity.class));
                 finish();
             } else {

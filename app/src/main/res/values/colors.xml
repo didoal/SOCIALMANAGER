@@ -10,4 +10,6 @@
     <color name="gold">#FFD700</color>
     <color name="background">#1C1C1C</color>
     <color name="gray">#888888</color>
+    <color name="red">#FF0000</color>
+    <color name="purple_100">#F3E5F5</color>
 </resources>
