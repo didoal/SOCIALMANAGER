@@ -98,9 +98,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (usuarioActual.isEsAdmin()) {
                 navigationView.getMenu().findItem(R.id.nav_asistencia).setVisible(false);
                 navigationView.getMenu().findItem(R.id.nav_seleccion_equipo).setVisible(true);
+                navigationView.getMenu().findItem(R.id.nav_gestion_equipos).setVisible(true);
+                navigationView.getMenu().findItem(R.id.nav_gestion_usuarios).setVisible(true);
             } else {
                 navigationView.getMenu().findItem(R.id.nav_estadisticas).setVisible(false);
                 navigationView.getMenu().findItem(R.id.nav_seleccion_equipo).setVisible(false);
+                navigationView.getMenu().findItem(R.id.nav_gestion_equipos).setVisible(false);
+                navigationView.getMenu().findItem(R.id.nav_gestion_usuarios).setVisible(false);
             }
         }
     }
@@ -152,6 +156,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_seleccion_equipo) {
             fragment = new SeleccionEquipoFragment();
             titulo = "Seleccionar Equipo";
+        } else if (id == R.id.nav_gestion_equipos) {
+            fragment = new GestionEquiposFragment();
+            titulo = "Gestión de Equipos";
+        } else if (id == R.id.nav_gestion_usuarios) {
+            fragment = new GestionUsuariosFragment();
+            titulo = "Gestión de Usuarios";
         } else if (id == R.id.nav_logout) {
             dataManager.cerrarSesion();
             new SessionManager(this).clearSession();

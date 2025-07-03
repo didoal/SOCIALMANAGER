@@ -41,6 +41,18 @@
             android:icon="@drawable/ic_team"
             android:title="Seleccionar Equipo"
             android:visible="false" />
+        
+        <item
+            android:id="@+id/nav_gestion_equipos"
+            android:icon="@drawable/ic_team_manage"
+            android:title="Gestión de Equipos"
+            android:visible="false" />
+        
+        <item
+            android:id="@+id/nav_gestion_usuarios"
+            android:icon="@drawable/ic_person_manage"
+            android:title="Gestión de Usuarios"
+            android:visible="false" />
     </group>
     
     <item
