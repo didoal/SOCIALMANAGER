@@ -103,7 +103,7 @@ public class MensajesFragment extends Fragment {
     }
 
     private void crearNotificacionMensaje(Mensaje mensaje) {
-        // Esta funcionalidad se implementará cuando se complete el sistema de notificaciones
+        dataManager.crearNotificacionMensaje(mensaje);
     }
 
     @Override

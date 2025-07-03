@@ -3,19 +3,21 @@ package com.gestionclub.padres.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.gestionclub.padres.R;
 import com.gestionclub.padres.model.Notificacion;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 public class NotificacionAdapter extends RecyclerView.Adapter<NotificacionAdapter.NotificacionViewHolder> {
     private List<Notificacion> notificaciones;
-    private SimpleDateFormat dateFormat;
     private OnNotificacionClickListener listener;
+    private SimpleDateFormat dateFormat;
 
     public interface OnNotificacionClickListener {
         void onNotificacionClick(Notificacion notificacion);
@@ -24,14 +26,13 @@ public class NotificacionAdapter extends RecyclerView.Adapter<NotificacionAdapte
     public NotificacionAdapter(List<Notificacion> notificaciones, OnNotificacionClickListener listener) {
         this.notificaciones = notificaciones;
         this.listener = listener;
-        this.dateFormat = new SimpleDateFormat("dd/MM HH:mm", Locale.getDefault());
+        this.dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
     }
 
     @NonNull
     @Override
     public NotificacionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_notificacion, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_notificacion, parent, false);
         return new NotificacionViewHolder(view);
     }
 
@@ -52,59 +53,68 @@ public class NotificacionAdapter extends RecyclerView.Adapter<NotificacionAdapte
     }
 
     class NotificacionViewHolder extends RecyclerView.ViewHolder {
+        private ImageView imageViewTipo;
         private TextView textViewTitulo;
-        private TextView textViewTipo;
         private TextView textViewMensaje;
         private TextView textViewRemitente;
         private TextView textViewFecha;
+        private View viewNoLeida;
 
         public NotificacionViewHolder(@NonNull View itemView) {
             super(itemView);
+            imageViewTipo = itemView.findViewById(R.id.imageViewTipo);
             textViewTitulo = itemView.findViewById(R.id.textViewTitulo);
-            textViewTipo = itemView.findViewById(R.id.textViewTipo);
             textViewMensaje = itemView.findViewById(R.id.textViewMensaje);
             textViewRemitente = itemView.findViewById(R.id.textViewRemitente);
             textViewFecha = itemView.findViewById(R.id.textViewFecha);
+            viewNoLeida = itemView.findViewById(R.id.viewNoLeida);
+
+            itemView.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION && listener != null) {
+                    listener.onNotificacionClick(notificaciones.get(position));
+                }
+            });
         }
 
         public void bind(Notificacion notificacion) {
             textViewTitulo.setText(notificacion.getTitulo());
-            textViewTipo.setText(notificacion.getTipo());
             textViewMensaje.setText(notificacion.getMensaje());
             textViewRemitente.setText("De: " + notificacion.getRemitenteNombre());
-            textViewFecha.setText(dateFormat.format(notificacion.getFechaCreacion()));
+            
+            // Formatear fecha
+            String fechaFormateada = dateFormat.format(notificacion.getFechaCreacion());
+            textViewFecha.setText(fechaFormateada);
 
-            // Configurar color de fondo según si está leída o no
-            if (!notificacion.isLeida()) {
-                itemView.setBackgroundResource(R.drawable.notificacion_background);
-                textViewTitulo.setTextColor(itemView.getContext().getResources().getColor(R.color.black));
+            // Configurar icono según tipo
+            configurarIconoTipo(notificacion.getTipo());
+
+            // Mostrar indicador de no leída
+            if (notificacion.isLeida()) {
+                viewNoLeida.setVisibility(View.GONE);
             } else {
-                itemView.setBackgroundResource(R.drawable.notificacion_background);
-                textViewTitulo.setTextColor(itemView.getContext().getResources().getColor(R.color.gray));
+                viewNoLeida.setVisibility(View.VISIBLE);
             }
+        }
 
-            // Configurar color del tipo
-            switch (notificacion.getTipo()) {
+        private void configurarIconoTipo(String tipo) {
+            switch (tipo) {
                 case "EVENTO":
-                    textViewTipo.setBackgroundResource(R.drawable.tipo_background);
+                    imageViewTipo.setImageResource(R.drawable.ic_calendar);
                     break;
                 case "MENSAJE":
-                    textViewTipo.setBackgroundResource(R.drawable.tipo_background);
+                    imageViewTipo.setImageResource(R.drawable.ic_message);
                     break;
                 case "OBJETO":
-                    textViewTipo.setBackgroundResource(R.drawable.tipo_background);
+                    imageViewTipo.setImageResource(R.drawable.ic_object);
                     break;
-                case "GENERAL":
-                    textViewTipo.setBackgroundResource(R.drawable.tipo_background);
+                case "SOLICITUD":
+                    imageViewTipo.setImageResource(R.drawable.ic_request);
+                    break;
+                default:
+                    imageViewTipo.setImageResource(R.drawable.ic_notification);
                     break;
             }
-
-            // Configurar click listener
-            itemView.setOnClickListener(v -> {
-                if (listener != null) {
-                    listener.onNotificacionClick(notificacion);
-                }
-            });
         }
     }
 } 

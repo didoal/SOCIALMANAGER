@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@color/black">
 
     <TextView
         android:layout_width="match_parent"
@@ -13,7 +14,7 @@
         android:textStyle="bold"
         android:gravity="center"
         android:layout_marginBottom="16dp"
-        android:textColor="@color/black" />
+        android:textColor="@color/gold" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewMensajes"
@@ -36,6 +37,8 @@
             android:hint="Escribe tu mensaje..."
             android:padding="12dp"
             android:background="@drawable/edit_text_background"
+            android:textColor="@color/white"
+            android:textColorHint="@color/gold"
             android:layout_marginEnd="8dp"
             android:maxLines="3" />
 
@@ -45,7 +48,9 @@
             android:layout_height="wrap_content"
             android:text="Enviar"
             android:padding="12dp"
-            android:backgroundTint="@color/purple_500" />
+            android:background="@drawable/card_background"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
 
     </LinearLayout>
 

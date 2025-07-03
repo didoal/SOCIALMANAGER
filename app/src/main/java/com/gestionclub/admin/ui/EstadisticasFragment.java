@@ -1,180 +1,96 @@
 package com.gestionclub.admin.ui;
 
 import android.os.Bundle;
-import android.widget.*;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import android.view.*;
-import com.github.mikephil.charting.charts.*;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.data.*;
-import com.github.mikephil.charting.formatter.PercentFormatter;
-import com.github.mikephil.charting.utils.ColorTemplate;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.gestionclub.padres.R;
-import com.gestionclub.padres.model.Evento;
-import com.gestionclub.padres.model.Confirmacion;
+import com.gestionclub.padres.adapter.JugadorEstadisticasAdapter;
+import com.gestionclub.padres.data.DataManager;
+import com.gestionclub.padres.model.Asistencia;
 import com.gestionclub.padres.model.Usuario;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import java.lang.reflect.Type;
-import java.util.*;
-import com.github.mikephil.charting.formatter.ValueFormatter;
-import com.github.mikephil.charting.components.AxisBase;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EstadisticasFragment extends Fragment {
+    private RecyclerView recyclerViewJugadores;
+    private TextView textViewTitulo;
     private LinearLayout contenedorEstadisticas;
-    private List<Evento> eventos;
-    private List<Confirmacion> confirmaciones;
-    private List<Usuario> jugadores;
+    private JugadorEstadisticasAdapter jugadorAdapter;
+    private DataManager dataManager;
+    private Usuario usuarioActual;
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_estadisticas, container, false);
+        
+        dataManager = new DataManager(requireContext());
+        usuarioActual = dataManager.getUsuarioActual();
+        
+        inicializarVistas(view);
+        configurarRecyclerView();
+        cargarEstadisticas();
+        
+        return view;
+    }
+
+    private void inicializarVistas(View view) {
+        recyclerViewJugadores = view.findViewById(R.id.recyclerViewJugadores);
+        textViewTitulo = view.findViewById(R.id.textViewTitulo);
+        contenedorEstadisticas = view.findViewById(R.id.contenedorEstadisticas);
+    }
+
+    private void configurarRecyclerView() {
+        jugadorAdapter = new JugadorEstadisticasAdapter(new ArrayList<>());
+        recyclerViewJugadores.setLayoutManager(new LinearLayoutManager(requireContext()));
+        recyclerViewJugadores.setAdapter(jugadorAdapter);
+    }
+
+    private void cargarEstadisticas() {
+        if (usuarioActual == null) return;
+
+        List<Usuario> jugadores;
+        String titulo;
+
+        if (usuarioActual.isEsAdmin()) {
+            // Para administradores, usar datos según equipo seleccionado
+            jugadores = dataManager.getUsuariosSegunRol(usuarioActual);
+            String equipoSeleccionado = dataManager.getEquipoSeleccionado();
+            if (equipoSeleccionado != null) {
+                com.gestionclub.padres.model.Equipo equipo = dataManager.getEquipoPorId(equipoSeleccionado);
+                titulo = "Estadísticas - " + (equipo != null ? equipo.getNombre() : "Equipo");
+            } else {
+                titulo = "Estadísticas - Todos los Equipos";
+            }
+        } else {
+            // Para entrenadores y otros roles, usar solo su equipo
+            jugadores = dataManager.getUsuariosSegunRol(usuarioActual);
+            titulo = "Estadísticas - " + usuarioActual.getEquipoNombre();
+        }
+
+        // Filtrar solo jugadores
+        List<Usuario> jugadoresFiltrados = new ArrayList<>();
+        for (Usuario usuario : jugadores) {
+            if (usuario.isEsJugador()) {
+                jugadoresFiltrados.add(usuario);
+            }
+        }
+
+        jugadorAdapter.actualizarJugadores(jugadoresFiltrados);
+        textViewTitulo.setText(titulo);
+    }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_estadisticas, container, false);
-        contenedorEstadisticas = v.findViewById(R.id.contenedorEstadisticas);
-
-        cargarDatos();
-        mostrarEstadisticas();
-
-        return v;
-    }
-
-    private void cargarDatos() {
-        eventos = cargarLista("eventos", new TypeToken<ArrayList<Evento>>(){}.getType());
-        confirmaciones = cargarLista("confirmaciones", new TypeToken<ArrayList<Confirmacion>>(){}.getType());
-        jugadores = cargarLista("usuarios", new TypeToken<ArrayList<Usuario>>(){}.getType());
-    }
-
-    private <T> List<T> cargarLista(String key, Type type) {
-        String json = requireContext().getSharedPreferences(key, 0).getString(key, "[]");
-        return new Gson().fromJson(json, type);
-    }
-
-    private void mostrarEstadisticas() {
-        if (jugadores == null || jugadores.isEmpty()) {
-            TextView tvVacio = new TextView(getContext());
-            tvVacio.setText("No hay estadísticas para mostrar");
-            tvVacio.setTextColor(getResources().getColor(R.color.gray));
-            tvVacio.setTextSize(16);
-            tvVacio.setPadding(0, 16, 0, 16);
-            contenedorEstadisticas.addView(tvVacio);
-            return;
-        }
-
-        Map<String, List<Usuario>> jugadoresPorCategoria = new HashMap<>();
-        for (Usuario jugador : jugadores) {
-            if (!jugador.getRol().equalsIgnoreCase("jugador")) continue;
-            String cat = jugador.getCategoria() == null ? "Sin categoría" : jugador.getCategoria();
-            if (!jugadoresPorCategoria.containsKey(cat)) jugadoresPorCategoria.put(cat, new ArrayList<>());
-            jugadoresPorCategoria.get(cat).add(jugador);
-        }
-
-        for (String categoria : jugadoresPorCategoria.keySet()) {
-            TextView tvCat = new TextView(getContext());
-            tvCat.setText("Categoría: " + categoria);
-            tvCat.setTextColor(getResources().getColor(R.color.gold));
-            tvCat.setTextSize(20);
-            tvCat.setPadding(0, 24, 0, 8);
-            contenedorEstadisticas.addView(tvCat);
-
-            List<Usuario> jugadoresCat = jugadoresPorCategoria.get(categoria);
-
-            for (String tipo : Arrays.asList("amistoso", "partido", "entrenamiento")) {
-                TextView tvTipo = new TextView(getContext());
-                tvTipo.setText("Tipo de evento: " + tipo.substring(0,1).toUpperCase() + tipo.substring(1));
-                tvTipo.setTextColor(getResources().getColor(R.color.white));
-                tvTipo.setTextSize(16);
-                contenedorEstadisticas.addView(tvTipo);
-
-                // Gráfico de barras (porcentaje de asistencia por jugador)
-                ArrayList<BarEntry> entries = new ArrayList<>();
-                ArrayList<String> nombres = new ArrayList<>();
-                int idx = 0;
-                for (Usuario jugador : jugadoresCat) {
-                    int total = 0, presentes = 0;
-                    for (Evento evento : eventos) {
-                        if (!evento.getTipo().equalsIgnoreCase(tipo)) continue;
-                        total++;
-                        Confirmacion conf = buscarConfirmacion(jugador.getUsername(), evento.getId());
-                        if (conf != null && conf.isPresente()) presentes++;
-                    }
-                    float porcentaje = (total > 0) ? (presentes * 100f / total) : 0f;
-                    entries.add(new BarEntry(idx, porcentaje));
-                    nombres.add(jugador.getNombreReal());
-                    idx++;
-                }
-
-                BarDataSet dataSet = new BarDataSet(entries, "Asistencia %");
-                dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
-                BarData barData = new BarData(dataSet);
-                barData.setValueTextColor(android.graphics.Color.BLACK);
-                barData.setValueTextSize(10f);
-
-                BarChart chart = new BarChart(getContext());
-                chart.setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, 400));
-                chart.setData(barData);
-
-                XAxis xAxis = chart.getXAxis();
-                xAxis.setValueFormatter(new ValueFormatter() {
-                    @Override
-                    public String getAxisLabel(float value, AxisBase axis) {
-                        int i = (int) value;
-                        return i >= 0 && i < nombres.size() ? nombres.get(i) : "";
-                    }
-                });
-                xAxis.setGranularity(1f);
-                xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-                xAxis.setDrawGridLines(false);
-
-                chart.getAxisRight().setEnabled(false);
-                chart.getDescription().setEnabled(false);
-                chart.getLegend().setEnabled(false);
-                chart.setFitBars(true);
-                chart.invalidate();
-
-                contenedorEstadisticas.addView(chart);
-
-                // PieChart global asistencia/ausencia para la categoría y tipo
-                int totalEventos = 0, totalPresentes = 0;
-                for (Usuario jugador : jugadoresCat) {
-                    for (Evento evento : eventos) {
-                        if (!evento.getTipo().equalsIgnoreCase(tipo)) continue;
-                        totalEventos++;
-                        Confirmacion conf = buscarConfirmacion(jugador.getUsername(), evento.getId());
-                        if (conf != null && conf.isPresente()) totalPresentes++;
-                    }
-                }
-                int totalAusentes = totalEventos - totalPresentes;
-
-                PieChart pieChart = new PieChart(getContext());
-                ArrayList<PieEntry> pieEntries = new ArrayList<>();
-                pieEntries.add(new PieEntry(totalPresentes, "Asistencias"));
-                pieEntries.add(new PieEntry(totalAusentes, "Ausencias"));
-
-                PieDataSet pieDataSet = new PieDataSet(pieEntries, "");
-                pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
-                PieData pieData = new PieData(pieDataSet);
-                pieData.setValueFormatter(new PercentFormatter(pieChart));
-                pieData.setValueTextSize(13f);
-                pieChart.setData(pieData);
-                pieChart.setUsePercentValues(true);
-                pieChart.getDescription().setEnabled(false);
-                pieChart.setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, 350));
-                pieChart.setDrawEntryLabels(true);
-                pieChart.getLegend().setEnabled(true);
-                pieChart.invalidate();
-
-                contenedorEstadisticas.addView(pieChart);
-            }
-        }
-    }
-
-    private Confirmacion buscarConfirmacion(String usuarioId, String eventoId) {
-        for (Confirmacion c : confirmaciones) {
-            if (c.getUsuarioId().equals(usuarioId) && c.getEventoId().equals(eventoId)) {
-                return c;
-            }
-        }
-        return null;
+    public void onResume() {
+        super.onResume();
+        cargarEstadisticas();
     }
 }

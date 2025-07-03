@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_perfil"
+            android:icon="@drawable/ic_person"
+            android:title="Perfil" />
+        
+        <item
+            android:id="@+id/nav_calendario"
+            android:icon="@drawable/ic_calendar"
+            android:title="Calendario" />
+        
+        <item
+            android:id="@+id/nav_mensajes"
+            android:icon="@drawable/ic_message"
+            android:title="Mensajes" />
+        
+        <item
+            android:id="@+id/nav_objetos_perdidos"
+            android:icon="@drawable/ic_search"
+            android:title="Objetos Perdidos" />
+        
+        <item
+            android:id="@+id/nav_notificaciones"
+            android:icon="@drawable/ic_notifications"
+            android:title="Notificaciones" />
+        
+        <item
+            android:id="@+id/nav_asistencia"
+            android:icon="@drawable/ic_check"
+            android:title="Asistencia" />
+        
+        <item
+            android:id="@+id/nav_estadisticas"
+            android:icon="@drawable/ic_bar_chart"
+            android:title="Estadísticas" />
+    </group>
+    
+    <group android:id="@+id/nav_bottom">
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/ic_logout"
+            android:title="Cerrar Sesión" />
+    </group>
+    
+</menu> 

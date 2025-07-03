@@ -9,6 +9,7 @@ public class Mensaje {
     private String contenido;
     private Date fechaCreacion;
     private boolean esAdmin;
+    private String equipoId;
 
     public Mensaje() {
         this.id = String.valueOf(System.currentTimeMillis());
@@ -70,5 +71,13 @@ public class Mensaje {
 
     public void setEsAdmin(boolean esAdmin) {
         this.esAdmin = esAdmin;
+    }
+
+    public String getEquipoId() {
+        return equipoId;
+    }
+
+    public void setEquipoId(String equipoId) {
+        this.equipoId = equipoId;
     }
 } 

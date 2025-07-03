@@ -30,7 +30,7 @@
             android:padding="4dp"
             android:textSize="12sp"
             android:textStyle="bold"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:background="@drawable/estado_background" />
 
     </LinearLayout>
@@ -48,7 +48,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="14sp"
-        android:textColor="@color/purple_700"
+        android:textColor="@color/black"
         android:layout_marginBottom="8dp" />
 
     <LinearLayout
@@ -81,7 +81,9 @@
         android:text="Reclamar"
         android:layout_gravity="end"
         android:layout_marginTop="8dp"
-        android:backgroundTint="@color/purple_500"
+        android:background="@drawable/card_background"
+        android:textColor="@color/black"
+        android:textStyle="bold"
         android:visibility="gone" />
 
 </LinearLayout> 

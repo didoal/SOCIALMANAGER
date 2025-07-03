@@ -15,6 +15,7 @@ public class ObjetoPerdido {
     private String reclamadoPorNombre;
     private Date fechaReclamo;
     private boolean esAdmin;
+    private String equipoId;
 
     public ObjetoPerdido() {
         this.id = String.valueOf(System.currentTimeMillis());
@@ -128,5 +129,13 @@ public class ObjetoPerdido {
 
     public void setEsAdmin(boolean esAdmin) {
         this.esAdmin = esAdmin;
+    }
+
+    public String getEquipoId() {
+        return equipoId;
+    }
+
+    public void setEquipoId(String equipoId) {
+        this.equipoId = equipoId;
     }
 } 

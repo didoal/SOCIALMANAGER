@@ -1,24 +1,70 @@
 package com.gestionclub.padres.model;
 
-public class Usuario {
-    private String username;
-    private String nombreReal;
-    private String rol; // "jugador" o "administrador"
-    private String categoria; // Ejemplo: "Sub-10", "Sub-12"
+import java.util.Date;
+import java.util.UUID;
 
-    public Usuario(String username, String nombreReal, String rol, String categoria) {
-        this.username = username;
-        this.nombreReal = nombreReal;
+public class Usuario {
+    private String id;
+    private String nombre;
+    private String email;
+    private String password;
+    private String rol; // "jugador" o "administrador"
+    private String equipoId;
+    private String equipoNombre;
+    private Date fechaRegistro;
+    private boolean activo;
+
+    public Usuario(String nombre, String email, String password, String rol) {
+        this.id = UUID.randomUUID().toString();
+        this.nombre = nombre;
+        this.email = email;
+        this.password = password;
         this.rol = rol;
-        this.categoria = categoria;
+        this.fechaRegistro = new Date();
+        this.activo = true;
     }
 
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
-    public String getNombreReal() { return nombreReal; }
-    public void setNombreReal(String nombreReal) { this.nombreReal = nombreReal; }
+    // Getters y Setters
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
     public String getRol() { return rol; }
     public void setRol(String rol) { this.rol = rol; }
-    public String getCategoria() { return categoria; }
-    public void setCategoria(String categoria) { this.categoria = categoria; }
+
+    public String getEquipoId() { return equipoId; }
+    public void setEquipoId(String equipoId) { this.equipoId = equipoId; }
+
+    public String getEquipoNombre() { return equipoNombre; }
+    public void setEquipoNombre(String equipoNombre) { this.equipoNombre = equipoNombre; }
+
+    public Date getFechaRegistro() { return fechaRegistro; }
+    public void setFechaRegistro(Date fechaRegistro) { this.fechaRegistro = fechaRegistro; }
+
+    public boolean isActivo() { return activo; }
+    public void setActivo(boolean activo) { this.activo = activo; }
+
+    public boolean isEsAdmin() {
+        return "administrador".equalsIgnoreCase(rol);
+    }
+
+    public boolean isEsEntrenador() {
+        return "entrenador".equalsIgnoreCase(rol);
+    }
+
+    public boolean isEsTutor() {
+        return "tutor".equalsIgnoreCase(rol);
+    }
+
+    public boolean isEsJugador() {
+        return "jugador".equalsIgnoreCase(rol);
+    }
 }

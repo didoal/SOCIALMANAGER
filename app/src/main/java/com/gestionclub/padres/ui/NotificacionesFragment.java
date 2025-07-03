@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -21,6 +22,7 @@ import java.util.List;
 public class NotificacionesFragment extends Fragment implements NotificacionAdapter.OnNotificacionClickListener {
     private RecyclerView recyclerViewNotificaciones;
     private TextView textViewContador;
+    private LinearLayout layoutNoNotificaciones;
     private NotificacionAdapter notificacionAdapter;
     private DataManager dataManager;
     private Usuario usuarioActual;
@@ -44,6 +46,7 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
     private void inicializarVistas(View view) {
         recyclerViewNotificaciones = view.findViewById(R.id.recyclerViewNotificaciones);
         textViewContador = view.findViewById(R.id.textViewContador);
+        layoutNoNotificaciones = view.findViewById(R.id.layoutNoNotificaciones);
     }
 
     private void configurarRecyclerView() {
@@ -55,13 +58,22 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
     private void cargarNotificaciones() {
         List<Notificacion> notificaciones = dataManager.getNotificaciones();
         notificacionAdapter.actualizarNotificaciones(notificaciones);
+        
+        // Mostrar mensaje si no hay notificaciones
+        if (notificaciones.isEmpty()) {
+            recyclerViewNotificaciones.setVisibility(View.GONE);
+            layoutNoNotificaciones.setVisibility(View.VISIBLE);
+        } else {
+            recyclerViewNotificaciones.setVisibility(View.VISIBLE);
+            layoutNoNotificaciones.setVisibility(View.GONE);
+        }
     }
 
     private void actualizarContador() {
         int noLeidas = dataManager.getNotificacionesNoLeidas();
-        textViewContador.setText(String.valueOf(noLeidas));
         
         if (noLeidas > 0) {
+            textViewContador.setText(String.valueOf(noLeidas));
             textViewContador.setVisibility(View.VISIBLE);
         } else {
             textViewContador.setVisibility(View.GONE);
@@ -85,7 +97,8 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
         String mensaje = "Título: " + notificacion.getTitulo() + "\n\n" +
                         "Mensaje: " + notificacion.getMensaje() + "\n\n" +
                         "Tipo: " + notificacion.getTipo() + "\n" +
-                        "De: " + notificacion.getRemitenteNombre();
+                        "De: " + notificacion.getRemitenteNombre() + "\n" +
+                        "Fecha: " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault()).format(notificacion.getFechaCreacion());
         
         Toast.makeText(requireContext(), mensaje, Toast.LENGTH_LONG).show();
     }

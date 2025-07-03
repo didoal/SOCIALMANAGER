@@ -139,7 +139,7 @@ public class ObjetosPerdidosFragment extends Fragment implements ObjetoPerdidoAd
     }
 
     private void crearNotificacionObjeto(ObjetoPerdido objeto) {
-        // Esta funcionalidad se implementará cuando se complete el sistema de notificaciones
+        dataManager.crearNotificacionObjeto(objeto);
     }
 
     @Override
