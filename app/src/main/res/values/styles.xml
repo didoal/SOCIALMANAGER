@@ -1,0 +1,8 @@
+<resources>
+    <style name="Theme.GestionPadres" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/gold</item>
+        <item name="colorPrimaryDark">@color/black</item>
+        <item name="colorAccent">@color/gold</item>
+        <item name="android:windowBackground">@color/background</item>
+    </style>
+</resources> 
