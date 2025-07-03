@@ -15,20 +15,20 @@ import com.gestionclub.padres.model.Usuario;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JugadorEstadisticaAdapter extends RecyclerView.Adapter<JugadorEstadisticaAdapter.JugadorViewHolder> {
+public class JugadorEstadisticasAdapter extends RecyclerView.Adapter<JugadorEstadisticasAdapter.JugadorViewHolder> {
     private List<Usuario> jugadores;
     private DataManager dataManager;
     private List<Evento> eventos;
     private List<Asistencia> asistencias;
 
-    public JugadorEstadisticaAdapter(List<Usuario> jugadores, DataManager dataManager, List<Evento> eventos, List<Asistencia> asistencias) {
+    public JugadorEstadisticasAdapter(List<Usuario> jugadores, DataManager dataManager, List<Evento> eventos, List<Asistencia> asistencias) {
         this.jugadores = jugadores;
         this.dataManager = dataManager;
         this.eventos = eventos;
         this.asistencias = asistencias;
     }
 
-    public JugadorEstadisticaAdapter(List<Usuario> jugadores) {
+    public JugadorEstadisticasAdapter(List<Usuario> jugadores) {
         this.jugadores = jugadores;
         this.dataManager = null;
         this.eventos = new ArrayList<>();

@@ -67,4 +67,17 @@ public class Usuario {
     public boolean isEsJugador() {
         return "jugador".equalsIgnoreCase(rol);
     }
+
+    // Métodos adicionales para compatibilidad
+    public String getUsername() {
+        return email; // Usamos el email como username
+    }
+
+    public String getNombreReal() {
+        return nombre;
+    }
+
+    public String getCategoria() {
+        return equipoNombre; // Usamos el nombre del equipo como categoría
+    }
 }

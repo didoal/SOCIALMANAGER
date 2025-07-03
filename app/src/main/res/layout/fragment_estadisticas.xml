@@ -7,6 +7,7 @@
     android:background="@color/background">
 
     <TextView
+        android:id="@+id/textViewTitulo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Estadísticas de Jugadores"
@@ -16,9 +17,17 @@
         android:gravity="center"
         android:layout_marginBottom="16dp" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewJugadores"
+    <LinearLayout
+        android:id="@+id/contenedorEstadisticas"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-</LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewJugadores"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+</LinearLayout> 

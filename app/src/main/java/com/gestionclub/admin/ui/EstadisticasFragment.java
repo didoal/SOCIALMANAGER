@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.gestionclub.padres.R;
-import com.gestionclub.padres.adapter.JugadorEstadisticasAdapter;
+import com.gestionclub.padres.adapter.JugadorEstadisticaAdapter;
 import com.gestionclub.padres.data.DataManager;
 import com.gestionclub.padres.model.Asistencia;
 import com.gestionclub.padres.model.Usuario;
@@ -23,7 +23,7 @@ public class EstadisticasFragment extends Fragment {
     private RecyclerView recyclerViewJugadores;
     private TextView textViewTitulo;
     private LinearLayout contenedorEstadisticas;
-    private JugadorEstadisticasAdapter jugadorAdapter;
+    private JugadorEstadisticaAdapter jugadorAdapter;
     private DataManager dataManager;
     private Usuario usuarioActual;
 
@@ -49,7 +49,7 @@ public class EstadisticasFragment extends Fragment {
     }
 
     private void configurarRecyclerView() {
-        jugadorAdapter = new JugadorEstadisticasAdapter(new ArrayList<>());
+        jugadorAdapter = new JugadorEstadisticaAdapter(new ArrayList<>());
         recyclerViewJugadores.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerViewJugadores.setAdapter(jugadorAdapter);
     }
