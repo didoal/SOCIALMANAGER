@@ -49,6 +49,16 @@ public class EstadisticasFragment extends Fragment {
     }
 
     private void mostrarEstadisticas() {
+        if (jugadores == null || jugadores.isEmpty()) {
+            TextView tvVacio = new TextView(getContext());
+            tvVacio.setText("No hay estadísticas para mostrar");
+            tvVacio.setTextColor(getResources().getColor(R.color.gray));
+            tvVacio.setTextSize(16);
+            tvVacio.setPadding(0, 16, 0, 16);
+            contenedorEstadisticas.addView(tvVacio);
+            return;
+        }
+
         Map<String, List<Usuario>> jugadoresPorCategoria = new HashMap<>();
         for (Usuario jugador : jugadores) {
             if (!jugador.getRol().equalsIgnoreCase("jugador")) continue;

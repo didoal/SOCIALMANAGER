@@ -24,14 +24,18 @@ public class PerfilFragment extends Fragment {
         SessionManager sessionManager = new SessionManager(requireContext());
         TextView tvNombre = view.findViewById(R.id.tv_nombre);
         TextView tvRol = view.findViewById(R.id.tv_rol);
+        TextView tvCategoria = view.findViewById(R.id.tv_categoria);
+        TextView tvUsername = view.findViewById(R.id.tv_username);
         Button btnLogout = view.findViewById(R.id.btn_logout);
         
         String userJson = sessionManager.getUser();
         if (userJson != null) {
             Usuario usuario = new Gson().fromJson(userJson, Usuario.class);
             if (usuario != null) {
-                tvNombre.setText(usuario.getNombreReal());
-                tvRol.setText("Rol: " + usuario.getRol());
+                tvNombre.setText(usuario.getNombreReal() != null && !usuario.getNombreReal().isEmpty() ? usuario.getNombreReal() : "Sin información");
+                tvRol.setText("Rol: " + (usuario.getRol() != null && !usuario.getRol().isEmpty() ? usuario.getRol() : "Sin información"));
+                tvCategoria.setText("Categoría: " + (usuario.getCategoria() != null && !usuario.getCategoria().isEmpty() ? usuario.getCategoria() : "Sin información"));
+                tvUsername.setText("Usuario: " + (usuario.getUsername() != null && !usuario.getUsername().isEmpty() ? usuario.getUsername() : "Sin información"));
             }
         }
         
