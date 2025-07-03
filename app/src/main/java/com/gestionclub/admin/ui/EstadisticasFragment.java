@@ -17,6 +17,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.*;
+import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.components.AxisBase;
 
 public class EstadisticasFragment extends Fragment {
     private LinearLayout contenedorEstadisticas;
@@ -102,9 +104,12 @@ public class EstadisticasFragment extends Fragment {
                 chart.setData(barData);
 
                 XAxis xAxis = chart.getXAxis();
-                xAxis.setValueFormatter((value, axis) -> {
-                    int i = (int) value;
-                    return i >= 0 && i < nombres.size() ? nombres.get(i) : "";
+                xAxis.setValueFormatter(new ValueFormatter() {
+                    @Override
+                    public String getAxisLabel(float value, AxisBase axis) {
+                        int i = (int) value;
+                        return i >= 0 && i < nombres.size() ? nombres.get(i) : "";
+                    }
                 });
                 xAxis.setGranularity(1f);
                 xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);

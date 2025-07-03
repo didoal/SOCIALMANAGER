@@ -11,6 +11,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.gestionclub.padres.R;
 import com.gestionclub.padres.util.SessionManager;
+import com.gestionclub.padres.model.Usuario;
+import com.google.gson.Gson;
 
 public class PerfilFragment extends Fragment {
     
@@ -24,13 +26,17 @@ public class PerfilFragment extends Fragment {
         TextView tvRol = view.findViewById(R.id.tv_rol);
         Button btnLogout = view.findViewById(R.id.btn_logout);
         
-        if (sessionManager.getCurrentUser() != null) {
-            tvNombre.setText(sessionManager.getCurrentUser().getNombreReal());
-            tvRol.setText("Rol: " + sessionManager.getCurrentUser().getRol());
+        String userJson = sessionManager.getUser();
+        if (userJson != null) {
+            Usuario usuario = new Gson().fromJson(userJson, Usuario.class);
+            if (usuario != null) {
+                tvNombre.setText(usuario.getNombreReal());
+                tvRol.setText("Rol: " + usuario.getRol());
+            }
         }
         
         btnLogout.setOnClickListener(v -> {
-            sessionManager.logout();
+            sessionManager.clearSession();
             requireActivity().finish();
         });
         
