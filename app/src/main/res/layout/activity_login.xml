@@ -8,6 +8,16 @@
     android:gravity="center"
     android:padding="32dp">
 
+    <!-- Indicador de actualización -->
+    <View
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@color/red"
+        android:elevation="5dp" />
+
     <!-- Logo y título -->
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,28 +27,29 @@
         android:layout_marginBottom="48dp">
 
         <ImageView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:src="@drawable/ic_team"
             app:tint="@color/gold"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="20dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="SocialManager"
-            android:textSize="28sp"
+            android:textSize="32sp"
             android:textStyle="bold"
             android:textColor="@color/gold"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="12dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Gestión de Club Deportivo"
+            android:text="Gestión Profesional de Club Deportivo"
             android:textSize="16sp"
             android:textColor="@color/white"
-            android:alpha="0.8" />
+            android:alpha="0.9"
+            android:gravity="center" />
 
     </LinearLayout>
 
@@ -46,26 +57,26 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="8dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="12dp"
         app:cardBackgroundColor="@color/surface"
-        android:layout_marginBottom="24dp">
+        android:layout_marginBottom="32dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="24dp">
+            android:padding="32dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Iniciar Sesión"
-                android:textSize="24sp"
+                android:textSize="26sp"
                 android:textStyle="bold"
                 android:textColor="@color/gold"
                 android:gravity="center"
-                android:layout_marginBottom="24dp" />
+                android:layout_marginBottom="32dp" />
 
             <!-- Campo Usuario -->
             <LinearLayout
@@ -73,16 +84,16 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:background="@drawable/edit_text_background"
-                android:padding="12dp"
-                android:layout_marginBottom="16dp">
+                android:padding="16dp"
+                android:layout_marginBottom="20dp">
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
                     android:src="@drawable/ic_person"
                     app:tint="@color/gold"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="12dp" />
+                    android:layout_marginEnd="16dp" />
 
                 <EditText
                     android:id="@+id/et_usuario"
@@ -103,16 +114,16 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:background="@drawable/edit_text_background"
-                android:padding="12dp"
-                android:layout_marginBottom="24dp">
+                android:padding="16dp"
+                android:layout_marginBottom="32dp">
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
                     android:src="@drawable/ic_lock"
                     app:tint="@color/gold"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="12dp" />
+                    android:layout_marginEnd="16dp" />
 
                 <EditText
                     android:id="@+id/et_password"
@@ -131,26 +142,43 @@
             <Button
                 android:id="@+id/btn_login"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="60dp"
                 android:text="INICIAR SESIÓN"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@color/black"
                 android:background="@drawable/button_gold_background"
-                android:elevation="4dp" />
+                android:elevation="6dp" />
 
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
 
     <!-- Información adicional -->
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Usuario: admin | Contraseña: admin"
-        android:textSize="12sp"
-        android:textColor="@color/white"
-        android:alpha="0.6"
-        android:gravity="center" />
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Credenciales de prueba:"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:alpha="0.7"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Usuario: admin | Contraseña: admin"
+            android:textSize="12sp"
+            android:textColor="@color/gold"
+            android:alpha="0.8"
+            android:gravity="center" />
+
+    </LinearLayout>
 
 </LinearLayout> 
