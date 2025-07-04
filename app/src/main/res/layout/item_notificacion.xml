@@ -23,7 +23,7 @@
             android:background="@drawable/circle_background"
             android:padding="8dp"
             android:src="@drawable/ic_notification"
-            android:tint="@color/white" />
+            app:tint="@color/white" />
 
         <!-- Contenido de la notificación -->
         <LinearLayout
