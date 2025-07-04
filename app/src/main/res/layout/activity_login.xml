@@ -1,66 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@drawable/login_background"
-    android:gravity="center"
-    android:padding="32dp">
+    android:background="@drawable/login_background">
 
-    <!-- Indicador de actualización -->
-    <View
-        android:layout_width="15dp"
-        android:layout_height="15dp"
-        android:layout_gravity="top|end"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:background="@color/red"
-        android:elevation="5dp" />
+    <!-- Logo circular con borde rojo y sombra -->
+    <FrameLayout
+        android:id="@+id/logo_container"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="60dp"
+        android:elevation="12dp">
 
-    <!-- Logo y título -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:layout_marginBottom="48dp">
+        <View
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:background="@drawable/circle_red"
+            android:elevation="8dp" />
 
         <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/ic_team"
-            app:tint="@color/gold"
-            android:layout_marginBottom="20dp" />
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            android:src="@drawable/logo_santiaguino"
+            android:elevation="12dp" />
+    </FrameLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="SocialManager"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            android:textColor="@color/gold"
-            android:layout_marginBottom="12dp" />
+    <!-- Branding -->
+    <TextView
+        android:id="@+id/app_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/logo_container"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="CD Santiaguiño Guizán"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textColor="@color/rojo_club"
+        android:fontFamily="sans-serif-medium" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Gestión Profesional de Club Deportivo"
-            android:textSize="16sp"
-            android:textColor="@color/white"
-            android:alpha="0.9"
-            android:gravity="center" />
+    <TextView
+        android:id="@+id/app_subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/app_title"
+        android:layout_centerHorizontal="true"
+        android:text="Bienvenido a la familia del Santiaguiño"
+        android:textSize="16sp"
+        android:textColor="@color/white"
+        android:alpha="0.8"
+        android:fontFamily="sans-serif"
+        android:layout_marginBottom="12dp" />
 
-    </LinearLayout>
-
-    <!-- Card de login -->
+    <!-- Tarjeta de login -->
     <androidx.cardview.widget.CardView
+        android:id="@+id/login_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="12dp"
-        app:cardBackgroundColor="@color/surface"
-        android:layout_marginBottom="32dp">
+        android:layout_below="@id/app_subtitle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="16dp"
+        app:cardBackgroundColor="@color/surface">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -72,11 +79,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Iniciar Sesión"
-                android:textSize="26sp"
+                android:textSize="22sp"
                 android:textStyle="bold"
                 android:textColor="@color/gold"
                 android:gravity="center"
-                android:layout_marginBottom="32dp" />
+                android:layout_marginBottom="24dp" />
 
             <!-- Campo Usuario -->
             <LinearLayout
@@ -84,101 +91,113 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:background="@drawable/edit_text_background"
-                android:padding="16dp"
-                android:layout_marginBottom="20dp">
+                android:padding="14dp"
+                android:layout_marginBottom="18dp">
 
                 <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:src="@drawable/ic_person"
                     app:tint="@color/gold"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="16dp" />
+                    android:layout_marginEnd="10dp" />
 
                 <EditText
                     android:id="@+id/et_usuario"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Usuario"
+                    android:hint="Usuario o Email"
                     android:textColor="@color/white"
-                    android:textColorHint="@color/gray"
+                    android:textColorHint="@color/gray_light"
                     android:background="@null"
-                    android:inputType="text"
-                    android:textSize="16sp" />
-
+                    android:inputType="text|textEmailAddress"
+                    android:imeOptions="actionNext"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif" />
             </LinearLayout>
 
-            <!-- Campo Contraseña -->
+            <!-- Campo Contraseña con mostrar/ocultar -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:background="@drawable/edit_text_background"
-                android:padding="16dp"
-                android:layout_marginBottom="32dp">
+                android:padding="14dp"
+                android:layout_marginBottom="24dp">
 
                 <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:src="@drawable/ic_lock"
                     app:tint="@color/gold"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="16dp" />
+                    android:layout_marginEnd="10dp" />
 
                 <EditText
                     android:id="@+id/et_password"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:hint="Contraseña"
                     android:textColor="@color/white"
-                    android:textColorHint="@color/gray"
+                    android:textColorHint="@color/gray_light"
                     android:background="@null"
                     android:inputType="textPassword"
-                    android:textSize="16sp" />
+                    android:imeOptions="actionDone"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif" />
 
+                <ImageView
+                    android:id="@+id/iv_toggle_password"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_eye"
+                    app:tint="@color/gold"
+                    android:layout_gravity="center_vertical"
+                    android:padding="2dp" />
             </LinearLayout>
+
+            <!-- Mensaje de error animado -->
+            <TextView
+                android:id="@+id/tv_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/red"
+                android:textSize="14sp"
+                android:visibility="gone"
+                android:gravity="center"
+                android:layout_marginBottom="12dp" />
 
             <!-- Botón de Login -->
             <Button
                 android:id="@+id/btn_login"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="56dp"
                 android:text="INICIAR SESIÓN"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@color/black"
                 android:background="@drawable/button_gold_background"
-                android:elevation="6dp" />
+                android:elevation="8dp" />
 
         </LinearLayout>
-
     </androidx.cardview.widget.CardView>
 
     <!-- Información adicional -->
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center">
+        android:layout_below="@id/login_card"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="18dp"
+        android:text="Admin: admin/admin o admin@club.com/admin123"
+        android:textSize="13sp"
+        android:textColor="@color/white"
+        android:alpha="0.7"
+        android:gravity="center" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Credenciales de prueba:"
-            android:textSize="14sp"
-            android:textColor="@color/white"
-            android:alpha="0.7"
-            android:layout_marginBottom="8dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Usuario: admin | Contraseña: admin"
-            android:textSize="12sp"
-            android:textColor="@color/gold"
-            android:alpha="0.8"
-            android:gravity="center" />
-
-    </LinearLayout>
-
-</LinearLayout> 
+</RelativeLayout> 

@@ -104,6 +104,11 @@ public class CalendarioFragment extends Fragment implements EventoAdapter.OnEven
         eventoAdapter.actualizarEventos(eventosDelDia);
         textViewEventosDia.setText("Eventos del " + dateFormat.format(fechaSeleccionada) + 
                                  " (" + eventosDelDia.size() + ")");
+        // Mostrar mensaje si no hay eventos
+        TextView tvSinEventos = getView().findViewById(R.id.tv_sin_eventos);
+        if (tvSinEventos != null) {
+            tvSinEventos.setVisibility(eventosDelDia.isEmpty() ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void configurarListeners() {
