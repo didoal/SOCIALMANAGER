@@ -48,19 +48,19 @@ public class MensajeAdapter extends RecyclerView.Adapter<MensajeAdapter.MensajeV
     class MensajeViewHolder extends RecyclerView.ViewHolder {
         private TextView textViewAutor;
         private TextView textViewFecha;
-        private TextView textViewContenido;
+        private TextView textViewMensaje;
 
         public MensajeViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewAutor = itemView.findViewById(R.id.textViewAutor);
             textViewFecha = itemView.findViewById(R.id.textViewFecha);
-            textViewContenido = itemView.findViewById(R.id.textViewContenido);
+            textViewMensaje = itemView.findViewById(R.id.textViewMensaje);
         }
 
         public void bind(Mensaje mensaje) {
             textViewAutor.setText(mensaje.getAutorNombre());
             textViewFecha.setText(dateFormat.format(mensaje.getFechaCreacion()));
-            textViewContenido.setText(mensaje.getContenido());
+            textViewMensaje.setText(mensaje.getContenido());
 
             // Cambiar color del autor si es admin
             if (mensaje.isEsAdmin()) {

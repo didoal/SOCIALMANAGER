@@ -138,4 +138,8 @@ public class ObjetoPerdido {
     public void setEquipoId(String equipoId) {
         this.equipoId = equipoId;
     }
+
+    public boolean isEncontrado() {
+        return "ENCONTRADO".equals(estado) || "RECLAMADO".equals(estado);
+    }
 } 

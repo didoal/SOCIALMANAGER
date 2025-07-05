@@ -8,16 +8,15 @@ public class Usuario {
     private String nombre;
     private String email;
     private String password;
-    private String rol; // "jugador" o "administrador"
-    private String equipoId;
-    private String equipoNombre;
+    private String rol; // "padre", "tutor" o "administrador"
+    private String jugador;
     private Date fechaRegistro;
     private boolean activo;
 
-    public Usuario(String nombre, String email, String password, String rol) {
+    public Usuario(String nombre, String jugador, String password, String rol) {
         this.id = UUID.randomUUID().toString();
         this.nombre = nombre;
-        this.email = email;
+        this.jugador = jugador;
         this.password = password;
         this.rol = rol;
         this.fechaRegistro = new Date();
@@ -40,11 +39,8 @@ public class Usuario {
     public String getRol() { return rol; }
     public void setRol(String rol) { this.rol = rol; }
 
-    public String getEquipoId() { return equipoId; }
-    public void setEquipoId(String equipoId) { this.equipoId = equipoId; }
-
-    public String getEquipoNombre() { return equipoNombre; }
-    public void setEquipoNombre(String equipoNombre) { this.equipoNombre = equipoNombre; }
+    public String getJugador() { return jugador; }
+    public void setJugador(String jugador) { this.jugador = jugador; }
 
     public Date getFechaRegistro() { return fechaRegistro; }
     public void setFechaRegistro(Date fechaRegistro) { this.fechaRegistro = fechaRegistro; }
@@ -56,16 +52,8 @@ public class Usuario {
         return "administrador".equalsIgnoreCase(rol);
     }
 
-    public boolean isEsEntrenador() {
-        return "entrenador".equalsIgnoreCase(rol);
-    }
-
-    public boolean isEsTutor() {
-        return "tutor".equalsIgnoreCase(rol);
-    }
-
-    public boolean isEsJugador() {
-        return "jugador".equalsIgnoreCase(rol);
+    public boolean isEsPadre() {
+        return "padre".equalsIgnoreCase(rol) || "tutor".equalsIgnoreCase(rol);
     }
 
     // Métodos adicionales para compatibilidad
@@ -75,9 +63,5 @@ public class Usuario {
 
     public String getNombreReal() {
         return nombre;
-    }
-
-    public String getCategoria() {
-        return equipoNombre; // Usamos el nombre del equipo como categoría
     }
 }

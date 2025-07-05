@@ -31,15 +31,29 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_notificaciones, container, false);
-        
-        dataManager = new DataManager(requireContext());
-        usuarioActual = dataManager.getUsuarioActual();
-        
-        inicializarVistas(view);
-        configurarRecyclerView();
-        cargarNotificaciones();
-        actualizarContador();
-        
+        try {
+            dataManager = new DataManager(requireContext());
+            usuarioActual = dataManager.getUsuarioActual();
+            inicializarVistas(view);
+            configurarRecyclerView();
+            cargarNotificaciones();
+            actualizarContador();
+        } catch (Exception e) {
+            Toast.makeText(requireContext(), "No se pudo cargar las notificaciones. Intenta más tarde.", Toast.LENGTH_LONG).show();
+            if (view.findViewById(R.id.recyclerViewNotificaciones) != null) {
+                view.findViewById(R.id.recyclerViewNotificaciones).setVisibility(View.GONE);
+            }
+            if (view.findViewById(R.id.layoutNoNotificaciones) != null) {
+                view.findViewById(R.id.layoutNoNotificaciones).setVisibility(View.VISIBLE);
+            }
+            // Mensaje amigable
+            TextView tvError = new TextView(requireContext());
+            tvError.setText("No se pudo cargar las notificaciones. Intenta más tarde.");
+            tvError.setTextColor(getResources().getColor(R.color.gray));
+            tvError.setTextSize(16);
+            tvError.setPadding(0, 16, 0, 16);
+            ((ViewGroup) view).addView(tvError);
+        }
         return view;
     }
 

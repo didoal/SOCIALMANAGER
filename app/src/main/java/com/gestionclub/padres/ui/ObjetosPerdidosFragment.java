@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,15 +32,29 @@ public class ObjetosPerdidosFragment extends Fragment implements ObjetoPerdidoAd
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_objetos_perdidos, container, false);
-        
-        dataManager = new DataManager(requireContext());
-        usuarioActual = dataManager.getUsuarioActual();
-        
-        inicializarVistas(view);
-        configurarRecyclerView();
-        cargarObjetos();
-        configurarListeners();
-        
+        try {
+            dataManager = new DataManager(requireContext());
+            usuarioActual = dataManager.getUsuarioActual();
+            inicializarVistas(view);
+            configurarRecyclerView();
+            cargarObjetos();
+            configurarListeners();
+        } catch (Exception e) {
+            Toast.makeText(requireContext(), "No se pudo cargar los objetos perdidos. Intenta más tarde.", Toast.LENGTH_LONG).show();
+            if (view.findViewById(R.id.recyclerViewObjetos) != null) {
+                view.findViewById(R.id.recyclerViewObjetos).setVisibility(View.GONE);
+            }
+            if (view.findViewById(R.id.buttonAgregarObjeto) != null) {
+                view.findViewById(R.id.buttonAgregarObjeto).setVisibility(View.GONE);
+            }
+            // Mensaje amigable
+            TextView tvError = new TextView(requireContext());
+            tvError.setText("No se pudo cargar los objetos perdidos. Intenta más tarde.");
+            tvError.setTextColor(getResources().getColor(R.color.gray));
+            tvError.setTextSize(16);
+            tvError.setPadding(0, 16, 0, 16);
+            ((ViewGroup) view).addView(tvError);
+        }
         return view;
     }
 

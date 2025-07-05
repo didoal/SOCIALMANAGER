@@ -1,38 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="176dp"
-    android:background="@color/black_light"
-    android:gravity="bottom"
+    android:layout_height="220dp"
+    android:background="@color/blue_profesional"
+    android:gravity="center"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:paddingTop="32dp"
+    android:paddingBottom="16dp">
 
     <ImageView
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/circle_background"
-        android:src="@drawable/ic_launcher_foreground"
-        android:contentDescription="Logo" />
+        android:id="@+id/imageViewAvatar"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/ic_avatar_default"
+        android:background="@drawable/circle_gold"
+        android:scaleType="centerCrop"
+        android:layout_gravity="center"
+        android:contentDescription="Avatar" />
 
     <TextView
         android:id="@+id/textViewUserName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Usuario"
-        android:textColor="@color/gold"
+        android:text="Nombre Usuario"
+        android:textColor="@color/white"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:gravity="center" />
+        android:gravity="center"
+        android:layout_marginTop="8dp" />
 
     <TextView
         android:id="@+id/textViewUserRole"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Rol"
-        android:textColor="@color/gray_light"
+        android:textColor="@color/blue_profesional_accent"
         android:textSize="14sp"
-        android:gravity="center" />
+        android:gravity="center"
+        android:layout_marginTop="2dp" />
+
+    <TextView
+        android:id="@+id/textViewUserEquipo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Equipo / Categoría"
+        android:textColor="@color/blue_profesional_light"
+        android:textSize="13sp"
+        android:gravity="center"
+        android:layout_marginTop="2dp" />
 
 </LinearLayout> 

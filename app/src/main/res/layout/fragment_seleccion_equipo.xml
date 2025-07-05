@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white">
+    android:background="@color/background">
 
     <!-- Header -->
     <LinearLayout
@@ -12,14 +12,15 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="16dp"
-        android:background="@drawable/gradient_header"
-        android:elevation="4dp">
+        android:background="@drawable/card_profesional"
+        android:elevation="4dp"
+        android:layout_marginBottom="16dp">
 
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_team"
-            app:tint="@color/white"
+            app:tint="@color/text_primary"
             android:layout_gravity="center_vertical" />
 
         <TextView
@@ -28,9 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Selecciona un equipo"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/white"
+            style="@style/TitleText"
             android:layout_marginStart="12dp"
             android:layout_gravity="center_vertical" />
 
@@ -43,7 +42,8 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:padding="8dp"
-        android:clipToPadding="false" />
+        android:clipToPadding="false"
+        android:background="@android:color/transparent" />
 
     <!-- Mensaje cuando no hay equipos -->
     <LinearLayout
@@ -66,8 +66,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="No hay equipos disponibles"
-            android:textSize="18sp"
-            android:textColor="@color/gray_medium"
+            style="@style/SubtitleText"
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
 
@@ -75,8 +74,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Contacta al administrador para crear equipos"
-            android:textSize="14sp"
-            android:textColor="@color/gray_light"
+            style="@style/BodyText"
             android:gravity="center"
             android:layout_marginHorizontal="32dp" />
 

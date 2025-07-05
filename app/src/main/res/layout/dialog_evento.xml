@@ -122,6 +122,84 @@
             android:textColorHint="@color/gray"
             android:layout_marginBottom="16dp" />
 
+        <!-- Nueva sección para eventos recurrentes -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Opciones de recurrencia:"
+            android:textStyle="bold"
+            android:textColor="@color/gold"
+            android:layout_marginBottom="8dp" />
+
+        <CheckBox
+            android:id="@+id/checkBoxRecurrente"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Evento recurrente"
+            android:textColor="@color/white"
+            android:buttonTint="@color/gold"
+            android:layout_marginBottom="8dp" />
+
+        <LinearLayout
+            android:id="@+id/layoutRecurrencia"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Frecuencia:"
+                android:textStyle="bold"
+                android:textColor="@color/gold"
+                android:layout_marginBottom="4dp" />
+
+            <Spinner
+                android:id="@+id/spinnerFrecuencia"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text_background"
+                android:padding="12dp"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Hasta:"
+                android:textStyle="bold"
+                android:textColor="@color/gold"
+                android:layout_marginBottom="4dp" />
+
+            <Button
+                android:id="@+id/buttonFechaFinRecurrencia"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Seleccionar fecha fin"
+                android:background="@drawable/card_background"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- Nueva sección para marcador visual -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Marcador visual:"
+            android:textStyle="bold"
+            android:textColor="@color/gold"
+            android:layout_marginBottom="8dp" />
+
+        <Spinner
+            android:id="@+id/spinnerColorMarcador"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edit_text_background"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp" />
+
     </LinearLayout>
 
 </ScrollView> 

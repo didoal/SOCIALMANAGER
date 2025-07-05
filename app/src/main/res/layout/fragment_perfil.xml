@@ -1,64 +1,98 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/background"
-    android:padding="16dp"
-    android:gravity="center">
+    android:background="@color/background">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="MI PERFIL"
-        android:textColor="@color/gold"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="32dp"/>
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center_horizontal">
 
-    <TextView
-        android:id="@+id/tv_nombre"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Nombre del Usuario"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        android:layout_marginBottom="16dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gestión de Usuarios"
+            style="@style/TitleText"
+            android:layout_marginBottom="24dp"/>
 
-    <TextView
-        android:id="@+id/tv_rol"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Rol: Usuario"
-        android:textColor="@color/gray"
-        android:textSize="16sp"
-        android:layout_marginBottom="32dp"/>
+        <!-- Formulario de alta de usuario -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_profesional"
+            android:padding="16dp"
+            android:layout_marginBottom="24dp">
 
-    <TextView
-        android:id="@+id/tv_categoria"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Categoría: "
-        android:textColor="@color/gray"
-        android:textSize="16sp"
-        android:layout_marginBottom="8dp"/>
+            <EditText
+                android:id="@+id/editTextNombreUsuario"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nombre del padre/tutor"
+                android:background="@drawable/edit_text_background"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_secondary"
+                android:layout_marginBottom="12dp"/>
 
-    <TextView
-        android:id="@+id/tv_username"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Usuario: "
-        android:textColor="@color/gray"
-        android:textSize="16sp"
-        android:layout_marginBottom="32dp"/>
+            <EditText
+                android:id="@+id/editTextJugador"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nombre del jugador/hijo"
+                android:background="@drawable/edit_text_background"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_secondary"
+                android:layout_marginBottom="12dp"/>
 
-    <Button
-        android:id="@+id/btn_logout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="CERRAR SESIÓN"
-        android:background="@drawable/button_danger_background"
-        android:textColor="@color/white"
-        android:textStyle="bold"
-        android:padding="16dp"/>
+            <EditText
+                android:id="@+id/editTextPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Contraseña"
+                android:inputType="textPassword"
+                android:background="@drawable/edit_text_background"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_secondary"
+                android:layout_marginBottom="16dp"/>
 
-</LinearLayout> 
+            <Button
+                android:id="@+id/btnCrearUsuario"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Crear usuario"
+                android:background="@drawable/button_gold_background"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
+        </LinearLayout>
+
+        <!-- Lista de usuarios -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Usuarios registrados:"
+            style="@style/SubtitleText"
+            android:layout_marginBottom="8dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewUsuarios"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:layout_marginBottom="32dp"/>
+
+        <Button
+            android:id="@+id/btn_logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CERRAR SESIÓN"
+            android:background="@drawable/button_danger_background"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:padding="16dp"/>
+
+    </LinearLayout>
+</ScrollView> 

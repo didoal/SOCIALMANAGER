@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+    
+    <!-- Círculo de fondo -->
+    <path
+        android:fillColor="@color/white"
+        android:pathData="M60,60m-50,0a50,50 0,1 1,100 0a50,50 0,1 1,-100 0" />
+    
+    <!-- Letra S estilizada -->
+    <path
+        android:fillColor="@color/rojo_club"
+        android:pathData="M35,25 Q45,20 55,25 Q65,30 65,40 Q65,50 55,55 Q45,60 35,55 Q25,50 25,40 Q25,30 35,25 Z" />
+    
+    <!-- Texto "CD" -->
+    <path
+        android:fillColor="@color/rojo_club"
+        android:pathData="M30,70 L50,70 L50,85 L30,85 Z" />
+    
+    <!-- Texto "Santiaguiño" -->
+    <path
+        android:fillColor="@color/rojo_club"
+        android:pathData="M55,75 L90,75 L90,80 L55,80 Z" />
+    
+    <!-- Estrella o símbolo deportivo -->
+    <path
+        android:fillColor="@color/gold"
+        android:pathData="M60,15 L63,20 L68,20 L65,25 L67,30 L60,27 L53,30 L55,25 L52,20 L57,20 Z" />
+</vector> 

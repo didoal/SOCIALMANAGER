@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.Socialmanager" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.Socialmanager" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/rojo_club</item>
         <item name="colorPrimaryVariant">@color/rojo_club_dark</item>

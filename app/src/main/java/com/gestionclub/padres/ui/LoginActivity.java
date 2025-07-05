@@ -184,17 +184,12 @@ public class LoginActivity extends AppCompatActivity {
             Usuario adminAlt = new Usuario("Administrador", "admin@club.com", "admin123", "administrador");
             usuarios.add(adminAlt);
             
-            // Entrenadores
-            Usuario entrenador1 = new Usuario("Carlos López", "carlos@club.com", "entrenador123", "entrenador");
-            entrenador1.setEquipoId("equipo1");
-            entrenador1.setEquipoNombre("Leones Sub-10");
-            usuarios.add(entrenador1);
+            // Padres/Tutores
+            Usuario padre1 = new Usuario("Juan Pérez", "juan@club.com", "padre123", "padre");
+            usuarios.add(padre1);
             
-            // Jugadores
-            Usuario jugador1 = new Usuario("Juan Pérez", "juan@club.com", "jugador123", "jugador");
-            jugador1.setEquipoId("equipo1");
-            jugador1.setEquipoNombre("Leones Sub-10");
-            usuarios.add(jugador1);
+            Usuario padre2 = new Usuario("María García", "maria@club.com", "padre123", "padre");
+            usuarios.add(padre2);
             
             // Guardar usuarios
             dataManager.guardarUsuarios(usuarios);

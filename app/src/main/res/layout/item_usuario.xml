@@ -1,79 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="4dp"
-    app:cardBackgroundColor="@color/white">
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:layout_marginBottom="8dp"
+    android:background="@drawable/card_profesional">
+
+    <TextView
+        android:id="@+id/textViewNombre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/SubtitleText"
+        android:textStyle="bold"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/textViewJugador"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/BodyText"
+        android:textSize="14sp"
+        android:layout_marginBottom="8dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:orientation="horizontal"
+        android:gravity="end">
 
-        <!-- Nombre del usuario -->
-        <TextView
-            android:id="@+id/textViewNombre"
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/buttonEliminar"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nombre del Usuario"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:layout_marginBottom="4dp" />
-
-        <!-- Email -->
-        <TextView
-            android:id="@+id/textViewEmail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="email@ejemplo.com"
-            android:textSize="14sp"
-            android:textColor="@color/gray_medium"
-            android:layout_marginBottom="8dp" />
-
-        <!-- Información adicional -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/textViewRol"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Rol: JUGADOR"
-                android:textSize="12sp"
-                android:textColor="@color/gold"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/textViewEstado"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Activo"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:padding="4dp"
-                android:background="@drawable/badge_background"
-                android:textColor="@color/white" />
-
-        </LinearLayout>
-
-        <!-- Equipo -->
-        <TextView
-            android:id="@+id/textViewEquipo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Equipo: Leones Sub-12"
-            android:textSize="12sp"
-            android:textColor="@color/gray_light" />
-
+            android:text="Eliminar"
+            android:background="@drawable/button_danger_background"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
     </LinearLayout>
 
-</androidx.cardview.widget.CardView> 
+</LinearLayout> 

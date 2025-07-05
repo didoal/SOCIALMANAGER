@@ -87,19 +87,27 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.EventoView
             textViewFecha.setText(fechaHora);
             textViewUbicacion.setText(evento.getUbicacion());
 
-            // Configurar color del tipo
+            // Configurar color del tipo según el tipo de evento
             switch (evento.getTipo()) {
                 case "ENTRENAMIENTO":
-                    textViewTipo.setBackgroundResource(R.drawable.tipo_background);
+                    textViewTipo.setBackgroundResource(R.drawable.tipo_entrenamiento_background);
+                    textViewTipo.setTextColor(0xFFFFFFFF); // Blanco
                     break;
                 case "PARTIDO":
-                    textViewTipo.setBackgroundResource(R.drawable.tipo_background);
+                    textViewTipo.setBackgroundResource(R.drawable.tipo_partido_background);
+                    textViewTipo.setTextColor(0xFFFFFFFF); // Blanco
                     break;
                 case "EVENTO":
-                    textViewTipo.setBackgroundResource(R.drawable.tipo_background);
+                    textViewTipo.setBackgroundResource(R.drawable.tipo_evento_background);
+                    textViewTipo.setTextColor(0xFFFFFFFF); // Blanco
                     break;
                 case "REUNION":
+                    textViewTipo.setBackgroundResource(R.drawable.tipo_reunion_background);
+                    textViewTipo.setTextColor(0xFFFFFFFF); // Blanco
+                    break;
+                default:
                     textViewTipo.setBackgroundResource(R.drawable.tipo_background);
+                    textViewTipo.setTextColor(0xFF000000); // Negro
                     break;
             }
 

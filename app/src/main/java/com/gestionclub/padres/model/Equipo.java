@@ -1,26 +1,23 @@
 package com.gestionclub.padres.model;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class Equipo {
     private String id;
     private String nombre;
     private String categoria;
-    private String entrenadorId;
-    private String entrenadorNombre;
-    private String descripcion;
-    private Date fechaCreacion;
+    private String entrenador;
+    private List<String> jugadoresIds;
     private boolean activo;
 
-    public Equipo(String nombre, String categoria, String entrenadorId, String entrenadorNombre, String descripcion) {
+    public Equipo(String nombre, String categoria, String entrenador) {
         this.id = UUID.randomUUID().toString();
         this.nombre = nombre;
         this.categoria = categoria;
-        this.entrenadorId = entrenadorId;
-        this.entrenadorNombre = entrenadorNombre;
-        this.descripcion = descripcion;
-        this.fechaCreacion = new Date();
+        this.entrenador = entrenador;
+        this.jugadoresIds = new ArrayList<>();
         this.activo = true;
     }
 
@@ -34,23 +31,26 @@ public class Equipo {
     public String getCategoria() { return categoria; }
     public void setCategoria(String categoria) { this.categoria = categoria; }
 
-    public String getEntrenadorId() { return entrenadorId; }
-    public void setEntrenadorId(String entrenadorId) { this.entrenadorId = entrenadorId; }
+    public String getEntrenador() { return entrenador; }
+    public void setEntrenador(String entrenador) { this.entrenador = entrenador; }
 
-    public String getEntrenadorNombre() { return entrenadorNombre; }
-    public void setEntrenadorNombre(String entrenadorNombre) { this.entrenadorNombre = entrenadorNombre; }
-
-    public String getDescripcion() { return descripcion; }
-    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
-
-    public Date getFechaCreacion() { return fechaCreacion; }
-    public void setFechaCreacion(Date fechaCreacion) { this.fechaCreacion = fechaCreacion; }
+    public List<String> getJugadoresIds() { return jugadoresIds; }
+    public void setJugadoresIds(List<String> jugadoresIds) { this.jugadoresIds = jugadoresIds; }
 
     public boolean isActivo() { return activo; }
     public void setActivo(boolean activo) { this.activo = activo; }
 
-    @Override
-    public String toString() {
+    public void agregarJugador(String jugadorId) {
+        if (!jugadoresIds.contains(jugadorId)) {
+            jugadoresIds.add(jugadorId);
+        }
+    }
+
+    public void removerJugador(String jugadorId) {
+        jugadoresIds.remove(jugadorId);
+    }
+
+    public String getNombreCompleto() {
         return nombre + " (" + categoria + ")";
     }
 } 

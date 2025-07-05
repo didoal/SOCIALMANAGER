@@ -28,7 +28,6 @@ public class DataManager {
     private static final String KEY_USUARIOS = "usuarios";
     private static final String KEY_USUARIO_ACTUAL = "usuario_actual";
     private static final String KEY_EQUIPOS = "equipos";
-    private static final String KEY_EQUIPO_SELECCIONADO = "equipo_seleccionado";
 
     private SharedPreferences sharedPreferences;
     private Gson gson;
@@ -108,54 +107,42 @@ public class DataManager {
             guardarAsistencias(asistenciasEjemplo);
         }
 
-        if (getEquipos().isEmpty()) {
-            List<Equipo> equiposEjemplo = new ArrayList<>();
-            equiposEjemplo.add(new Equipo("Leones Sub-10", "Sub-10", "entrenador1", "Carlos López", "Equipo de fútbol para niños de 8-10 años"));
-            equiposEjemplo.add(new Equipo("Tigres Sub-12", "Sub-12", "entrenador2", "Ana Martínez", "Equipo de fútbol para niños de 10-12 años"));
-            equiposEjemplo.add(new Equipo("Águilas Sub-14", "Sub-14", "entrenador3", "Roberto Sánchez", "Equipo de fútbol para adolescentes de 12-14 años"));
-            guardarEquipos(equiposEjemplo);
-        }
-
         if (getUsuarios().isEmpty()) {
             List<Usuario> usuariosEjemplo = new ArrayList<>();
             
-            // Administrador
+            // Administrador principal
             Usuario admin = new Usuario("Administrador", "admin@club.com", "admin123", "administrador");
             usuariosEjemplo.add(admin);
             
-            // Entrenadores
-            Usuario entrenador1 = new Usuario("Carlos López", "carlos@club.com", "entrenador123", "entrenador");
-            entrenador1.setEquipoId("equipo1");
-            entrenador1.setEquipoNombre("Leones Sub-10");
-            usuariosEjemplo.add(entrenador1);
+            // Administrador alternativo para el usuario actual
+            Usuario adminUsuario = new Usuario("Diego", "diego@club.com", "admin123", "administrador");
+            usuariosEjemplo.add(adminUsuario);
             
-            Usuario entrenador2 = new Usuario("Ana Martínez", "ana@club.com", "entrenador123", "entrenador");
-            entrenador2.setEquipoId("equipo2");
-            entrenador2.setEquipoNombre("Tigres Sub-12");
-            usuariosEjemplo.add(entrenador2);
+            // Padres/Tutores
+            Usuario padre1 = new Usuario("Juan Pérez", "juan@club.com", "padre123", "padre");
+            padre1.setJugador("Titi");
+            usuariosEjemplo.add(padre1);
             
-            Usuario entrenador3 = new Usuario("Roberto Sánchez", "roberto@club.com", "entrenador123", "entrenador");
-            entrenador3.setEquipoId("equipo3");
-            entrenador3.setEquipoNombre("Águilas Sub-14");
-            usuariosEjemplo.add(entrenador3);
-            
-            // Jugadores
-            Usuario jugador1 = new Usuario("Juan Pérez", "juan@club.com", "jugador123", "jugador");
-            jugador1.setEquipoId("equipo1");
-            jugador1.setEquipoNombre("Leones Sub-10");
-            usuariosEjemplo.add(jugador1);
-            
-            Usuario jugador2 = new Usuario("María García", "maria@club.com", "jugador123", "jugador");
-            jugador2.setEquipoId("equipo2");
-            jugador2.setEquipoNombre("Tigres Sub-12");
-            usuariosEjemplo.add(jugador2);
-            
-            Usuario jugador3 = new Usuario("Pedro López", "pedro@club.com", "jugador123", "jugador");
-            jugador3.setEquipoId("equipo3");
-            jugador3.setEquipoNombre("Águilas Sub-14");
-            usuariosEjemplo.add(jugador3);
+            Usuario padre2 = new Usuario("María García", "maria@club.com", "padre123", "padre");
+            padre2.setJugador("Carlos");
+            usuariosEjemplo.add(padre2);
             
             guardarUsuarios(usuariosEjemplo);
+        }
+
+        if (getEquipos().isEmpty()) {
+            List<Equipo> equiposEjemplo = new ArrayList<>();
+            
+            // Equipos de ejemplo
+            Equipo equipo1 = new Equipo("Alevín A", "Alevín", "Carlos López");
+            Equipo equipo2 = new Equipo("Infantil B", "Infantil", "María Rodríguez");
+            Equipo equipo3 = new Equipo("Cadete A", "Cadete", "Juan García");
+            
+            equiposEjemplo.add(equipo1);
+            equiposEjemplo.add(equipo2);
+            equiposEjemplo.add(equipo3);
+            
+            guardarEquipos(equiposEjemplo);
         }
     }
 
@@ -458,8 +445,7 @@ public class DataManager {
     }
 
     public Equipo getEquipoPorId(String equipoId) {
-        List<Equipo> equipos = getEquipos();
-        for (Equipo equipo : equipos) {
+        for (Equipo equipo : getEquipos()) {
             if (equipo.getId().equals(equipoId)) {
                 return equipo;
             }
@@ -467,128 +453,19 @@ public class DataManager {
         return null;
     }
 
-    public String getEquipoSeleccionado() {
-        return sharedPreferences.getString(KEY_EQUIPO_SELECCIONADO, null);
-    }
-
-    public void setEquipoSeleccionado(String equipoId) {
-        sharedPreferences.edit().putString(KEY_EQUIPO_SELECCIONADO, equipoId).apply();
-    }
-
-    // Métodos para filtrar datos por equipo según rol
-    public List<Usuario> getUsuariosPorEquipo(String equipoId) {
-        List<Usuario> todos = getUsuarios();
-        List<Usuario> delEquipo = new ArrayList<>();
-        for (Usuario usuario : todos) {
-            if (equipoId.equals(usuario.getEquipoId())) {
-                delEquipo.add(usuario);
+    public List<Usuario> getJugadoresPorEquipo(String equipoId) {
+        List<Usuario> jugadores = new ArrayList<>();
+        Equipo equipo = getEquipoPorId(equipoId);
+        if (equipo != null && equipo.getJugadoresIds() != null) {
+            for (String jugadorId : equipo.getJugadoresIds()) {
+                for (Usuario usuario : getUsuarios()) {
+                    if (usuario.getId().equals(jugadorId) && usuario.isEsPadre()) {
+                        jugadores.add(usuario);
+                        break;
+                    }
+                }
             }
         }
-        return delEquipo;
-    }
-
-    public List<Evento> getEventosPorEquipo(String equipoId) {
-        List<Evento> todos = getEventos();
-        List<Evento> delEquipo = new ArrayList<>();
-        for (Evento evento : todos) {
-            if (equipoId.equals(evento.getEquipoId())) {
-                delEquipo.add(evento);
-            }
-        }
-        return delEquipo;
-    }
-
-    public List<Asistencia> getAsistenciasPorEquipo(String equipoId) {
-        List<Asistencia> todas = getAsistencias();
-        List<Asistencia> delEquipo = new ArrayList<>();
-        for (Asistencia asistencia : todas) {
-            if (equipoId.equals(asistencia.getEquipoId())) {
-                delEquipo.add(asistencia);
-            }
-        }
-        return delEquipo;
-    }
-
-    public List<Mensaje> getMensajesPorEquipo(String equipoId) {
-        List<Mensaje> todos = getMensajes();
-        List<Mensaje> delEquipo = new ArrayList<>();
-        for (Mensaje mensaje : todos) {
-            if (equipoId.equals(mensaje.getEquipoId())) {
-                delEquipo.add(mensaje);
-            }
-        }
-        return delEquipo;
-    }
-
-    public List<ObjetoPerdido> getObjetosPerdidosPorEquipo(String equipoId) {
-        List<ObjetoPerdido> todos = getObjetosPerdidos();
-        List<ObjetoPerdido> delEquipo = new ArrayList<>();
-        for (ObjetoPerdido objeto : todos) {
-            if (equipoId.equals(objeto.getEquipoId())) {
-                delEquipo.add(objeto);
-            }
-        }
-        return delEquipo;
-    }
-
-    // Método para obtener datos según el rol del usuario
-    public List<Usuario> getUsuariosSegunRol(Usuario usuario) {
-        if (usuario.isEsAdmin()) {
-            String equipoSeleccionado = getEquipoSeleccionado();
-            if (equipoSeleccionado != null) {
-                return getUsuariosPorEquipo(equipoSeleccionado);
-            }
-            return getUsuarios(); // Todos los usuarios
-        } else {
-            return getUsuariosPorEquipo(usuario.getEquipoId());
-        }
-    }
-
-    public List<Evento> getEventosSegunRol(Usuario usuario) {
-        if (usuario.isEsAdmin()) {
-            String equipoSeleccionado = getEquipoSeleccionado();
-            if (equipoSeleccionado != null) {
-                return getEventosPorEquipo(equipoSeleccionado);
-            }
-            return getEventos(); // Todos los eventos
-        } else {
-            return getEventosPorEquipo(usuario.getEquipoId());
-        }
-    }
-
-    public List<Asistencia> getAsistenciasSegunRol(Usuario usuario) {
-        if (usuario.isEsAdmin()) {
-            String equipoSeleccionado = getEquipoSeleccionado();
-            if (equipoSeleccionado != null) {
-                return getAsistenciasPorEquipo(equipoSeleccionado);
-            }
-            return getAsistencias(); // Todas las asistencias
-        } else {
-            return getAsistenciasPorEquipo(usuario.getEquipoId());
-        }
-    }
-
-    public List<Mensaje> getMensajesSegunRol(Usuario usuario) {
-        if (usuario.isEsAdmin()) {
-            String equipoSeleccionado = getEquipoSeleccionado();
-            if (equipoSeleccionado != null) {
-                return getMensajesPorEquipo(equipoSeleccionado);
-            }
-            return getMensajes(); // Todos los mensajes
-        } else {
-            return getMensajesPorEquipo(usuario.getEquipoId());
-        }
-    }
-
-    public List<ObjetoPerdido> getObjetosPerdidosSegunRol(Usuario usuario) {
-        if (usuario.isEsAdmin()) {
-            String equipoSeleccionado = getEquipoSeleccionado();
-            if (equipoSeleccionado != null) {
-                return getObjetosPerdidosPorEquipo(equipoSeleccionado);
-            }
-            return getObjetosPerdidos(); // Todos los objetos
-        } else {
-            return getObjetosPerdidosPorEquipo(usuario.getEquipoId());
-        }
+        return jugadores;
     }
 } 

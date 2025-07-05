@@ -3,7 +3,6 @@ package com.gestionclub.padres.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -53,21 +52,15 @@ public class NotificacionAdapter extends RecyclerView.Adapter<NotificacionAdapte
     }
 
     class NotificacionViewHolder extends RecyclerView.ViewHolder {
-        private ImageView imageViewTipo;
         private TextView textViewTitulo;
         private TextView textViewMensaje;
-        private TextView textViewRemitente;
         private TextView textViewFecha;
-        private View viewNoLeida;
 
         public NotificacionViewHolder(@NonNull View itemView) {
             super(itemView);
-            imageViewTipo = itemView.findViewById(R.id.imageViewTipo);
             textViewTitulo = itemView.findViewById(R.id.textViewTitulo);
             textViewMensaje = itemView.findViewById(R.id.textViewMensaje);
-            textViewRemitente = itemView.findViewById(R.id.textViewRemitente);
             textViewFecha = itemView.findViewById(R.id.textViewFecha);
-            viewNoLeida = itemView.findViewById(R.id.viewNoLeida);
 
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
@@ -80,41 +73,8 @@ public class NotificacionAdapter extends RecyclerView.Adapter<NotificacionAdapte
         public void bind(Notificacion notificacion) {
             textViewTitulo.setText(notificacion.getTitulo());
             textViewMensaje.setText(notificacion.getMensaje());
-            textViewRemitente.setText("De: " + notificacion.getRemitenteNombre());
-            
-            // Formatear fecha
             String fechaFormateada = dateFormat.format(notificacion.getFechaCreacion());
             textViewFecha.setText(fechaFormateada);
-
-            // Configurar icono según tipo
-            configurarIconoTipo(notificacion.getTipo());
-
-            // Mostrar indicador de no leída
-            if (notificacion.isLeida()) {
-                viewNoLeida.setVisibility(View.GONE);
-            } else {
-                viewNoLeida.setVisibility(View.VISIBLE);
-            }
-        }
-
-        private void configurarIconoTipo(String tipo) {
-            switch (tipo) {
-                case "EVENTO":
-                    imageViewTipo.setImageResource(R.drawable.ic_calendar);
-                    break;
-                case "MENSAJE":
-                    imageViewTipo.setImageResource(R.drawable.ic_message);
-                    break;
-                case "OBJETO":
-                    imageViewTipo.setImageResource(R.drawable.ic_object);
-                    break;
-                case "SOLICITUD":
-                    imageViewTipo.setImageResource(R.drawable.ic_request);
-                    break;
-                default:
-                    imageViewTipo.setImageResource(R.drawable.ic_notification);
-                    break;
-            }
         }
     }
 } 

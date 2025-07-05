@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:padding="16dp"
     android:layout_marginBottom="8dp"
-    android:background="@drawable/card_background">
+    android:background="@drawable/card_profesional">
 
     <!-- Header del evento -->
     <LinearLayout
@@ -20,9 +20,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            style="@style/SubtitleText"
             android:textStyle="bold"
-            android:textSize="18sp"
-            android:textColor="@color/black" />
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/textViewTipo"
@@ -31,7 +31,7 @@
             android:padding="4dp"
             android:textSize="10sp"
             android:textStyle="bold"
-            android:textColor="@color/black"
+            android:textColor="@color/text_primary"
             android:background="@drawable/tipo_background" />
 
     </LinearLayout>
@@ -41,8 +41,8 @@
         android:id="@+id/textViewDescripcion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        style="@style/BodyText"
         android:textSize="14sp"
-        android:textColor="@color/gray"
         android:layout_marginBottom="8dp" />
 
     <!-- Información del evento -->
@@ -56,8 +56,8 @@
             android:id="@+id/textViewFecha"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            style="@style/BodyText"
             android:textSize="14sp"
-            android:textColor="@color/black"
             android:drawableStart="@drawable/ic_calendar"
             android:drawablePadding="8dp"
             android:layout_marginBottom="4dp" />
@@ -66,8 +66,8 @@
             android:id="@+id/textViewUbicacion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            style="@style/BodyText"
             android:textSize="14sp"
-            android:textColor="@color/black"
             android:drawableStart="@drawable/ic_location"
             android:drawablePadding="8dp" />
 
@@ -86,7 +86,7 @@
             android:layout_height="wrap_content"
             android:text="Editar"
             android:layout_marginEnd="8dp"
-            android:background="@drawable/card_background"
+            android:background="@drawable/button_gold_background"
             android:textColor="@color/black"
             android:textStyle="bold"
             android:visibility="gone" />

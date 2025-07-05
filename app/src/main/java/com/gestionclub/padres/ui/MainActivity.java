@@ -75,9 +75,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 dataManager.crearDatosEjemploNotificaciones();
             }
 
-            // Mostrar fragmento de perfil por defecto
+            // Mostrar fragmento de perfil por defecto y marcarlo como seleccionado
             Log.d(TAG, "onCreate: Mostrando fragmento inicial");
             if (savedInstanceState == null) {
+                navigationView.setCheckedItem(R.id.nav_perfil);
                 mostrarFragmento(new PerfilFragment());
             }
             
@@ -127,10 +128,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             View headerView = navigationView.getHeaderView(0);
             TextView textViewUserName = headerView.findViewById(R.id.textViewUserName);
             TextView textViewUserRole = headerView.findViewById(R.id.textViewUserRole);
+            TextView textViewUserEquipo = headerView.findViewById(R.id.textViewUserEquipo);
 
             if (usuarioActual != null) {
                 textViewUserName.setText(usuarioActual.getNombre());
-                textViewUserRole.setText(usuarioActual.getRol());
+                textViewUserRole.setText(usuarioActual.isEsAdmin() ? "Administrador" : "Usuario");
+                // Mostrar equipo/categoría si existe
+                String equipo = usuarioActual.getJugador() != null ? usuarioActual.getJugador() : "Sin equipo";
+                textViewUserEquipo.setText(equipo);
                 Log.d(TAG, "actualizarHeaderUsuario: Header actualizado para " + usuarioActual.getNombre());
             }
         } catch (Exception e) {
@@ -140,22 +145,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void configurarVisibilidadMenu() {
         try {
-            Log.d(TAG, "configurarVisibilidadMenu: Configurando");
-            if (usuarioActual != null) {
-                if (usuarioActual.isEsAdmin()) {
-                    navigationView.getMenu().findItem(R.id.nav_asistencia).setVisible(false);
-                    navigationView.getMenu().findItem(R.id.nav_seleccion_equipo).setVisible(true);
-                    navigationView.getMenu().findItem(R.id.nav_gestion_equipos).setVisible(true);
-                    navigationView.getMenu().findItem(R.id.nav_gestion_usuarios).setVisible(true);
-                    Log.d(TAG, "configurarVisibilidadMenu: Configurado para administrador");
-                } else {
-                    navigationView.getMenu().findItem(R.id.nav_estadisticas).setVisible(false);
-                    navigationView.getMenu().findItem(R.id.nav_seleccion_equipo).setVisible(false);
-                    navigationView.getMenu().findItem(R.id.nav_gestion_equipos).setVisible(false);
-                    navigationView.getMenu().findItem(R.id.nav_gestion_usuarios).setVisible(false);
-                    Log.d(TAG, "configurarVisibilidadMenu: Configurado para usuario normal");
-                }
-            }
+            Log.d(TAG, "configurarVisibilidadMenu: Configurando visibilidad según rol");
+            // Mostrar grupo de administración solo si el usuario es admin
+            boolean esAdmin = usuarioActual != null && usuarioActual.isEsAdmin();
+            navigationView.getMenu().setGroupVisible(R.id.nav_admin, esAdmin);
         } catch (Exception e) {
             Log.e(TAG, "configurarVisibilidadMenu: Error", e);
         }
@@ -205,22 +198,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fragment = new AsistenciaFragment();
                 titulo = "Asistencia";
             } else if (id == R.id.nav_estadisticas) {
-                if (usuarioActual != null && usuarioActual.isEsAdmin()) {
-                    fragment = new SeleccionEquipoFragment();
-                    titulo = "Seleccionar Equipo";
-                } else {
-                    fragment = new com.gestionclub.admin.ui.EstadisticasFragment();
-                    titulo = "Estadísticas";
-                }
-            } else if (id == R.id.nav_seleccion_equipo) {
-                fragment = new SeleccionEquipoFragment();
-                titulo = "Seleccionar Equipo";
-            } else if (id == R.id.nav_gestion_equipos) {
-                fragment = new GestionEquiposFragment();
-                titulo = "Gestión de Equipos";
-            } else if (id == R.id.nav_gestion_usuarios) {
-                fragment = new GestionUsuariosFragment();
-                titulo = "Gestión de Usuarios";
+                fragment = new EstadisticasFragment();
+                titulo = "Estadísticas";
+            } else if (id == R.id.nav_logins_admin) {
+                fragment = new LoginsAdminFragment();
+                titulo = "Logins (Admin)";
             } else if (id == R.id.nav_logout) {
                 Log.d(TAG, "onNavigationItemSelected: Cerrando sesión");
                 dataManager.cerrarSesion();

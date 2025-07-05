@@ -1,97 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="4dp"
-    app:cardBackgroundColor="@color/white">
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:layout_marginBottom="8dp"
+    android:background="@drawable/card_profesional">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/textViewTitulo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp">
+        style="@style/SubtitleText"
+        android:textStyle="bold"
+        android:textSize="16sp" />
 
-        <!-- Icono de tipo de notificación -->
-        <ImageView
-            android:id="@+id/imageViewTipo"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/circle_background"
-            android:padding="8dp"
-            android:src="@drawable/ic_notification"
-            app:tint="@color/white" />
+    <TextView
+        android:id="@+id/textViewMensaje"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/BodyText"
+        android:textSize="14sp"
+        android:layout_marginBottom="8dp" />
 
-        <!-- Contenido de la notificación -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="16dp"
-            android:orientation="vertical">
+    <TextView
+        android:id="@+id/textViewFecha"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/BodyText"
+        android:textSize="12sp"
+        android:textColor="@color/text_secondary"
+        android:gravity="end" />
 
-            <TextView
-                android:id="@+id/textViewTitulo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Título de la notificación"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="@color/black"
-                android:maxLines="2"
-                android:ellipsize="end" />
-
-            <TextView
-                android:id="@+id/textViewMensaje"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Mensaje de la notificación"
-                android:textSize="14sp"
-                android:textColor="@color/gray_medium"
-                android:maxLines="3"
-                android:ellipsize="end" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/textViewRemitente"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="De: Usuario"
-                    android:textSize="12sp"
-                    android:textColor="@color/gray_light" />
-
-                <TextView
-                    android:id="@+id/textViewFecha"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Hace 2 horas"
-                    android:textSize="12sp"
-                    android:textColor="@color/gray_light" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <!-- Indicador de no leída -->
-        <View
-            android:id="@+id/viewNoLeida"
-            android:layout_width="8dp"
-            android:layout_height="8dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="8dp"
-            android:background="@drawable/circle_gold"
-            android:visibility="visible" />
-
-    </LinearLayout>
-
-</androidx.cardview.widget.CardView> 
+</LinearLayout> 

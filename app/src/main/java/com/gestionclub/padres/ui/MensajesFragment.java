@@ -31,15 +31,32 @@ public class MensajesFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_mensajes, container, false);
-        
-        dataManager = new DataManager(requireContext());
-        usuarioActual = dataManager.getUsuarioActual();
-        
-        inicializarVistas(view);
-        configurarRecyclerView();
-        cargarMensajes();
-        configurarListeners();
-        
+        try {
+            dataManager = new DataManager(requireContext());
+            usuarioActual = dataManager.getUsuarioActual();
+            inicializarVistas(view);
+            configurarRecyclerView();
+            cargarMensajes();
+            configurarListeners();
+        } catch (Exception e) {
+            Toast.makeText(requireContext(), "No se pudo cargar los mensajes. Intenta más tarde.", Toast.LENGTH_LONG).show();
+            if (view.findViewById(R.id.recyclerViewMensajes) != null) {
+                view.findViewById(R.id.recyclerViewMensajes).setVisibility(View.GONE);
+            }
+            if (view.findViewById(R.id.editTextMensaje) != null) {
+                view.findViewById(R.id.editTextMensaje).setVisibility(View.GONE);
+            }
+            if (view.findViewById(R.id.buttonEnviar) != null) {
+                view.findViewById(R.id.buttonEnviar).setVisibility(View.GONE);
+            }
+            // Mensaje amigable
+            EditText tvError = new EditText(requireContext());
+            tvError.setText("No se pudo cargar el chat. Intenta más tarde.");
+            tvError.setTextColor(getResources().getColor(R.color.gray));
+            tvError.setTextSize(16);
+            tvError.setEnabled(false);
+            ((ViewGroup) view).addView(tvError);
+        }
         return view;
     }
 

@@ -16,10 +16,18 @@ public class Evento {
     private boolean esAdmin;
     private boolean activo;
     private String equipoId;
+    
+    // Nuevos campos para eventos recurrentes
+    private boolean esRecurrente;
+    private String frecuencia; // "DIARIA", "SEMANAL", "MENSUAL"
+    private Date fechaFinRecurrencia;
+    private String colorMarcador; // Color para marcador visual en calendario
 
     public Evento() {
         this.id = UUID.randomUUID().toString();
         this.activo = true;
+        this.esRecurrente = false;
+        this.colorMarcador = "#FFD700"; // Dorado por defecto
     }
 
     public Evento(String titulo, String descripcion, Date fechaInicio, Date fechaFin, 
@@ -131,5 +139,47 @@ public class Evento {
 
     public void setEquipoId(String equipoId) {
         this.equipoId = equipoId;
+    }
+
+    // Métodos para compatibilidad con el código existente
+    public String getEquipo() {
+        return equipoId;
+    }
+
+    public void setEquipo(String equipo) {
+        this.equipoId = equipo;
+    }
+
+    // Nuevos getters y setters para eventos recurrentes
+    public boolean isEsRecurrente() {
+        return esRecurrente;
+    }
+
+    public void setEsRecurrente(boolean esRecurrente) {
+        this.esRecurrente = esRecurrente;
+    }
+
+    public String getFrecuencia() {
+        return frecuencia;
+    }
+
+    public void setFrecuencia(String frecuencia) {
+        this.frecuencia = frecuencia;
+    }
+
+    public Date getFechaFinRecurrencia() {
+        return fechaFinRecurrencia;
+    }
+
+    public void setFechaFinRecurrencia(Date fechaFinRecurrencia) {
+        this.fechaFinRecurrencia = fechaFinRecurrencia;
+    }
+
+    public String getColorMarcador() {
+        return colorMarcador;
+    }
+
+    public void setColorMarcador(String colorMarcador) {
+        this.colorMarcador = colorMarcador;
     }
 }

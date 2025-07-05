@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Título -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Gestión de Usuarios"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/rojo_club"
+            android:gravity="center"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Formulario de creación -->
+        <LinearLayout
+            android:id="@+id/contenedorFormulario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_background"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Crear Nuevo Usuario"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Nombre -->
+            <EditText
+                android:id="@+id/editTextNombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nombre completo"
+                android:textColor="@color/white"
+                android:textColorHint="@color/gray_light"
+                android:background="@drawable/edit_text_background"
+                android:padding="12dp"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Email -->
+            <EditText
+                android:id="@+id/editTextEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Email (opcional)"
+                android:textColor="@color/white"
+                android:textColorHint="@color/gray_light"
+                android:background="@drawable/edit_text_background"
+                android:padding="12dp"
+                android:inputType="textEmailAddress"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Contraseña -->
+            <EditText
+                android:id="@+id/editTextPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Contraseña"
+                android:textColor="@color/white"
+                android:textColorHint="@color/gray_light"
+                android:background="@drawable/edit_text_background"
+                android:padding="12dp"
+                android:inputType="textPassword"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Jugador -->
+            <EditText
+                android:id="@+id/editTextJugador"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nombre del jugador (opcional)"
+                android:textColor="@color/white"
+                android:textColorHint="@color/gray_light"
+                android:background="@drawable/edit_text_background"
+                android:padding="12dp"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Rol -->
+            <EditText
+                android:id="@+id/editTextRol"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Rol (administrador, padre, tutor)"
+                android:textColor="@color/white"
+                android:textColorHint="@color/gray_light"
+                android:background="@drawable/edit_text_background"
+                android:padding="12dp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Botones -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+
+                <Button
+                    android:id="@+id/btnCrearUsuario"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Crear Usuario"
+                    android:textColor="@color/black"
+                    android:background="@drawable/button_gold_background"
+                    android:layout_marginEnd="8dp" />
+
+                <Button
+                    android:id="@+id/btnLimpiar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Limpiar"
+                    android:textColor="@color/white"
+                    android:background="@drawable/button_danger_background"
+                    android:layout_marginStart="8dp" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Lista de usuarios -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Usuarios Registrados"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/rojo_club"
+            android:layout_marginBottom="12dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewUsuarios"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+</ScrollView> 

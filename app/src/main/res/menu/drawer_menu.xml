@@ -3,15 +3,25 @@
     
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_perfil"
-            android:icon="@drawable/ic_person"
-            android:title="Perfil" />
-        
+            android:id="@+id/nav_inicio"
+            android:icon="@drawable/ic_home"
+            android:title="Inicio" />
+
         <item
             android:id="@+id/nav_calendario"
             android:icon="@drawable/ic_calendar"
             android:title="Calendario" />
-        
+
+        <item
+            android:id="@+id/nav_convocatorias"
+            android:icon="@drawable/ic_group"
+            android:title="Convocatorias" />
+
+        <item
+            android:id="@+id/nav_mi_equipo"
+            android:icon="@drawable/ic_team"
+            android:title="Mi Equipo" />
+
         <item
             android:id="@+id/nav_mensajes"
             android:icon="@drawable/ic_message"
@@ -19,30 +29,55 @@
         
         <item
             android:id="@+id/nav_objetos_perdidos"
-            android:icon="@drawable/ic_search"
+            android:icon="@drawable/ic_object"
             android:title="Objetos Perdidos" />
         
         <item
             android:id="@+id/nav_notificaciones"
-            android:icon="@drawable/ic_notifications"
+            android:icon="@drawable/ic_notification"
             android:title="Notificaciones" />
         
         <item
             android:id="@+id/nav_asistencia"
             android:icon="@drawable/ic_check"
-            android:title="Asistencia" />
+            android:title="Asistencias" />
         
         <item
             android:id="@+id/nav_estadisticas"
-            android:icon="@drawable/ic_bar_chart"
+            android:icon="@drawable/ic_stats"
             android:title="Estadísticas" />
     </group>
-    
+
+    <!-- Opciones solo para administrador -->
+    <group android:id="@+id/nav_admin" android:visible="false">
+        <item
+            android:id="@+id/nav_gestion_usuarios"
+            android:icon="@drawable/ic_admin"
+            android:title="Gestión de Usuarios" />
+        <item
+            android:id="@+id/nav_gestion_equipos"
+            android:icon="@drawable/ic_team"
+            android:title="Gestión de Equipos" />
+        <item
+            android:id="@+id/nav_gestion_eventos"
+            android:icon="@drawable/ic_event"
+            android:title="Gestión de Eventos" />
+    </group>
+
+    <!-- Separador visual -->
+    <item android:title="">
+        <menu>
+            <item android:title=""
+                  android:enabled="false"
+                  android:icon="@drawable/separator_line" />
+        </menu>
+    </item>
+
     <group android:id="@+id/nav_bottom">
         <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_logout"
             android:title="Cerrar Sesión" />
     </group>
-    
+
 </menu> 

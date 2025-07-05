@@ -10,7 +10,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CalendarView;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,18 +48,24 @@ public class CalendarioFragment extends Fragment implements EventoAdapter.OnEven
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_calendario, container, false);
-        
-        dataManager = new DataManager(requireContext());
-        usuarioActual = dataManager.getUsuarioActual();
-        fechaSeleccionada = new Date();
-        dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        
-        inicializarVistas(view);
-        configurarCalendario();
-        configurarRecyclerView();
-        cargarEventosDelDia();
-        configurarListeners();
-        
+        try {
+            dataManager = new DataManager(requireContext());
+            usuarioActual = dataManager.getUsuarioActual();
+            fechaSeleccionada = new Date();
+            dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            inicializarVistas(view);
+            configurarCalendario();
+            configurarRecyclerView();
+            cargarEventosDelDia();
+            configurarListeners();
+        } catch (Exception e) {
+            Toast.makeText(requireContext(), "Error al cargar el calendario: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            TextView tvSinEventos = view.findViewById(R.id.tv_sin_eventos);
+            if (tvSinEventos != null) {
+                tvSinEventos.setText("No se pudo cargar el calendario. Intenta más tarde.");
+                tvSinEventos.setVisibility(View.VISIBLE);
+            }
+        }
         return view;
     }
 
@@ -82,16 +90,41 @@ public class CalendarioFragment extends Fragment implements EventoAdapter.OnEven
         eventoAdapter = new EventoAdapter(new ArrayList<>(), this, mostrarAcciones);
         recyclerViewEventos.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerViewEventos.setAdapter(eventoAdapter);
+        
+        // Mostrar botón agregar solo para administradores
+        if (buttonAgregarEvento != null) {
+            buttonAgregarEvento.setVisibility(mostrarAcciones ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void cargarEventosDelDia() {
-        List<Evento> todosEventos = dataManager.getEventos();
-        List<Evento> eventosDelDia = new ArrayList<>();
+        List<Evento> todosEventos = new ArrayList<>();
+        try {
+            if (dataManager != null) {
+                List<Evento> eventos = dataManager.getEventos();
+                if (eventos != null) todosEventos = eventos;
+            }
+        } catch (Exception e) {
+            // Si hay error, la lista queda vacía
+        }
         
+        List<Evento> eventosDelDia = new ArrayList<>();
         Calendar calSeleccionada = Calendar.getInstance();
         calSeleccionada.setTime(fechaSeleccionada);
         
+        // Obtener el equipo/categoría del usuario actual para filtrar
+        String equipoUsuario = usuarioActual != null ? usuarioActual.getEquipo() : null;
+        
         for (Evento evento : todosEventos) {
+            // Filtrar por equipo/categoría si el usuario no es administrador
+            if (usuarioActual != null && !usuarioActual.isEsAdmin() && equipoUsuario != null) {
+                // Si el evento tiene equipo específico, solo mostrarlo si coincide
+                if (evento.getEquipo() != null && !evento.getEquipo().equals(equipoUsuario)) {
+                    continue; // Saltar este evento
+                }
+            }
+            
+            // Verificar eventos normales
             Calendar calEvento = Calendar.getInstance();
             calEvento.setTime(evento.getFechaInicio());
             
@@ -99,15 +132,79 @@ public class CalendarioFragment extends Fragment implements EventoAdapter.OnEven
                 calSeleccionada.get(Calendar.DAY_OF_YEAR) == calEvento.get(Calendar.DAY_OF_YEAR)) {
                 eventosDelDia.add(evento);
             }
+            
+            // Verificar eventos recurrentes
+            if (evento.isEsRecurrente() && evento.getFechaFinRecurrencia() != null) {
+                Calendar calFinRecurrencia = Calendar.getInstance();
+                calFinRecurrencia.setTime(evento.getFechaFinRecurrencia());
+                
+                // Solo procesar si la fecha seleccionada está dentro del rango de recurrencia
+                if (!calSeleccionada.before(calEvento) && !calSeleccionada.after(calFinRecurrencia)) {
+                    if (esEventoRecurrenteEnFecha(evento, calSeleccionada)) {
+                        // Crear una copia del evento para esta fecha específica
+                        Evento eventoRecurrente = new Evento(
+                            evento.getTitulo(),
+                            evento.getDescripcion(),
+                            calSeleccionada.getTime(),
+                            calSeleccionada.getTime(),
+                            evento.getUbicacion(),
+                            evento.getTipo(),
+                            evento.getCreadorId(),
+                            evento.getCreadorNombre(),
+                            evento.isEsAdmin()
+                        );
+                        eventoRecurrente.setEsRecurrente(true);
+                        eventoRecurrente.setFrecuencia(evento.getFrecuencia());
+                        eventoRecurrente.setColorMarcador(evento.getColorMarcador());
+                        eventoRecurrente.setEquipo(evento.getEquipo()); // Mantener el equipo
+                        eventosDelDia.add(eventoRecurrente);
+                    }
+                }
+            }
         }
         
-        eventoAdapter.actualizarEventos(eventosDelDia);
-        textViewEventosDia.setText("Eventos del " + dateFormat.format(fechaSeleccionada) + 
+        if (eventoAdapter != null) {
+            eventoAdapter.actualizarEventos(eventosDelDia);
+        }
+        if (textViewEventosDia != null) {
+            textViewEventosDia.setText("Eventos del " + dateFormat.format(fechaSeleccionada) +
                                  " (" + eventosDelDia.size() + ")");
+        }
         // Mostrar mensaje si no hay eventos
-        TextView tvSinEventos = getView().findViewById(R.id.tv_sin_eventos);
+        View root = getView() != null ? getView() : getActivity().findViewById(android.R.id.content);
+        TextView tvSinEventos = root != null ? root.findViewById(R.id.tv_sin_eventos) : null;
         if (tvSinEventos != null) {
             tvSinEventos.setVisibility(eventosDelDia.isEmpty() ? View.VISIBLE : View.GONE);
+        }
+    }
+    
+    private boolean esEventoRecurrenteEnFecha(Evento evento, Calendar fechaSeleccionada) {
+        Calendar calEvento = Calendar.getInstance();
+        calEvento.setTime(evento.getFechaInicio());
+        
+        // Si es el mismo día, no es recurrencia
+        if (calEvento.get(Calendar.YEAR) == fechaSeleccionada.get(Calendar.YEAR) &&
+            calEvento.get(Calendar.DAY_OF_YEAR) == fechaSeleccionada.get(Calendar.DAY_OF_YEAR)) {
+            return false;
+        }
+        
+        String frecuencia = evento.getFrecuencia();
+        if (frecuencia == null) return false;
+        
+        switch (frecuencia) {
+            case "DIARIA":
+                return true; // Todos los días
+                
+            case "SEMANAL":
+                // Mismo día de la semana
+                return calEvento.get(Calendar.DAY_OF_WEEK) == fechaSeleccionada.get(Calendar.DAY_OF_WEEK);
+                
+            case "MENSUAL":
+                // Mismo día del mes
+                return calEvento.get(Calendar.DAY_OF_MONTH) == fechaSeleccionada.get(Calendar.DAY_OF_MONTH);
+                
+            default:
+                return false;
         }
     }
 
@@ -126,12 +223,39 @@ public class CalendarioFragment extends Fragment implements EventoAdapter.OnEven
         Button buttonFecha = dialogView.findViewById(R.id.buttonFecha);
         Button buttonHora = dialogView.findViewById(R.id.buttonHora);
         
+        // Nuevos elementos para recurrencia
+        CheckBox checkBoxRecurrente = dialogView.findViewById(R.id.checkBoxRecurrente);
+        LinearLayout layoutRecurrencia = dialogView.findViewById(R.id.layoutRecurrencia);
+        Spinner spinnerFrecuencia = dialogView.findViewById(R.id.spinnerFrecuencia);
+        Button buttonFechaFinRecurrencia = dialogView.findViewById(R.id.buttonFechaFinRecurrencia);
+        Spinner spinnerColorMarcador = dialogView.findViewById(R.id.spinnerColorMarcador);
+        
         // Configurar spinner de tipos
         String[] tipos = {"ENTRENAMIENTO", "PARTIDO", "EVENTO", "REUNION"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), 
             android.R.layout.simple_spinner_item, tipos);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerTipo.setAdapter(adapter);
+        
+        // Configurar spinner de frecuencias
+        String[] frecuencias = {"DIARIA", "SEMANAL", "MENSUAL"};
+        ArrayAdapter<String> adapterFrecuencia = new ArrayAdapter<>(requireContext(), 
+            android.R.layout.simple_spinner_item, frecuencias);
+        adapterFrecuencia.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFrecuencia.setAdapter(adapterFrecuencia);
+        
+        // Configurar spinner de colores de marcador
+        String[] colores = {"Dorado (#FFD700)", "Rojo (#FF0000)", "Verde (#4CAF50)", "Azul (#2196F3)", "Naranja (#FF9800)"};
+        String[] valoresColores = {"#FFD700", "#FF0000", "#4CAF50", "#2196F3", "#FF9800"};
+        ArrayAdapter<String> adapterColor = new ArrayAdapter<>(requireContext(), 
+            android.R.layout.simple_spinner_item, colores);
+        adapterColor.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerColorMarcador.setAdapter(adapterColor);
+        
+        // Configurar checkbox de recurrencia
+        checkBoxRecurrente.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            layoutRecurrencia.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+        });
         
         // Variables para fecha y hora
         final Calendar cal = Calendar.getInstance();
@@ -140,6 +264,35 @@ public class CalendarioFragment extends Fragment implements EventoAdapter.OnEven
             editTextTitulo.setText(eventoExistente.getTitulo());
             editTextDescripcion.setText(eventoExistente.getDescripcion());
             editTextUbicacion.setText(eventoExistente.getUbicacion());
+            
+            // Configurar recurrencia si existe
+            if (eventoExistente.isEsRecurrente()) {
+                checkBoxRecurrente.setChecked(true);
+                layoutRecurrencia.setVisibility(View.VISIBLE);
+                
+                // Seleccionar frecuencia
+                for (int i = 0; i < frecuencias.length; i++) {
+                    if (frecuencias[i].equals(eventoExistente.getFrecuencia())) {
+                        spinnerFrecuencia.setSelection(i);
+                        break;
+                    }
+                }
+                
+                // Configurar fecha fin recurrencia
+                if (eventoExistente.getFechaFinRecurrencia() != null) {
+                    Calendar calFin = Calendar.getInstance();
+                    calFin.setTime(eventoExistente.getFechaFinRecurrencia());
+                    buttonFechaFinRecurrencia.setText(dateFormat.format(eventoExistente.getFechaFinRecurrencia()));
+                }
+            }
+            
+            // Seleccionar color de marcador
+            for (int i = 0; i < valoresColores.length; i++) {
+                if (valoresColores[i].equals(eventoExistente.getColorMarcador())) {
+                    spinnerColorMarcador.setSelection(i);
+                    break;
+                }
+            }
             
             // Seleccionar tipo en spinner
             for (int i = 0; i < tipos.length; i++) {
@@ -153,6 +306,7 @@ public class CalendarioFragment extends Fragment implements EventoAdapter.OnEven
         }
         
         final Date[] fechaSeleccionada = {cal.getTime()};
+        final Date[] fechaFinRecurrencia = {null};
         
         // Configurar botón de fecha
         buttonFecha.setText(dateFormat.format(fechaSeleccionada[0]));
@@ -163,6 +317,23 @@ public class CalendarioFragment extends Fragment implements EventoAdapter.OnEven
                     cal.set(year, month, dayOfMonth);
                     fechaSeleccionada[0] = cal.getTime();
                     buttonFecha.setText(dateFormat.format(fechaSeleccionada[0]));
+                },
+                cal.get(Calendar.YEAR),
+                cal.get(Calendar.MONTH),
+                cal.get(Calendar.DAY_OF_MONTH)
+            );
+            datePickerDialog.show();
+        });
+        
+        // Configurar botón de fecha fin recurrencia
+        buttonFechaFinRecurrencia.setOnClickListener(v -> {
+            DatePickerDialog datePickerDialog = new DatePickerDialog(
+                requireContext(),
+                (view, year, month, dayOfMonth) -> {
+                    Calendar calFin = Calendar.getInstance();
+                    calFin.set(year, month, dayOfMonth);
+                    fechaFinRecurrencia[0] = calFin.getTime();
+                    buttonFechaFinRecurrencia.setText(dateFormat.format(fechaFinRecurrencia[0]));
                 },
                 cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH),
@@ -199,23 +370,34 @@ public class CalendarioFragment extends Fragment implements EventoAdapter.OnEven
                     String descripcion = editTextDescripcion.getText().toString().trim();
                     String ubicacion = editTextUbicacion.getText().toString().trim();
                     String tipo = spinnerTipo.getSelectedItem().toString();
+                    boolean esRecurrente = checkBoxRecurrente.isChecked();
+                    String frecuencia = esRecurrente ? spinnerFrecuencia.getSelectedItem().toString() : null;
+                    String colorMarcador = valoresColores[spinnerColorMarcador.getSelectedItemPosition()];
                     
                     if (titulo.isEmpty() || descripcion.isEmpty() || ubicacion.isEmpty()) {
                         Toast.makeText(requireContext(), "Por favor completa todos los campos", Toast.LENGTH_SHORT).show();
                         return;
                     }
                     
+                    if (esRecurrente && fechaFinRecurrencia[0] == null) {
+                        Toast.makeText(requireContext(), "Por favor selecciona una fecha de fin para eventos recurrentes", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    
                     if (eventoExistente != null) {
-                        actualizarEvento(eventoExistente, titulo, descripcion, ubicacion, tipo, fechaSeleccionada[0]);
+                        actualizarEvento(eventoExistente, titulo, descripcion, ubicacion, tipo, 
+                                       fechaSeleccionada[0], esRecurrente, frecuencia, fechaFinRecurrencia[0], colorMarcador);
                     } else {
-                        agregarEvento(titulo, descripcion, ubicacion, tipo, fechaSeleccionada[0]);
+                        agregarEvento(titulo, descripcion, ubicacion, tipo, fechaSeleccionada[0], 
+                                    esRecurrente, frecuencia, fechaFinRecurrencia[0], colorMarcador);
                     }
                 })
                 .setNegativeButton("Cancelar", null)
                 .show();
     }
 
-    private void agregarEvento(String titulo, String descripcion, String ubicacion, String tipo, Date fecha) {
+    private void agregarEvento(String titulo, String descripcion, String ubicacion, String tipo, Date fecha,
+                              boolean esRecurrente, String frecuencia, Date fechaFinRecurrencia, String colorMarcador) {
         if (usuarioActual == null) {
             Toast.makeText(requireContext(), "Error: Usuario no identificado", Toast.LENGTH_SHORT).show();
             return;
@@ -232,6 +414,12 @@ public class CalendarioFragment extends Fragment implements EventoAdapter.OnEven
             usuarioActual.getNombre(),
             usuarioActual.isEsAdmin()
         );
+        
+        // Configurar campos de recurrencia
+        nuevoEvento.setEsRecurrente(esRecurrente);
+        nuevoEvento.setFrecuencia(frecuencia);
+        nuevoEvento.setFechaFinRecurrencia(fechaFinRecurrencia);
+        nuevoEvento.setColorMarcador(colorMarcador);
 
         dataManager.agregarEvento(nuevoEvento);
         cargarEventosDelDia();
@@ -242,13 +430,18 @@ public class CalendarioFragment extends Fragment implements EventoAdapter.OnEven
         crearNotificacionEvento(nuevoEvento);
     }
 
-    private void actualizarEvento(Evento evento, String titulo, String descripcion, String ubicacion, String tipo, Date fecha) {
+    private void actualizarEvento(Evento evento, String titulo, String descripcion, String ubicacion, String tipo, Date fecha,
+                                 boolean esRecurrente, String frecuencia, Date fechaFinRecurrencia, String colorMarcador) {
         evento.setTitulo(titulo);
         evento.setDescripcion(descripcion);
         evento.setUbicacion(ubicacion);
         evento.setTipo(tipo);
         evento.setFechaInicio(fecha);
         evento.setFechaFin(fecha);
+        evento.setEsRecurrente(esRecurrente);
+        evento.setFrecuencia(frecuencia);
+        evento.setFechaFinRecurrencia(fechaFinRecurrencia);
+        evento.setColorMarcador(colorMarcador);
         
         dataManager.actualizarEvento(evento);
         cargarEventosDelDia();

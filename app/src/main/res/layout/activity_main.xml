@@ -28,16 +28,6 @@
             android:layout_height="match_parent"
             android:background="@color/background">
 
-            <!-- Cuadrado rojo indicador de actualización -->
-            <View
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_gravity="top|end"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:background="@color/red"
-                android:elevation="10dp" />
-
             <!-- Contenedor de fragmentos -->
             <FrameLayout
                 android:id="@+id/fragment_container"

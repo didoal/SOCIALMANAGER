@@ -35,24 +35,14 @@
             android:id="@+id/nav_estadisticas"
             android:icon="@drawable/ic_stats"
             android:title="Estadísticas" />
-        
+    </group>
+    
+    <!-- Sección de Administración -->
+    <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_seleccion_equipo"
-            android:icon="@drawable/ic_team"
-            android:title="Seleccionar Equipo"
-            android:visible="false" />
-        
-        <item
-            android:id="@+id/nav_gestion_equipos"
-            android:icon="@drawable/ic_team_manage"
-            android:title="Gestión de Equipos"
-            android:visible="false" />
-        
-        <item
-            android:id="@+id/nav_gestion_usuarios"
-            android:icon="@drawable/ic_person_manage"
-            android:title="Gestión de Usuarios"
-            android:visible="false" />
+            android:id="@+id/nav_logins_admin"
+            android:icon="@drawable/ic_admin"
+            android:title="Logins (Admin)" />
     </group>
     
     <item

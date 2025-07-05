@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:padding="16dp"
     android:layout_marginBottom="8dp"
-    android:background="@drawable/card_background">
+    android:background="@drawable/card_profesional">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textStyle="bold"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textColor="@color/black" />
 
         <TextView
@@ -39,6 +39,7 @@
         android:id="@+id/textViewDescripcion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        style="@style/BodyText"
         android:textSize="14sp"
         android:textColor="@color/gray"
         android:layout_marginBottom="8dp" />
@@ -47,8 +48,10 @@
         android:id="@+id/textViewUbicacion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        style="@style/BodyText"
         android:textSize="14sp"
-        android:textColor="@color/black"
+        android:drawableStart="@drawable/ic_location"
+        android:drawablePadding="8dp"
         android:layout_marginBottom="8dp" />
 
     <LinearLayout
@@ -69,8 +72,10 @@
             android:id="@+id/textViewFecha"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            style="@style/BodyText"
             android:textSize="12sp"
-            android:textColor="@color/gray" />
+            android:textColor="@color/text_secondary"
+            android:gravity="end" />
 
     </LinearLayout>
 
