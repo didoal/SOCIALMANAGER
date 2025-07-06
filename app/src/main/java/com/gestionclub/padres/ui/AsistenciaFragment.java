@@ -24,6 +24,7 @@ import com.gestionclub.padres.adapter.AsistenciaAdapter;
 import com.gestionclub.padres.data.DataManager;
 import com.gestionclub.padres.model.Asistencia;
 import com.gestionclub.padres.model.Evento;
+import com.gestionclub.padres.model.Notificacion;
 import com.gestionclub.padres.model.Usuario;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.text.SimpleDateFormat;
@@ -42,6 +43,8 @@ public class AsistenciaFragment extends Fragment {
     private TextView textViewEstadisticas;
     private FloatingActionButton fabRegistrarAsistencia;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+    private Usuario usuarioActual;
+    private LinearLayout layoutNoAsistencias;
 
     @Nullable
     @Override
@@ -50,6 +53,7 @@ public class AsistenciaFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_asistencia, container, false);
         
         dataManager = new DataManager(requireContext());
+        usuarioActual = dataManager.getUsuarioActual();
         inicializarVistas(view);
         configurarRecyclerView();
         cargarAsistencias();
@@ -63,6 +67,7 @@ public class AsistenciaFragment extends Fragment {
         recyclerViewAsistencias = view.findViewById(R.id.recyclerViewAsistencias);
         textViewEstadisticas = view.findViewById(R.id.textViewEstadisticas);
         fabRegistrarAsistencia = view.findViewById(R.id.fabRegistrarAsistencia);
+        layoutNoAsistencias = view.findViewById(R.id.layoutNoAsistencias);
         
         fabRegistrarAsistencia.setOnClickListener(v -> mostrarDialogoRegistrarAsistencia());
     }
@@ -75,10 +80,42 @@ public class AsistenciaFragment extends Fragment {
     }
 
     private void cargarAsistencias() {
-        Log.d(TAG, "cargarAsistencias: Cargando lista de asistencias");
-        List<Asistencia> asistencias = dataManager.getAsistencias();
-        asistenciaAdapter.actualizarAsistencias(asistencias);
-        Log.d(TAG, "cargarAsistencias: " + asistencias.size() + " asistencias cargadas");
+        Log.d(TAG, "cargarAsistencias: Cargando asistencias");
+        
+        List<Asistencia> todasAsistencias = dataManager.getAsistencias();
+        List<Asistencia> asistenciasFiltradas = new ArrayList<>();
+        
+        // Filtrar por usuario actual si no es admin
+        if (usuarioActual != null && !usuarioActual.isEsAdmin()) {
+            String equipoUsuario = usuarioActual.getEquipo();
+            for (Asistencia asistencia : todasAsistencias) {
+                // Mostrar asistencias del jugador del usuario actual
+                if (asistencia.getJugadorNombre() != null && 
+                    asistencia.getJugadorNombre().equals(usuarioActual.getJugador())) {
+                    asistenciasFiltradas.add(asistencia);
+                }
+            }
+        } else {
+            // Para admin, mostrar todas las asistencias
+            asistenciasFiltradas = todasAsistencias;
+        }
+        
+        // Ordenar por fecha (más recientes primero)
+        asistenciasFiltradas.sort((a1, a2) -> a2.getFecha().compareTo(a1.getFecha()));
+        
+        asistenciaAdapter.actualizarAsistencias(asistenciasFiltradas);
+        
+        // Mostrar/ocultar mensaje de sin asistencias
+        if (asistenciasFiltradas.isEmpty()) {
+            layoutNoAsistencias.setVisibility(View.VISIBLE);
+            recyclerViewAsistencias.setVisibility(View.GONE);
+        } else {
+            layoutNoAsistencias.setVisibility(View.GONE);
+            recyclerViewAsistencias.setVisibility(View.VISIBLE);
+        }
+        
+        // Verificar eventos pendientes de confirmación
+        verificarEventosPendientesConfirmacion();
     }
 
     private void actualizarEstadisticas() {
@@ -121,7 +158,6 @@ public class AsistenciaFragment extends Fragment {
         }
         
         // Obtener jugadores del usuario actual
-        Usuario usuarioActual = dataManager.getUsuarioActual();
         if (usuarioActual != null && usuarioActual.getJugador() != null) {
             jugadores.add(usuarioActual.getJugador());
         }
@@ -306,6 +342,82 @@ public class AsistenciaFragment extends Fragment {
         } else {
             Log.e(TAG, "manejarClicEnAsistencia: Evento o JugadorNombre no encontrado para la asistencia ID: " + asistencia.getId());
             Toast.makeText(requireContext(), "Error al cargar los detalles de la asistencia.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Verifica si hay eventos próximos que requieren confirmación de asistencia
+     */
+    private void verificarEventosPendientesConfirmacion() {
+        if (usuarioActual == null) return;
+        
+        List<Evento> eventos = dataManager.getEventos();
+        List<Asistencia> asistencias = dataManager.getAsistencias();
+        Calendar ahora = Calendar.getInstance();
+        Calendar proximas72h = Calendar.getInstance();
+        proximas72h.add(Calendar.HOUR, 72); // Próximas 72 horas
+        
+        for (Evento evento : eventos) {
+            // Verificar si el evento está en las próximas 72 horas
+            if (evento.getFechaInicio().after(ahora.getTime()) && 
+                evento.getFechaInicio().before(proximas72h.getTime())) {
+                
+                // Verificar si el usuario debe recibir notificación de este evento
+                boolean debeNotificar = false;
+                
+                if (evento.getEquipo() != null && !evento.getEquipo().isEmpty()) {
+                    // Evento específico para un equipo
+                    if (evento.getEquipo().equals(usuarioActual.getEquipo())) {
+                        debeNotificar = true;
+                    }
+                } else {
+                    // Evento global
+                    debeNotificar = true;
+                }
+                
+                if (debeNotificar) {
+                    // Verificar si ya existe una asistencia para este evento y jugador
+                    boolean existeAsistencia = false;
+                    for (Asistencia asistencia : asistencias) {
+                        if (asistencia.getEventoId().equals(evento.getId()) && 
+                            asistencia.getJugadorNombre() != null &&
+                            asistencia.getJugadorNombre().equals(usuarioActual.getJugador())) {
+                            existeAsistencia = true;
+                            break;
+                        }
+                    }
+                    
+                    // Si no existe asistencia, crear solicitud de confirmación
+                    if (!existeAsistencia) {
+                        crearSolicitudConfirmacionAsistencia(evento);
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Crea una solicitud de confirmación de asistencia para un evento
+     */
+    private void crearSolicitudConfirmacionAsistencia(Evento evento) {
+        try {
+            // Crear notificación de solicitud de confirmación
+            Notificacion solicitud = new Notificacion(
+                "Confirmar asistencia: " + evento.getTitulo(),
+                "Por favor confirma tu asistencia al evento:\n" + evento.getDescripcion() + 
+                "\nFecha: " + dateFormat.format(evento.getFechaInicio()) + 
+                "\nUbicación: " + evento.getUbicacion() +
+                "\n\nVe a la sección Asistencia para confirmar.",
+                "SOLICITUD_ASISTENCIA",
+                usuarioActual.getId(), // Notificación específica para este usuario
+                "sistema",
+                "Sistema Automático",
+                true
+            );
+            
+            dataManager.agregarNotificacion(solicitud);
+        } catch (Exception e) {
+            Log.e(TAG, "Error creando solicitud de confirmación: " + e.getMessage());
         }
     }
 } 

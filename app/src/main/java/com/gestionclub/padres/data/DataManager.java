@@ -354,16 +354,169 @@ public class DataManager {
     }
 
     public void crearNotificacionEvento(Evento evento) {
-        Notificacion notificacion = new Notificacion(
-            "Nuevo evento: " + evento.getTitulo(),
-            evento.getDescripcion() + "\nFecha: " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault()).format(evento.getFechaInicio()) + "\nUbicación: " + evento.getUbicacion(),
-            "EVENTO",
-            null, // Notificación global
-            evento.getCreadorId(),
-            evento.getCreadorNombre(),
-            evento.isEsAdmin()
-        );
-        agregarNotificacion(notificacion);
+        // Si el evento tiene equipo/categoría, notificar solo a ese equipo
+        if (evento.getEquipo() != null && !evento.getEquipo().isEmpty()) {
+            crearNotificacionParaEquipo(evento, evento.getEquipo());
+        } else {
+            // Notificación global
+            Notificacion notificacion = new Notificacion(
+                "Nuevo evento: " + evento.getTitulo(),
+                evento.getDescripcion() + "\nFecha: " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault()).format(evento.getFechaInicio()) + "\nUbicación: " + evento.getUbicacion(),
+                "EVENTO",
+                null, // Notificación global
+                evento.getCreadorId(),
+                evento.getCreadorNombre(),
+                evento.isEsAdmin()
+            );
+            agregarNotificacion(notificacion);
+        }
+        
+        // Crear recordatorio automático para el día anterior
+        crearRecordatorioEvento(evento);
+        
+        // Crear solicitudes de confirmación de asistencia
+        crearSolicitudesConfirmacionAsistencia(evento);
+    }
+    
+    /**
+     * Crea un recordatorio automático para un evento (un día antes)
+     */
+    public void crearRecordatorioEvento(Evento evento) {
+        try {
+            java.util.Calendar cal = java.util.Calendar.getInstance();
+            cal.setTime(evento.getFechaInicio());
+            cal.add(java.util.Calendar.DAY_OF_MONTH, -1); // Un día antes
+            
+            java.util.Date fechaRecordatorio = cal.getTime();
+            java.util.Date ahora = new java.util.Date();
+            
+            // Solo crear recordatorio si el evento es en el futuro
+            if (evento.getFechaInicio().after(ahora)) {
+                String mensajeRecordatorio = "Recordatorio: El evento '" + evento.getTitulo() + 
+                    "' será mañana a las " + new java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault()).format(evento.getFechaInicio()) + 
+                    " en " + evento.getUbicacion();
+                
+                // Si el evento tiene equipo/categoría, crear recordatorio específico para ese equipo
+                if (evento.getEquipo() != null && !evento.getEquipo().isEmpty()) {
+                    crearRecordatorioParaEquipo(evento, mensajeRecordatorio, fechaRecordatorio);
+                } else {
+                    // Recordatorio global
+                    Notificacion recordatorio = new Notificacion(
+                        "Recordatorio: " + evento.getTitulo(),
+                        mensajeRecordatorio,
+                        "RECORDATORIO",
+                        null, // Notificación global
+                        "sistema",
+                        "Sistema Automático",
+                        true
+                    );
+                    
+                    // Programar el recordatorio para el día anterior
+                    programarRecordatorio(recordatorio, fechaRecordatorio);
+                }
+            }
+        } catch (Exception e) {
+            // Log del error pero no fallar la aplicación
+            android.util.Log.e("DataManager", "Error creando recordatorio: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Crea recordatorio específico para los jugadores de un equipo
+     */
+    private void crearRecordatorioParaEquipo(Evento evento, String mensajeRecordatorio, java.util.Date fechaRecordatorio) {
+        try {
+            List<Usuario> jugadoresEquipo = getJugadoresPorEquipo(evento.getEquipo());
+            
+            for (Usuario jugador : jugadoresEquipo) {
+                Notificacion recordatorio = new Notificacion(
+                    "Recordatorio para tu equipo: " + evento.getTitulo(),
+                    mensajeRecordatorio + "\n\nEste evento es específico para tu equipo.",
+                    "RECORDATORIO",
+                    jugador.getId(), // Recordatorio específico para este jugador
+                    "sistema",
+                    "Sistema Automático",
+                    true
+                );
+                
+                // Programar el recordatorio para el día anterior
+                programarRecordatorio(recordatorio, fechaRecordatorio);
+            }
+        } catch (Exception e) {
+            android.util.Log.e("DataManager", "Error creando recordatorio para equipo: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Programa un recordatorio para una fecha específica
+     */
+    private void programarRecordatorio(Notificacion recordatorio, java.util.Date fechaProgramada) {
+        // Por ahora, guardamos el recordatorio programado en las notificaciones
+        // En una implementación real, usaríamos WorkManager o AlarmManager
+        recordatorio.setFechaCreacion(fechaProgramada);
+        agregarNotificacion(recordatorio);
+    }
+    
+    /**
+     * Verifica y crea recordatorios automáticos para eventos próximos
+     */
+    public void verificarRecordatoriosAutomaticos() {
+        try {
+            List<Evento> eventos = getEventos();
+            List<Notificacion> notificaciones = getNotificaciones();
+            java.util.Calendar ahora = java.util.Calendar.getInstance();
+            java.util.Calendar proximas24h = java.util.Calendar.getInstance();
+            proximas24h.add(java.util.Calendar.HOUR, 24);
+            
+            for (Evento evento : eventos) {
+                // Verificar si el evento está en las próximas 24 horas
+                if (evento.getFechaInicio().after(ahora.getTime()) && 
+                    evento.getFechaInicio().before(proximas24h.getTime())) {
+                    
+                    // Verificar si ya existe una notificación de recordatorio para este evento
+                    boolean existeRecordatorio = false;
+                    for (Notificacion notificacion : notificaciones) {
+                        if (notificacion.getTitulo().contains("Recordatorio: " + evento.getTitulo()) && 
+                            "RECORDATORIO".equals(notificacion.getTipo())) {
+                            existeRecordatorio = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!existeRecordatorio) {
+                        crearRecordatorioEvento(evento);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            android.util.Log.e("DataManager", "Error verificando recordatorios: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Crea notificaciones específicas para jugadores de un equipo/categoría
+     */
+    public void crearNotificacionParaEquipo(Evento evento, String equipoId) {
+        try {
+            List<Usuario> jugadoresEquipo = getJugadoresPorEquipo(equipoId);
+            
+            for (Usuario jugador : jugadoresEquipo) {
+                Notificacion notificacion = new Notificacion(
+                    "Evento para tu equipo: " + evento.getTitulo(),
+                    "Tu equipo tiene un evento: " + evento.getDescripcion() + 
+                    "\nFecha: " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault()).format(evento.getFechaInicio()) + 
+                    "\nUbicación: " + evento.getUbicacion(),
+                    "EVENTO_EQUIPO",
+                    jugador.getId(), // Notificación específica para este jugador
+                    evento.getCreadorId(),
+                    evento.getCreadorNombre(),
+                    evento.isEsAdmin()
+                );
+                agregarNotificacion(notificacion);
+            }
+        } catch (Exception e) {
+            android.util.Log.e("DataManager", "Error creando notificaciones para equipo: " + e.getMessage());
+        }
     }
 
     public void crearNotificacionMensaje(Mensaje mensaje) {
@@ -380,9 +533,11 @@ public class DataManager {
     }
 
     public void crearNotificacionObjeto(ObjetoPerdido objeto) {
+        // Notificación principal del objeto perdido
         Notificacion notificacion = new Notificacion(
             "Nuevo objeto perdido: " + objeto.getNombre(),
-            "Se reportó: " + objeto.getDescripcion() + "\nUbicación: " + objeto.getUbicacion(),
+            "Se reportó: " + objeto.getDescripcion() + "\nUbicación: " + objeto.getUbicacion() + 
+            "\nFecha: " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault()).format(objeto.getFechaReporte()),
             "OBJETO",
             null, // Notificación global
             objeto.getReportadoPor(),
@@ -390,6 +545,73 @@ public class DataManager {
             objeto.isEsAdmin()
         );
         agregarNotificacion(notificacion);
+        
+        // Crear notificación automática para el equipo si el objeto tiene equipo asociado
+        if (objeto.getEquipoId() != null && !objeto.getEquipoId().isEmpty()) {
+            crearNotificacionObjetoParaEquipo(objeto);
+        }
+        
+        // Crear recordatorio automático para revisar objetos perdidos (cada 3 días)
+        crearRecordatorioObjetosPerdidos();
+    }
+    
+    /**
+     * Crea notificación específica para el equipo del objeto perdido
+     */
+    private void crearNotificacionObjetoParaEquipo(ObjetoPerdido objeto) {
+        try {
+            List<Usuario> jugadoresEquipo = getJugadoresPorEquipo(objeto.getEquipoId());
+            
+            for (Usuario jugador : jugadoresEquipo) {
+                Notificacion notificacionEquipo = new Notificacion(
+                    "Objeto perdido en tu equipo: " + objeto.getNombre(),
+                    "Se reportó un objeto perdido en tu equipo:\n" + objeto.getDescripcion() + 
+                    "\nUbicación: " + objeto.getUbicacion() + 
+                    "\nFecha: " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault()).format(objeto.getFechaReporte()) +
+                    "\n\nRevisa si es tuyo en la sección de Objetos Perdidos.",
+                    "OBJETO_EQUIPO",
+                    jugador.getId(), // Notificación específica para este jugador
+                    objeto.getReportadoPor(),
+                    objeto.getReportadoPorNombre(),
+                    objeto.isEsAdmin()
+                );
+                agregarNotificacion(notificacionEquipo);
+            }
+        } catch (Exception e) {
+            android.util.Log.e("DataManager", "Error creando notificación de objeto para equipo: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Crea recordatorio automático para revisar objetos perdidos
+     */
+    private void crearRecordatorioObjetosPerdidos() {
+        try {
+            List<ObjetoPerdido> objetosPerdidos = getObjetosPerdidos();
+            int objetosSinReclamar = 0;
+            
+            for (ObjetoPerdido objeto : objetosPerdidos) {
+                if (!objeto.isEncontrado()) {
+                    objetosSinReclamar++;
+                }
+            }
+            
+            if (objetosSinReclamar > 0) {
+                Notificacion recordatorio = new Notificacion(
+                    "Recordatorio: Objetos perdidos sin reclamar",
+                    "Hay " + objetosSinReclamar + " objeto(s) perdido(s) sin reclamar. " +
+                    "Revisa la sección de Objetos Perdidos para ver si alguno es tuyo.",
+                    "RECORDATORIO_OBJETOS",
+                    null, // Notificación global
+                    "sistema",
+                    "Sistema Automático",
+                    true
+                );
+                agregarNotificacion(recordatorio);
+            }
+        } catch (Exception e) {
+            android.util.Log.e("DataManager", "Error creando recordatorio de objetos perdidos: " + e.getMessage());
+        }
     }
 
     public void crearNotificacionSolicitud(String titulo, String mensaje, String tipo) {
@@ -537,5 +759,60 @@ public class DataManager {
             }
         }
         guardarUsuarios(nuevos);
+    }
+
+    // Actualizar usuario
+    public void actualizarUsuario(Usuario usuarioActualizado) {
+        List<Usuario> usuarios = getUsuarios();
+        for (int i = 0; i < usuarios.size(); i++) {
+            if (usuarios.get(i).getId().equals(usuarioActualizado.getId())) {
+                usuarios.set(i, usuarioActualizado);
+                break;
+            }
+        }
+        guardarUsuarios(usuarios);
+    }
+
+    /**
+     * Crea solicitudes de confirmación de asistencia para un evento
+     */
+    public void crearSolicitudesConfirmacionAsistencia(Evento evento) {
+        try {
+            List<Usuario> usuariosNotificar = new ArrayList<>();
+            
+            // Determinar qué usuarios deben recibir la solicitud
+            if (evento.getEquipo() != null && !evento.getEquipo().isEmpty()) {
+                // Evento específico para un equipo
+                List<Usuario> jugadoresEquipo = getJugadoresPorEquipo(evento.getEquipo());
+                usuariosNotificar.addAll(jugadoresEquipo);
+            } else {
+                // Evento global - notificar a todos los usuarios que no sean admin
+                for (Usuario usuario : getUsuarios()) {
+                    if (!usuario.isEsAdmin() && usuario.getJugador() != null && !usuario.getJugador().isEmpty()) {
+                        usuariosNotificar.add(usuario);
+                    }
+                }
+            }
+            
+            // Crear solicitud para cada usuario
+            for (Usuario usuario : usuariosNotificar) {
+                Notificacion solicitud = new Notificacion(
+                    "Confirmar asistencia: " + evento.getTitulo(),
+                    "Por favor confirma tu asistencia al evento:\n" + evento.getDescripcion() + 
+                    "\nFecha: " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault()).format(evento.getFechaInicio()) + 
+                    "\nUbicación: " + evento.getUbicacion() +
+                    "\n\nVe a la sección Asistencia para confirmar.",
+                    "SOLICITUD_ASISTENCIA",
+                    usuario.getId(), // Notificación específica para este usuario
+                    "sistema",
+                    "Sistema Automático",
+                    true
+                );
+                
+                agregarNotificacion(solicitud);
+            }
+        } catch (Exception e) {
+            android.util.Log.e("DataManager", "Error creando solicitudes de confirmación: " + e.getMessage());
+        }
     }
 } 

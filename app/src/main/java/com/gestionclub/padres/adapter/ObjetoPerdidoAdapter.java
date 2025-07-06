@@ -20,6 +20,8 @@ public class ObjetoPerdidoAdapter extends RecyclerView.Adapter<ObjetoPerdidoAdap
 
     public interface OnObjetoClickListener {
         void onReclamarClick(ObjetoPerdido objeto);
+        void onEsMioClick(ObjetoPerdido objeto);
+        void onPreguntarClick(ObjetoPerdido objeto);
     }
 
     public ObjetoPerdidoAdapter(List<ObjetoPerdido> objetos, OnObjetoClickListener listener) {
@@ -60,6 +62,8 @@ public class ObjetoPerdidoAdapter extends RecyclerView.Adapter<ObjetoPerdidoAdap
         private TextView textViewReportadoPor;
         private TextView textViewFecha;
         private Button buttonReclamar;
+        private Button buttonEsMio;
+        private Button buttonPreguntar;
 
         public ObjetoViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -70,6 +74,8 @@ public class ObjetoPerdidoAdapter extends RecyclerView.Adapter<ObjetoPerdidoAdap
             textViewReportadoPor = itemView.findViewById(R.id.textViewReportadoPor);
             textViewFecha = itemView.findViewById(R.id.textViewFecha);
             buttonReclamar = itemView.findViewById(R.id.buttonReclamar);
+            buttonEsMio = itemView.findViewById(R.id.buttonEsMio);
+            buttonPreguntar = itemView.findViewById(R.id.buttonPreguntar);
         }
 
         public void bind(ObjetoPerdido objeto) {
@@ -107,6 +113,13 @@ public class ObjetoPerdidoAdapter extends RecyclerView.Adapter<ObjetoPerdidoAdap
             } else {
                 buttonReclamar.setVisibility(View.GONE);
             }
+
+            buttonEsMio.setOnClickListener(v -> {
+                if (listener != null) listener.onEsMioClick(objeto);
+            });
+            buttonPreguntar.setOnClickListener(v -> {
+                if (listener != null) listener.onPreguntarClick(objeto);
+            });
         }
     }
 } 

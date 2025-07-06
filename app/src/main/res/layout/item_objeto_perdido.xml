@@ -133,4 +133,32 @@
         android:textStyle="bold"
         android:visibility="gone" />
 
+    <!-- Botones de acción para el usuario -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:layout_marginTop="12dp">
+
+        <Button
+            android:id="@+id/buttonEsMio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Es mío"
+            android:background="@drawable/button_gold_background"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:layout_marginEnd="8dp" />
+
+        <Button
+            android:id="@+id/buttonPreguntar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Preguntar"
+            android:background="@drawable/button_gold_background"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
+    </LinearLayout>
+
 </LinearLayout> 

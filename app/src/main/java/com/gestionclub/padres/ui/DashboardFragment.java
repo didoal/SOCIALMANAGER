@@ -81,7 +81,7 @@ public class DashboardFragment extends Fragment {
         cardMensajes.setOnClickListener(v -> navegarAFragmento(new MensajesFragment()));
         cardObjetosPerdidos.setOnClickListener(v -> navegarAFragmento(new ObjetosPerdidosFragment()));
         cardEstadisticas.setOnClickListener(v -> navegarAFragmento(new EstadisticasFragment()));
-        cardGestion.setOnClickListener(v -> navegarAFragmento(new LoginsAdminFragment()));
+        cardGestion.setOnClickListener(v -> navegarAFragmento(new GestionUsuariosFragment()));
     }
 
     private void navegarAFragmento(Fragment fragment) {

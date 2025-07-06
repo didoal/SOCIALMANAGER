@@ -62,7 +62,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/app_subtitle"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="8dp"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         app:cardCornerRadius="24dp"
@@ -188,16 +188,6 @@
     </androidx.cardview.widget.CardView>
 
     <!-- Información adicional -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/login_card"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="18dp"
-        android:text="Admin: admin/admin o admin@club.com/admin123"
-        android:textSize="13sp"
-        android:textColor="@color/white"
-        android:alpha="0.7"
-        android:gravity="center" />
+    <!-- TextView eliminado por seguridad, no mostrar credenciales -->
 
 </RelativeLayout> 

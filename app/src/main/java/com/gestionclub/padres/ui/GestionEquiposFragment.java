@@ -20,6 +20,7 @@ import com.gestionclub.padres.R;
 import com.gestionclub.padres.adapter.EquipoAdapter;
 import com.gestionclub.padres.data.DataManager;
 import com.gestionclub.padres.model.Equipo;
+import com.gestionclub.padres.model.Notificacion;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -172,10 +173,5 @@ public class GestionEquiposFragment extends Fragment {
         Log.d(TAG, "onResume: Fragmento resumido");
         cargarEquipos();
         actualizarEstadisticas();
-    }
-
-    @Override
-    public void onMarcarLeidaClick(Notificacion notificacion) {
-        // tu lógica aquí
     }
 } 

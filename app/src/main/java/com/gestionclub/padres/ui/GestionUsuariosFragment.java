@@ -64,7 +64,9 @@ public class GestionUsuariosFragment extends Fragment {
     private void configurarRecyclerView() {
         Log.d(TAG, "configurarRecyclerView: Configurando RecyclerView");
         recyclerViewUsuarios.setLayoutManager(new LinearLayoutManager(requireContext()));
-        usuarioAdapter = new UsuarioAdapter(new ArrayList<>(), this::mostrarDialogoEliminarUsuario);
+        usuarioAdapter = new UsuarioAdapter(new ArrayList<>(), 
+            this::mostrarDialogoEliminarUsuario,
+            this::mostrarDialogoEditarUsuario);
         recyclerViewUsuarios.setAdapter(usuarioAdapter);
     }
 
@@ -83,10 +85,10 @@ public class GestionUsuariosFragment extends Fragment {
         
         for (Usuario usuario : usuarios) {
             if (usuario.isEsAdmin()) admins++;
-            else if ("Padre".equals(usuario.getRol())) padres++;
-            else if ("Madre".equals(usuario.getRol())) madres++;
-            else if ("Tutor".equals(usuario.getRol())) tutores++;
-            else if ("Jugador".equals(usuario.getRol())) jugadores++;
+            else if ("padre".equalsIgnoreCase(usuario.getRol())) padres++;
+            else if ("madre".equalsIgnoreCase(usuario.getRol())) madres++;
+            else if ("tutor".equalsIgnoreCase(usuario.getRol())) tutores++;
+            else if ("jugador".equalsIgnoreCase(usuario.getRol())) jugadores++;
         }
         
         String estadisticas = String.format("Total: %d | Admins: %d | Padres: %d | Madres: %d | Tutores: %d | Jugadores: %d",
@@ -102,15 +104,25 @@ public class GestionUsuariosFragment extends Fragment {
         EditText editTextNombre = dialogView.findViewById(R.id.editTextNombre);
         EditText editTextEmail = dialogView.findViewById(R.id.editTextEmail);
         EditText editTextPassword = dialogView.findViewById(R.id.editTextPassword);
+        EditText editTextConfirmPassword = dialogView.findViewById(R.id.editTextConfirmPassword);
         EditText editTextJugador = dialogView.findViewById(R.id.editTextJugador);
         Spinner spinnerRol = dialogView.findViewById(R.id.spinnerRol);
+        Spinner spinnerEquipo = dialogView.findViewById(R.id.spinnerEquipo);
         
-        // Configurar spinner de roles (sin opción administrador)
+        // Configurar spinner de roles (sin opción administrador para usuarios normales)
         String[] roles = {"Padre", "Madre", "Tutor", "Jugador"};
         ArrayAdapter<String> rolAdapter = new ArrayAdapter<>(requireContext(), 
                 android.R.layout.simple_spinner_item, roles);
         rolAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerRol.setAdapter(rolAdapter);
+        
+        // Configurar spinner de equipos
+        String[] equipos = {"Biberones", "Prebenjamín A", "Prebenjamín B", "Benjamín A", "Benjamín B", 
+                           "Alevín A", "Alevín B", "Infantil", "Cadete", "Juvenil", "Todo el Club"};
+        ArrayAdapter<String> equipoAdapter = new ArrayAdapter<>(requireContext(), 
+                android.R.layout.simple_spinner_item, equipos);
+        equipoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerEquipo.setAdapter(equipoAdapter);
         
         builder.setView(dialogView)
                 .setTitle("Crear Nuevo Usuario")
@@ -118,24 +130,30 @@ public class GestionUsuariosFragment extends Fragment {
                     String nombre = editTextNombre.getText().toString().trim();
                     String email = editTextEmail.getText().toString().trim();
                     String password = editTextPassword.getText().toString().trim();
+                    String confirmPassword = editTextConfirmPassword.getText().toString().trim();
                     String jugador = editTextJugador.getText().toString().trim();
-                    String rol = spinnerRol.getSelectedItem().toString();
+                    String rol = spinnerRol.getSelectedItem().toString().toLowerCase();
+                    String equipo = spinnerEquipo.getSelectedItem().toString();
                     
-                    if (validarDatos(nombre, email, password, rol)) {
-                        crearUsuario(nombre, email, password, jugador, rol);
+                    if (validarDatosCreacion(nombre, email, password, confirmPassword, rol)) {
+                        crearUsuario(nombre, email, password, jugador, rol, equipo);
                     }
                 })
                 .setNegativeButton("Cancelar", null)
                 .show();
     }
 
-    private boolean validarDatos(String nombre, String email, String password, String rol) {
+    private boolean validarDatosCreacion(String nombre, String email, String password, String confirmPassword, String rol) {
         if (nombre.isEmpty()) {
             Toast.makeText(requireContext(), "El nombre es obligatorio", Toast.LENGTH_SHORT).show();
             return false;
         }
         if (email.isEmpty()) {
             Toast.makeText(requireContext(), "El email es obligatorio", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(requireContext(), "El formato del email no es válido", Toast.LENGTH_SHORT).show();
             return false;
         }
         if (password.isEmpty()) {
@@ -146,10 +164,14 @@ public class GestionUsuariosFragment extends Fragment {
             Toast.makeText(requireContext(), "La contraseña debe tener al menos 6 caracteres", Toast.LENGTH_SHORT).show();
             return false;
         }
+        if (!password.equals(confirmPassword)) {
+            Toast.makeText(requireContext(), "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
+            return false;
+        }
         return true;
     }
 
-    private void crearUsuario(String nombre, String email, String password, String jugador, String rol) {
+    private void crearUsuario(String nombre, String email, String password, String jugador, String rol, String equipo) {
         Log.d(TAG, "crearUsuario: Creando usuario " + nombre);
         
         // Verificar si el email ya existe
@@ -159,6 +181,8 @@ public class GestionUsuariosFragment extends Fragment {
         }
         
         Usuario nuevoUsuario = new Usuario(nombre, jugador, password, rol);
+        nuevoUsuario.setEmail(email);
+        nuevoUsuario.setEquipo(equipo);
         
         dataManager.agregarUsuario(nuevoUsuario);
         cargarUsuarios();
@@ -168,12 +192,125 @@ public class GestionUsuariosFragment extends Fragment {
         Log.d(TAG, "crearUsuario: Usuario " + nombre + " creado correctamente");
     }
 
+    private void mostrarDialogoEditarUsuario(Usuario usuario) {
+        Log.d(TAG, "mostrarDialogoEditarUsuario: Mostrando diálogo para " + usuario.getNombre());
+        
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_editar_usuario, null);
+        
+        EditText editTextNombre = dialogView.findViewById(R.id.editTextNombre);
+        EditText editTextEmail = dialogView.findViewById(R.id.editTextEmail);
+        EditText editTextJugador = dialogView.findViewById(R.id.editTextJugador);
+        Spinner spinnerRol = dialogView.findViewById(R.id.spinnerRol);
+        Spinner spinnerEquipo = dialogView.findViewById(R.id.spinnerEquipo);
+        
+        // Pre-llenar campos
+        editTextNombre.setText(usuario.getNombre());
+        editTextEmail.setText(usuario.getEmail());
+        editTextJugador.setText(usuario.getJugador());
+        
+        // Configurar spinner de roles
+        String[] roles = {"Padre", "Madre", "Tutor", "Jugador"};
+        ArrayAdapter<String> rolAdapter = new ArrayAdapter<>(requireContext(), 
+                android.R.layout.simple_spinner_item, roles);
+        rolAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerRol.setAdapter(rolAdapter);
+        
+        // Seleccionar rol actual
+        for (int i = 0; i < roles.length; i++) {
+            if (roles[i].equalsIgnoreCase(usuario.getRol())) {
+                spinnerRol.setSelection(i);
+                break;
+            }
+        }
+        
+        // Configurar spinner de equipos
+        String[] equipos = {"Biberones", "Prebenjamín A", "Prebenjamín B", "Benjamín A", "Benjamín B", 
+                           "Alevín A", "Alevín B", "Infantil", "Cadete", "Juvenil", "Todo el Club"};
+        ArrayAdapter<String> equipoAdapter = new ArrayAdapter<>(requireContext(), 
+                android.R.layout.simple_spinner_item, equipos);
+        equipoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerEquipo.setAdapter(equipoAdapter);
+        
+        // Seleccionar equipo actual
+        if (usuario.getEquipo() != null) {
+            for (int i = 0; i < equipos.length; i++) {
+                if (equipos[i].equals(usuario.getEquipo())) {
+                    spinnerEquipo.setSelection(i);
+                    break;
+                }
+            }
+        }
+        
+        builder.setView(dialogView)
+                .setTitle("Editar Usuario")
+                .setPositiveButton("Guardar", (dialog, which) -> {
+                    String nombre = editTextNombre.getText().toString().trim();
+                    String email = editTextEmail.getText().toString().trim();
+                    String jugador = editTextJugador.getText().toString().trim();
+                    String rol = spinnerRol.getSelectedItem().toString().toLowerCase();
+                    String equipo = spinnerEquipo.getSelectedItem().toString();
+                    
+                    if (validarDatosEdicion(nombre, email, usuario.getEmail())) {
+                        editarUsuario(usuario, nombre, email, jugador, rol, equipo);
+                    }
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private boolean validarDatosEdicion(String nombre, String email, String emailOriginal) {
+        if (nombre.isEmpty()) {
+            Toast.makeText(requireContext(), "El nombre es obligatorio", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (email.isEmpty()) {
+            Toast.makeText(requireContext(), "El email es obligatorio", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(requireContext(), "El formato del email no es válido", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        // Verificar si el email ya existe (excepto para el usuario actual)
+        if (!email.equalsIgnoreCase(emailOriginal) && dataManager.existeUsuario(email)) {
+            Toast.makeText(requireContext(), "Ya existe un usuario con ese email", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+    private void editarUsuario(Usuario usuarioOriginal, String nombre, String email, String jugador, String rol, String equipo) {
+        Log.d(TAG, "editarUsuario: Editando usuario " + usuarioOriginal.getNombre());
+        
+        // No permitir cambiar rol de administrador
+        if (usuarioOriginal.isEsAdmin() && !rol.equalsIgnoreCase("administrador")) {
+            Toast.makeText(requireContext(), "No se puede cambiar el rol de un administrador", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        // Actualizar datos del usuario
+        usuarioOriginal.setNombre(nombre);
+        usuarioOriginal.setEmail(email);
+        usuarioOriginal.setJugador(jugador);
+        usuarioOriginal.setRol(rol);
+        usuarioOriginal.setEquipo(equipo);
+        
+        // Guardar cambios
+        dataManager.actualizarUsuario(usuarioOriginal);
+        cargarUsuarios();
+        actualizarEstadisticas();
+        
+        Toast.makeText(requireContext(), "Usuario actualizado exitosamente", Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "editarUsuario: Usuario " + nombre + " actualizado correctamente");
+    }
+
     private void mostrarDialogoEliminarUsuario(Usuario usuario) {
         Log.d(TAG, "mostrarDialogoEliminarUsuario: Mostrando diálogo para " + usuario.getNombre());
         
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("Eliminar Usuario")
-                .setMessage("¿Estás seguro de que quieres eliminar al usuario '" + usuario.getNombre() + "'?")
+                .setMessage("¿Estás seguro de que quieres eliminar al usuario '" + usuario.getNombre() + "'?\n\nEsta acción no se puede deshacer.")
                 .setPositiveButton("Eliminar", (dialog, which) -> {
                     eliminarUsuario(usuario);
                 })

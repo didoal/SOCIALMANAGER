@@ -25,6 +25,7 @@ import com.gestionclub.padres.R;
 import com.gestionclub.padres.adapter.EventoAdapter;
 import com.gestionclub.padres.data.DataManager;
 import com.gestionclub.padres.model.Evento;
+import com.gestionclub.padres.model.Equipo;
 import com.gestionclub.padres.model.Usuario;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -220,22 +221,36 @@ public class CalendarioFragment extends Fragment implements EventoAdapter.OnEven
         EditText editTextDescripcion = dialogView.findViewById(R.id.editTextDescripcion);
         EditText editTextUbicacion = dialogView.findViewById(R.id.editTextUbicacion);
         Spinner spinnerTipo = dialogView.findViewById(R.id.spinnerTipo);
-        Button buttonFecha = dialogView.findViewById(R.id.buttonFecha);
-        Button buttonHora = dialogView.findViewById(R.id.buttonHora);
-        
-        // Nuevos elementos para recurrencia
+        Spinner spinnerFrecuencia = dialogView.findViewById(R.id.spinnerFrecuencia);
+        Spinner spinnerColorMarcador = dialogView.findViewById(R.id.spinnerColorMarcador);
+        Spinner spinnerEquipo = dialogView.findViewById(R.id.spinnerEquipo);
         CheckBox checkBoxRecurrente = dialogView.findViewById(R.id.checkBoxRecurrente);
         LinearLayout layoutRecurrencia = dialogView.findViewById(R.id.layoutRecurrencia);
-        Spinner spinnerFrecuencia = dialogView.findViewById(R.id.spinnerFrecuencia);
+        Button buttonFecha = dialogView.findViewById(R.id.buttonFecha);
+        Button buttonHora = dialogView.findViewById(R.id.buttonHora);
         Button buttonFechaFinRecurrencia = dialogView.findViewById(R.id.buttonFechaFinRecurrencia);
-        Spinner spinnerColorMarcador = dialogView.findViewById(R.id.spinnerColorMarcador);
         
-        // Configurar spinner de tipos
+        // Configurar spinner de tipo
         String[] tipos = {"ENTRENAMIENTO", "PARTIDO", "EVENTO", "REUNION"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), 
-            android.R.layout.simple_spinner_item, tipos);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerTipo.setAdapter(adapter);
+        ArrayAdapter<String> tipoAdapter = new ArrayAdapter<>(requireContext(), 
+                android.R.layout.simple_spinner_item, tipos);
+        tipoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerTipo.setAdapter(tipoAdapter);
+        
+        // Configurar spinner de equipo/categoría
+        List<String> opcionesEquipo = new ArrayList<>();
+        opcionesEquipo.add("Todo el club"); // Opción para eventos globales
+        
+        // Agregar equipos disponibles
+        List<Equipo> equipos = dataManager.getEquipos();
+        for (Equipo equipo : equipos) {
+            opcionesEquipo.add(equipo.getNombreCompleto());
+        }
+        
+        ArrayAdapter<String> equipoAdapter = new ArrayAdapter<>(requireContext(), 
+                android.R.layout.simple_spinner_item, opcionesEquipo);
+        equipoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerEquipo.setAdapter(equipoAdapter);
         
         // Configurar spinner de frecuencias
         String[] frecuencias = {"DIARIA", "SEMANAL", "MENSUAL"};
@@ -370,6 +385,7 @@ public class CalendarioFragment extends Fragment implements EventoAdapter.OnEven
                     String descripcion = editTextDescripcion.getText().toString().trim();
                     String ubicacion = editTextUbicacion.getText().toString().trim();
                     String tipo = spinnerTipo.getSelectedItem().toString();
+                    String equipoSeleccionado = spinnerEquipo.getSelectedItem().toString();
                     boolean esRecurrente = checkBoxRecurrente.isChecked();
                     String frecuencia = esRecurrente ? spinnerFrecuencia.getSelectedItem().toString() : null;
                     String colorMarcador = valoresColores[spinnerColorMarcador.getSelectedItemPosition()];
@@ -385,10 +401,10 @@ public class CalendarioFragment extends Fragment implements EventoAdapter.OnEven
                     }
                     
                     if (eventoExistente != null) {
-                        actualizarEvento(eventoExistente, titulo, descripcion, ubicacion, tipo, 
+                        actualizarEvento(eventoExistente, titulo, descripcion, ubicacion, tipo, equipoSeleccionado,
                                        fechaSeleccionada[0], esRecurrente, frecuencia, fechaFinRecurrencia[0], colorMarcador);
                     } else {
-                        agregarEvento(titulo, descripcion, ubicacion, tipo, fechaSeleccionada[0], 
+                        agregarEvento(titulo, descripcion, ubicacion, tipo, equipoSeleccionado, fechaSeleccionada[0], 
                                     esRecurrente, frecuencia, fechaFinRecurrencia[0], colorMarcador);
                     }
                 })
@@ -396,7 +412,7 @@ public class CalendarioFragment extends Fragment implements EventoAdapter.OnEven
                 .show();
     }
 
-    private void agregarEvento(String titulo, String descripcion, String ubicacion, String tipo, Date fecha,
+    private void agregarEvento(String titulo, String descripcion, String ubicacion, String tipo, String equipoSeleccionado, Date fecha,
                               boolean esRecurrente, String frecuencia, Date fechaFinRecurrencia, String colorMarcador) {
         if (usuarioActual == null) {
             Toast.makeText(requireContext(), "Error: Usuario no identificado", Toast.LENGTH_SHORT).show();
@@ -420,6 +436,7 @@ public class CalendarioFragment extends Fragment implements EventoAdapter.OnEven
         nuevoEvento.setFrecuencia(frecuencia);
         nuevoEvento.setFechaFinRecurrencia(fechaFinRecurrencia);
         nuevoEvento.setColorMarcador(colorMarcador);
+        nuevoEvento.setEquipo(equipoSeleccionado);
 
         dataManager.agregarEvento(nuevoEvento);
         cargarEventosDelDia();
@@ -430,8 +447,8 @@ public class CalendarioFragment extends Fragment implements EventoAdapter.OnEven
         crearNotificacionEvento(nuevoEvento);
     }
 
-    private void actualizarEvento(Evento evento, String titulo, String descripcion, String ubicacion, String tipo, Date fecha,
-                                 boolean esRecurrente, String frecuencia, Date fechaFinRecurrencia, String colorMarcador) {
+    private void actualizarEvento(Evento evento, String titulo, String descripcion, String ubicacion, String tipo, String equipoSeleccionado,
+                                 Date fecha, boolean esRecurrente, String frecuencia, Date fechaFinRecurrencia, String colorMarcador) {
         evento.setTitulo(titulo);
         evento.setDescripcion(descripcion);
         evento.setUbicacion(ubicacion);
@@ -442,6 +459,7 @@ public class CalendarioFragment extends Fragment implements EventoAdapter.OnEven
         evento.setFrecuencia(frecuencia);
         evento.setFechaFinRecurrencia(fechaFinRecurrencia);
         evento.setColorMarcador(colorMarcador);
+        evento.setEquipo(equipoSeleccionado);
         
         dataManager.actualizarEvento(evento);
         cargarEventosDelDia();

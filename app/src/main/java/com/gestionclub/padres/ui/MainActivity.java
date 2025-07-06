@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             // Mostrar fragmento de dashboard por defecto y marcarlo como seleccionado
             Log.d(TAG, "onCreate: Mostrando fragmento inicial");
             if (savedInstanceState == null) {
-                navigationView.setCheckedItem(R.id.nav_dashboard);
+                navigationView.setCheckedItem(R.id.nav_inicio);
                 mostrarFragmento(new DashboardFragment());
             }
             
@@ -179,12 +179,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             String titulo = "";
 
             int id = item.getItemId();
-            if (id == R.id.nav_dashboard) {
+            if (id == R.id.nav_inicio) {
                 fragment = new DashboardFragment();
-                titulo = "Dashboard";
-            } else if (id == R.id.nav_perfil) {
+                titulo = "Inicio";
+            } else if (id == R.id.nav_mi_equipo) {
                 fragment = new PerfilFragment();
-                titulo = "Perfil";
+                titulo = "Mi Equipo";
+            } else if (id == R.id.nav_convocatorias) {
+                // Si tienes un fragmento para convocatorias, ponlo aquí
+                // fragment = new ConvocatoriasFragment();
+                // titulo = "Convocatorias";
             } else if (id == R.id.nav_calendario) {
                 fragment = new CalendarioFragment();
                 titulo = "Calendario";
@@ -198,11 +202,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fragment = new NotificacionesFragment();
                 titulo = "Notificaciones";
             } else if (id == R.id.nav_asistencia) {
-                fragment = new AsistenciaFragment();
-                titulo = "Asistencia";
+                // Si tienes un fragmento para asistencia, ponlo aquí
+                // fragment = new AsistenciaFragment();
+                // titulo = "Asistencias";
             } else if (id == R.id.nav_estadisticas) {
-                fragment = new EstadisticasFragment();
-                titulo = "Estadísticas";
+                // Si tienes un fragmento para estadísticas, ponlo aquí
+                // fragment = new EstadisticasFragment();
+                // titulo = "Estadísticas";
             } else if (id == R.id.nav_gestion_usuarios) {
                 fragment = new GestionUsuariosFragment();
                 titulo = "Gestión de Usuarios";
@@ -212,9 +218,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             } else if (id == R.id.nav_gestion_eventos) {
                 fragment = new GestionEventosFragment();
                 titulo = "Gestión de Eventos";
-            } else if (id == R.id.nav_logins_admin) {
-                fragment = new LoginsAdminFragment();
-                titulo = "Logins (Admin)";
             } else if (id == R.id.nav_logout) {
                 Log.d(TAG, "onNavigationItemSelected: Cerrando sesión");
                 dataManager.cerrarSesion();

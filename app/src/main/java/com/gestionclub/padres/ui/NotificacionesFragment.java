@@ -161,59 +161,43 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
     private void generarRecordatoriosEventos() {
         Log.d(TAG, "generarRecordatoriosEventos: Generando recordatorios automáticos");
         
-        List<Evento> eventos = dataManager.getEventos();
-        List<Notificacion> notificaciones = dataManager.getNotificaciones();
-        Calendar ahora = Calendar.getInstance();
-        Calendar proximas24h = Calendar.getInstance();
-        proximas24h.add(Calendar.HOUR, 24);
-        
-        for (Evento evento : eventos) {
-            // Verificar si el evento está en las próximas 24 horas
-            if (evento.getFechaInicio().after(ahora.getTime()) && 
-                evento.getFechaInicio().before(proximas24h.getTime())) {
-                
-                // Verificar si ya existe una notificación para este evento
-                boolean existeNotificacion = false;
-                for (Notificacion notificacion : notificaciones) {
-                    if (notificacion.getTitulo().contains(evento.getTitulo()) && 
-                        notificacion.getTipo().equals("Recordatorio")) {
-                        existeNotificacion = true;
-                        break;
-                    }
-                }
-                
-                if (!existeNotificacion) {
-                    // Crear recordatorio automático
-                    Notificacion recordatorio = new Notificacion();
-                    recordatorio.setTitulo("Recordatorio: " + evento.getTitulo());
-                    recordatorio.setMensaje("El evento '" + evento.getTitulo() + "' está programado para " + 
-                                         dateFormat.format(evento.getFechaInicio()) + " en " + evento.getUbicacion());
-                    recordatorio.setTipo("Recordatorio");
-                    recordatorio.setFechaCreacion(new Date());
-                    recordatorio.setLeida(false);
-                    recordatorio.setId(String.valueOf(System.currentTimeMillis() + eventos.indexOf(evento)));
-                    
-                    dataManager.agregarNotificacion(recordatorio);
-                    Log.d(TAG, "generarRecordatoriosEventos: Recordatorio creado para " + evento.getTitulo());
-                }
-            }
-        }
+        // Usar el nuevo método automático del DataManager
+        dataManager.verificarRecordatoriosAutomaticos();
     }
 
     private void actualizarEstadisticas() {
         Log.d(TAG, "actualizarEstadisticas: Actualizando estadísticas");
         List<Notificacion> notificaciones = dataManager.getNotificaciones();
         int totalNotificaciones = notificaciones.size();
-        int noLeidas = 0, recordatorios = 0, mensajes = 0;
+        int noLeidas = 0, recordatorios = 0, mensajes = 0, eventos = 0, objetos = 0, solicitudes = 0;
         
         for (Notificacion notificacion : notificaciones) {
             if (!notificacion.isLeida()) noLeidas++;
-            if ("Recordatorio".equals(notificacion.getTipo())) recordatorios++;
-            if ("Mensaje".equals(notificacion.getTipo())) mensajes++;
+            
+            switch (notificacion.getTipo()) {
+                case "RECORDATORIO":
+                case "RECORDATORIO_OBJETOS":
+                    recordatorios++;
+                    break;
+                case "MENSAJE":
+                    mensajes++;
+                    break;
+                case "EVENTO":
+                case "EVENTO_EQUIPO":
+                    eventos++;
+                    break;
+                case "OBJETO":
+                case "OBJETO_EQUIPO":
+                    objetos++;
+                    break;
+                case "SOLICITUD":
+                    solicitudes++;
+                    break;
+            }
         }
         
-        String estadisticas = String.format("Total: %d | No leídas: %d | Recordatorios: %d | Mensajes: %d", 
-                totalNotificaciones, noLeidas, recordatorios, mensajes);
+        String estadisticas = String.format("Total: %d | No leídas: %d | Eventos: %d | Objetos: %d | Recordatorios: %d", 
+                totalNotificaciones, noLeidas, eventos, objetos, recordatorios);
         textViewEstadisticas.setText(estadisticas);
         
         // Mostrar/ocultar botón de marcar como leídas
@@ -257,15 +241,14 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
     }
 
     @Override
-    public void onNotificacionClick(Notificacion notificacion) {
+    public void onMarcarLeidaClick(Notificacion notificacion) {
         // Marcar como leída
         if (!notificacion.isLeida()) {
             dataManager.marcarNotificacionComoLeida(notificacion.getId());
             cargarNotificaciones();
             actualizarEstadisticas();
         }
-        
-        // Mostrar detalles de la notificación
+        // Mostrar detalles de la notificación si lo deseas
         mostrarDetallesNotificacion(notificacion);
     }
 
@@ -340,10 +323,5 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
         
         Toast.makeText(requireContext(), "Notificación creada exitosamente", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "crearNotificacion: Notificación " + titulo + " creada correctamente");
-    }
-
-    @Override
-    public void onMarcarLeidaClick(Notificacion notificacion) {
-        // Lógica para marcar como leída o dejar vacío si no se usa
     }
 } 

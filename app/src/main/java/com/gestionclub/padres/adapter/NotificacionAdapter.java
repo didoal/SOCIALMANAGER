@@ -73,14 +73,35 @@ public class NotificacionAdapter extends RecyclerView.Adapter<NotificacionAdapte
             textViewMensaje.setText(notificacion.getMensaje());
             textViewFecha.setText("Fecha: " + dateFormat.format(notificacion.getFechaCreacion()));
             
-            // Configurar tipo con color
+            // Configurar tipo con color y estilo según el tipo de notificación
             textViewTipo.setText(notificacion.getTipo());
-            if ("Recordatorio".equals(notificacion.getTipo())) {
-                textViewTipo.setTextColor(itemView.getContext().getResources().getColor(R.color.colorAccent));
-                textViewTipo.setBackgroundResource(R.drawable.badge_recordatorio_background);
-            } else {
-                textViewTipo.setTextColor(itemView.getContext().getResources().getColor(R.color.colorPrimary));
-                textViewTipo.setBackgroundResource(R.drawable.badge_mensaje_background);
+            
+            switch (notificacion.getTipo()) {
+                case "RECORDATORIO":
+                case "RECORDATORIO_OBJETOS":
+                    textViewTipo.setTextColor(itemView.getContext().getResources().getColor(R.color.colorAccent));
+                    textViewTipo.setBackgroundResource(R.drawable.badge_recordatorio_background);
+                    break;
+                case "EVENTO":
+                case "EVENTO_EQUIPO":
+                    textViewTipo.setTextColor(itemView.getContext().getResources().getColor(R.color.colorPrimary));
+                    textViewTipo.setBackgroundResource(R.drawable.badge_evento_background);
+                    break;
+                case "OBJETO":
+                case "OBJETO_EQUIPO":
+                    textViewTipo.setTextColor(itemView.getContext().getResources().getColor(R.color.colorWarning));
+                    textViewTipo.setBackgroundResource(R.drawable.badge_objeto_background);
+                    break;
+                case "SOLICITUD":
+                case "SOLICITUD_ASISTENCIA":
+                    textViewTipo.setTextColor(itemView.getContext().getResources().getColor(R.color.colorInfo));
+                    textViewTipo.setBackgroundResource(R.drawable.badge_solicitud_background);
+                    break;
+                case "MENSAJE":
+                default:
+                    textViewTipo.setTextColor(itemView.getContext().getResources().getColor(R.color.colorPrimary));
+                    textViewTipo.setBackgroundResource(R.drawable.badge_mensaje_background);
+                    break;
             }
             
             // Configurar estado visual

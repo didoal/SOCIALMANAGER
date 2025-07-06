@@ -22,10 +22,10 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Dashboard"
+                android:text="Santiaguiño de Guizán"
                 android:textSize="28sp"
                 android:textStyle="bold"
-                android:textColor="@color/text_primary"
+                android:textColor="@color/white"
                 android:layout_marginBottom="8dp" />
 
             <TextView
@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:text="Bienvenido al Club CD Santiaguiño"
                 android:textSize="16sp"
-                android:textColor="@color/text_primary"
+                android:textColor="@color/white"
                 android:alpha="0.8" />
 
         </LinearLayout>
