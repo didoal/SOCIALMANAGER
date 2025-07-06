@@ -29,7 +29,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Gestión de Equipos"
+                    android:text="Gestión de Eventos"
                     android:textColor="@color/white"
                     android:textSize="24sp"
                     android:textStyle="bold"
@@ -40,7 +40,7 @@
                     android:id="@+id/textViewEstadisticas"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Total Equipos: 0 | Total Jugadores: 0"
+                    android:text="Total: 0 | Hoy: 0 | Esta semana: 0 | Este mes: 0"
                     android:textColor="@color/white"
                     android:textSize="14sp"
                     android:gravity="center"
@@ -51,9 +51,9 @@
 
         </androidx.cardview.widget.CardView>
 
-        <!-- Lista de equipos -->
+        <!-- Lista de eventos -->
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewEquipos"
+            android:id="@+id/recyclerViewEventos"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -63,9 +63,9 @@
 
     </LinearLayout>
 
-    <!-- Floating Action Button para agregar equipo -->
+    <!-- Floating Action Button para agregar evento -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAgregarEquipo"
+        android:id="@+id/fabAgregarEvento"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"

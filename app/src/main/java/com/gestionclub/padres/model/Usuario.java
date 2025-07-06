@@ -12,6 +12,7 @@ public class Usuario {
     private String jugador;
     private Date fechaRegistro;
     private boolean activo;
+    private String equipo;
 
     public Usuario(String nombre, String jugador, String password, String rol) {
         this.id = UUID.randomUUID().toString();
@@ -63,5 +64,13 @@ public class Usuario {
 
     public String getNombreReal() {
         return nombre;
+    }
+
+    public String getEquipo() {
+        return equipo;
+    }
+
+    public void setEquipo(String equipo) {
+        this.equipo = equipo;
     }
 }

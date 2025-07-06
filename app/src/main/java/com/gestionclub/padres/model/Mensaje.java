@@ -80,4 +80,13 @@ public class Mensaje {
     public void setEquipoId(String equipoId) {
         this.equipoId = equipoId;
     }
+
+    // Métodos para compatibilidad con el código existente
+    public String getEquipo() {
+        return equipoId;
+    }
+
+    public void setEquipo(String equipo) {
+        this.equipoId = equipo;
+    }
 } 

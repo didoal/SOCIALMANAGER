@@ -19,14 +19,22 @@ import com.gestionclub.padres.adapter.ObjetoPerdidoAdapter;
 import com.gestionclub.padres.data.DataManager;
 import com.gestionclub.padres.model.ObjetoPerdido;
 import com.gestionclub.padres.model.Usuario;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ObjetosPerdidosFragment extends Fragment implements ObjetoPerdidoAdapter.OnObjetoClickListener {
     private RecyclerView recyclerViewObjetos;
     private Button buttonAgregarObjeto;
+    private Button buttonFiltroTodos;
+    private Button buttonFiltroPerdidos;
+    private Button buttonFiltroEncontrados;
+    private TextView textViewPerdidos;
+    private TextView textViewEncontrados;
+    private TextView textViewSinObjetos;
     private ObjetoPerdidoAdapter objetoAdapter;
     private DataManager dataManager;
     private Usuario usuarioActual;
+    private String filtroActual = "TODOS";
 
     @Nullable
     @Override
@@ -37,23 +45,12 @@ public class ObjetosPerdidosFragment extends Fragment implements ObjetoPerdidoAd
             usuarioActual = dataManager.getUsuarioActual();
             inicializarVistas(view);
             configurarRecyclerView();
+            configurarFiltros();
             cargarObjetos();
             configurarListeners();
+            actualizarEstadisticas();
         } catch (Exception e) {
             Toast.makeText(requireContext(), "No se pudo cargar los objetos perdidos. Intenta más tarde.", Toast.LENGTH_LONG).show();
-            if (view.findViewById(R.id.recyclerViewObjetos) != null) {
-                view.findViewById(R.id.recyclerViewObjetos).setVisibility(View.GONE);
-            }
-            if (view.findViewById(R.id.buttonAgregarObjeto) != null) {
-                view.findViewById(R.id.buttonAgregarObjeto).setVisibility(View.GONE);
-            }
-            // Mensaje amigable
-            TextView tvError = new TextView(requireContext());
-            tvError.setText("No se pudo cargar los objetos perdidos. Intenta más tarde.");
-            tvError.setTextColor(getResources().getColor(R.color.gray));
-            tvError.setTextSize(16);
-            tvError.setPadding(0, 16, 0, 16);
-            ((ViewGroup) view).addView(tvError);
         }
         return view;
     }
@@ -61,21 +58,119 @@ public class ObjetosPerdidosFragment extends Fragment implements ObjetoPerdidoAd
     private void inicializarVistas(View view) {
         recyclerViewObjetos = view.findViewById(R.id.recyclerViewObjetos);
         buttonAgregarObjeto = view.findViewById(R.id.buttonAgregarObjeto);
+        buttonFiltroTodos = view.findViewById(R.id.buttonFiltroTodos);
+        buttonFiltroPerdidos = view.findViewById(R.id.buttonFiltroPerdidos);
+        buttonFiltroEncontrados = view.findViewById(R.id.buttonFiltroEncontrados);
+        textViewPerdidos = view.findViewById(R.id.textViewPerdidos);
+        textViewEncontrados = view.findViewById(R.id.textViewEncontrados);
+        textViewSinObjetos = view.findViewById(R.id.textViewSinObjetos);
     }
 
     private void configurarRecyclerView() {
-        objetoAdapter = new ObjetoPerdidoAdapter(dataManager.getObjetosPerdidos(), this);
+        objetoAdapter = new ObjetoPerdidoAdapter(new ArrayList<>(), this);
         recyclerViewObjetos.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerViewObjetos.setAdapter(objetoAdapter);
     }
 
+    private void configurarFiltros() {
+        // Configurar estado inicial de los filtros
+        actualizarEstadosFiltros();
+    }
+
+    private void actualizarEstadosFiltros() {
+        // Resetear todos los botones
+        buttonFiltroTodos.setBackgroundResource(R.drawable.button_secondary_background);
+        buttonFiltroTodos.setTextColor(getResources().getColor(R.color.text_primary));
+        buttonFiltroPerdidos.setBackgroundResource(R.drawable.button_secondary_background);
+        buttonFiltroPerdidos.setTextColor(getResources().getColor(R.color.text_primary));
+        buttonFiltroEncontrados.setBackgroundResource(R.drawable.button_secondary_background);
+        buttonFiltroEncontrados.setTextColor(getResources().getColor(R.color.text_primary));
+
+        // Activar el filtro actual
+        switch (filtroActual) {
+            case "TODOS":
+                buttonFiltroTodos.setBackgroundResource(R.drawable.button_gold_background);
+                buttonFiltroTodos.setTextColor(getResources().getColor(R.color.black));
+                break;
+            case "PERDIDOS":
+                buttonFiltroPerdidos.setBackgroundResource(R.drawable.button_gold_background);
+                buttonFiltroPerdidos.setTextColor(getResources().getColor(R.color.black));
+                break;
+            case "ENCONTRADOS":
+                buttonFiltroEncontrados.setBackgroundResource(R.drawable.button_gold_background);
+                buttonFiltroEncontrados.setTextColor(getResources().getColor(R.color.black));
+                break;
+        }
+    }
+
     private void cargarObjetos() {
-        List<ObjetoPerdido> objetos = dataManager.getObjetosPerdidos();
-        objetoAdapter.actualizarObjetos(objetos);
+        List<ObjetoPerdido> todosObjetos = dataManager.getObjetosPerdidos();
+        List<ObjetoPerdido> objetosFiltrados = new ArrayList<>();
+        
+        for (ObjetoPerdido objeto : todosObjetos) {
+            switch (filtroActual) {
+                case "TODOS":
+                    objetosFiltrados.add(objeto);
+                    break;
+                case "PERDIDOS":
+                    if ("PERDIDO".equals(objeto.getEstado())) {
+                        objetosFiltrados.add(objeto);
+                    }
+                    break;
+                case "ENCONTRADOS":
+                    if ("ENCONTRADO".equals(objeto.getEstado()) || "RECLAMADO".equals(objeto.getEstado())) {
+                        objetosFiltrados.add(objeto);
+                    }
+                    break;
+            }
+        }
+        
+        objetoAdapter.actualizarObjetos(objetosFiltrados);
+        
+        // Mostrar/ocultar mensaje de sin objetos
+        if (objetosFiltrados.isEmpty()) {
+            textViewSinObjetos.setVisibility(View.VISIBLE);
+            recyclerViewObjetos.setVisibility(View.GONE);
+        } else {
+            textViewSinObjetos.setVisibility(View.GONE);
+            recyclerViewObjetos.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void actualizarEstadisticas() {
+        List<ObjetoPerdido> todosObjetos = dataManager.getObjetosPerdidos();
+        int perdidos = 0;
+        int encontrados = 0;
+        
+        for (ObjetoPerdido objeto : todosObjetos) {
+            if ("PERDIDO".equals(objeto.getEstado())) {
+                perdidos++;
+            } else {
+                encontrados++;
+            }
+        }
+        
+        textViewPerdidos.setText(String.valueOf(perdidos));
+        textViewEncontrados.setText(String.valueOf(encontrados));
     }
 
     private void configurarListeners() {
         buttonAgregarObjeto.setOnClickListener(v -> mostrarDialogoAgregarObjeto());
+        buttonFiltroTodos.setOnClickListener(v -> {
+            filtroActual = "TODOS";
+            actualizarEstadosFiltros();
+            cargarObjetos();
+        });
+        buttonFiltroPerdidos.setOnClickListener(v -> {
+            filtroActual = "PERDIDOS";
+            actualizarEstadosFiltros();
+            cargarObjetos();
+        });
+        buttonFiltroEncontrados.setOnClickListener(v -> {
+            filtroActual = "ENCONTRADOS";
+            actualizarEstadosFiltros();
+            cargarObjetos();
+        });
     }
 
     private void mostrarDialogoAgregarObjeto() {
@@ -121,6 +216,7 @@ public class ObjetosPerdidosFragment extends Fragment implements ObjetoPerdidoAd
 
         dataManager.agregarObjetoPerdido(nuevoObjeto);
         cargarObjetos();
+        actualizarEstadisticas();
         
         Toast.makeText(requireContext(), "Objeto reportado exitosamente", Toast.LENGTH_SHORT).show();
         
@@ -146,6 +242,7 @@ public class ObjetosPerdidosFragment extends Fragment implements ObjetoPerdidoAd
                     
                     dataManager.actualizarObjetoPerdido(objeto);
                     cargarObjetos();
+                    actualizarEstadisticas();
                     
                     Toast.makeText(requireContext(), "Objeto reclamado exitosamente", Toast.LENGTH_SHORT).show();
                 })
@@ -161,5 +258,6 @@ public class ObjetosPerdidosFragment extends Fragment implements ObjetoPerdidoAd
     public void onResume() {
         super.onResume();
         cargarObjetos();
+        actualizarEstadisticas();
     }
 } 

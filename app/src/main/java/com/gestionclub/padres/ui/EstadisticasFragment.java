@@ -1,14 +1,17 @@
 package com.gestionclub.padres.ui;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -22,6 +25,7 @@ import com.gestionclub.padres.model.Usuario;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -36,6 +40,11 @@ public class EstadisticasFragment extends Fragment {
     private Spinner spinnerEquipos, spinnerJugadores;
     private LinearLayout contenedorEstadisticasJugador;
     private Usuario jugadorSeleccionado = null;
+    
+    // Filtros de fecha
+    private Button buttonFechaInicio, buttonFechaFin;
+    private Date fechaInicio = null, fechaFin = null;
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
     @Nullable
     @Override
@@ -64,6 +73,14 @@ public class EstadisticasFragment extends Fragment {
         spinnerEquipos = view.findViewById(R.id.spinnerEquipos);
         spinnerJugadores = view.findViewById(R.id.spinnerJugadores);
         contenedorEstadisticasJugador = view.findViewById(R.id.contenedorEstadisticasJugador);
+        
+        // Inicializar filtros de fecha
+        buttonFechaInicio = view.findViewById(R.id.buttonFechaInicio);
+        buttonFechaFin = view.findViewById(R.id.buttonFechaFin);
+        Button buttonLimpiarFiltros = view.findViewById(R.id.buttonLimpiarFiltros);
+        
+        configurarFiltrosFecha();
+        configurarBotonLimpiar(buttonLimpiarFiltros);
     }
 
     private void configurarSpinners() {
@@ -95,7 +112,7 @@ public class EstadisticasFragment extends Fragment {
         adapterJugadores.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerJugadores.setAdapter(adapterJugadores);
 
-        // Listeners
+        // Listeners con filtros mejorados
         spinnerEquipos.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -151,7 +168,15 @@ public class EstadisticasFragment extends Fragment {
             }
         }
 
-        mostrarEstadisticasEquipo(equipo, jugadoresEquipo, asistenciasEquipo, eventos);
+        // Filtrar eventos del equipo
+        List<Evento> eventosEquipo = new ArrayList<>();
+        for (Evento evento : eventos) {
+            if (evento.getEquipo() != null && evento.getEquipo().equals(equipo.getNombre())) {
+                eventosEquipo.add(evento);
+            }
+        }
+
+        mostrarEstadisticasEquipo(equipo, jugadoresEquipo, asistenciasEquipo, eventosEquipo);
     }
 
     private void mostrarEstadisticasEquipo(Equipo equipo, List<Usuario> jugadores, List<Asistencia> asistencias, List<Evento> eventos) {
@@ -162,7 +187,7 @@ public class EstadisticasFragment extends Fragment {
         tvTituloEquipo.setText("Estadísticas del Equipo: " + equipo.getNombreCompleto());
         tvTituloEquipo.setTextSize(20);
         tvTituloEquipo.setTypeface(null, android.graphics.Typeface.BOLD);
-        tvTituloEquipo.setTextColor(getResources().getColor(R.color.rojo_club));
+        tvTituloEquipo.setTextColor(getResources().getColor(R.color.colorPrimary));
         tvTituloEquipo.setPadding(0, 16, 0, 16);
         contenedorEstadisticasJugador.addView(tvTituloEquipo);
 
@@ -170,37 +195,102 @@ public class EstadisticasFragment extends Fragment {
         int totalJugadores = jugadores.size();
         int totalAsistencias = asistencias.size();
         int asistenciasPositivas = 0;
+        int totalEventos = eventos.size();
+        
         for (Asistencia a : asistencias) {
             if (a.isAsistio()) asistenciasPositivas++;
         }
 
         double porcentajeAsistencia = totalAsistencias > 0 ? (double) asistenciasPositivas / totalAsistencias * 100 : 0;
 
-        // Mostrar estadísticas
+        // Mostrar estadísticas mejoradas
         TextView tvStatsEquipo = new TextView(requireContext());
-        tvStatsEquipo.setText(String.format("Jugadores: %d\nTotal Asistencias: %d\nAsistencias: %d\nPorcentaje: %.1f%%",
-                totalJugadores, totalAsistencias, asistenciasPositivas, porcentajeAsistencia));
+        tvStatsEquipo.setText(String.format("Jugadores: %d\nTotal Eventos: %d\nTotal Asistencias: %d\nAsistencias: %d\nPorcentaje: %.1f%%",
+                totalJugadores, totalEventos, totalAsistencias, asistenciasPositivas, porcentajeAsistencia));
         tvStatsEquipo.setTextSize(16);
-        tvStatsEquipo.setTextColor(getResources().getColor(R.color.white));
+        tvStatsEquipo.setTextColor(getResources().getColor(R.color.colorTextSecondary));
         tvStatsEquipo.setPadding(0, 8, 0, 16);
         contenedorEstadisticasJugador.addView(tvStatsEquipo);
 
-        // Lista de jugadores del equipo
+        // Estadísticas por tipo de evento
+        mostrarEstadisticasPorTipoEvento(eventos, asistencias);
+
+        // Lista de jugadores del equipo con sus estadísticas
         TextView tvJugadoresTitulo = new TextView(requireContext());
         tvJugadoresTitulo.setText("Jugadores del Equipo:");
         tvJugadoresTitulo.setTextSize(18);
         tvJugadoresTitulo.setTypeface(null, android.graphics.Typeface.BOLD);
-        tvJugadoresTitulo.setTextColor(getResources().getColor(R.color.gold));
+        tvJugadoresTitulo.setTextColor(getResources().getColor(R.color.colorAccent));
         tvJugadoresTitulo.setPadding(0, 16, 0, 8);
         contenedorEstadisticasJugador.addView(tvJugadoresTitulo);
 
         for (Usuario jugador : jugadores) {
+            // Calcular estadísticas del jugador
+            int asistenciasJugador = 0;
+            int totalAsistenciasJugador = 0;
+            for (Asistencia asistencia : asistencias) {
+                if (asistencia.getJugadorNombre().equalsIgnoreCase(jugador.getJugador())) {
+                    totalAsistenciasJugador++;
+                    if (asistencia.isAsistio()) {
+                        asistenciasJugador++;
+                    }
+                }
+            }
+            
+            double porcentajeJugador = totalAsistenciasJugador > 0 ? 
+                (double) asistenciasJugador / totalAsistenciasJugador * 100 : 0;
+
             TextView tvJugador = new TextView(requireContext());
-            tvJugador.setText("• " + jugador.getJugador() + " (Padre: " + jugador.getNombre() + ")");
+            tvJugador.setText(String.format("• %s (Padre: %s)\n  Asistencias: %d/%d (%.1f%%)", 
+                    jugador.getJugador(), jugador.getNombre(), 
+                    asistenciasJugador, totalAsistenciasJugador, porcentajeJugador));
             tvJugador.setTextSize(14);
-            tvJugador.setTextColor(getResources().getColor(R.color.white));
-            tvJugador.setPadding(16, 4, 0, 4);
+            tvJugador.setTextColor(getResources().getColor(R.color.colorTextSecondary));
+            tvJugador.setPadding(0, 4, 0, 4);
             contenedorEstadisticasJugador.addView(tvJugador);
+        }
+    }
+
+    private void mostrarEstadisticasPorTipoEvento(List<Evento> eventos, List<Asistencia> asistencias) {
+        // Agrupar eventos por tipo
+        Map<String, Integer> eventosPorTipo = new HashMap<>();
+        Map<String, Integer> asistenciasPorTipo = new HashMap<>();
+        
+        for (Evento evento : eventos) {
+            String tipo = evento.getTipo();
+            eventosPorTipo.put(tipo, eventosPorTipo.getOrDefault(tipo, 0) + 1);
+        }
+        
+        for (Asistencia asistencia : asistencias) {
+            // Buscar el evento correspondiente
+            for (Evento evento : eventos) {
+                if (evento.getId().equals(asistencia.getEventoId())) {
+                    String tipo = evento.getTipo();
+                    asistenciasPorTipo.put(tipo, asistenciasPorTipo.getOrDefault(tipo, 0) + 1);
+                    break;
+                }
+            }
+        }
+        
+        // Mostrar estadísticas por tipo
+        TextView tvTipoTitulo = new TextView(requireContext());
+        tvTipoTitulo.setText("Estadísticas por Tipo de Evento:");
+        tvTipoTitulo.setTextSize(16);
+        tvTipoTitulo.setTypeface(null, android.graphics.Typeface.BOLD);
+        tvTipoTitulo.setTextColor(getResources().getColor(R.color.colorAccent));
+        tvTipoTitulo.setPadding(0, 16, 0, 8);
+        contenedorEstadisticasJugador.addView(tvTipoTitulo);
+        
+        for (String tipo : eventosPorTipo.keySet()) {
+            int numEventos = eventosPorTipo.get(tipo);
+            int numAsistencias = asistenciasPorTipo.getOrDefault(tipo, 0);
+            
+            TextView tvTipo = new TextView(requireContext());
+            tvTipo.setText(String.format("• %s: %d eventos, %d asistencias", tipo, numEventos, numAsistencias));
+            tvTipo.setTextSize(14);
+            tvTipo.setTextColor(getResources().getColor(R.color.colorTextSecondary));
+            tvTipo.setPadding(0, 4, 0, 4);
+            contenedorEstadisticasJugador.addView(tvTipo);
         }
     }
 
@@ -294,16 +384,86 @@ public class EstadisticasFragment extends Fragment {
         List<Evento> eventos = dataManager.getEventos();
         List<Asistencia> asistencias = dataManager.getAsistencias();
         List<ObjetoPerdido> objetos = dataManager.getObjetosPerdidos();
-
-        // Estadísticas generales
-        tvTotalEventos.setText("Total Eventos: " + eventos.size());
-        tvTotalAsistencias.setText("Total Asistencias: " + asistencias.size());
-        tvTotalMensajes.setText("Total Mensajes: " + dataManager.getMensajes().size());
-        tvTotalObjetos.setText("Total Objetos: " + objetos.size());
-
+        
+        // Aplicar filtros de fecha
+        eventos = filtrarEventosPorFecha(eventos);
+        asistencias = filtrarAsistenciasPorFecha(asistencias, eventos);
+        
+        // Actualizar estadísticas generales
+        tvTotalEventos.setText("Eventos: " + eventos.size());
+        tvTotalAsistencias.setText("Asistencias: " + asistencias.size());
+        tvTotalMensajes.setText("Mensajes: " + dataManager.getMensajes().size());
+        tvTotalObjetos.setText("Objetos: " + objetos.size());
+        
+        // Calcular promedio de asistencia
+        int asistenciasPositivas = 0;
+        for (Asistencia a : asistencias) {
+            if (a.isAsistio()) asistenciasPositivas++;
+        }
+        double promedioAsistencia = asistencias.size() > 0 ? (double) asistenciasPositivas / asistencias.size() * 100 : 0;
+        tvPromedioAsistencia.setText(String.format("Promedio Asistencia: %.1f%%", promedioAsistencia));
+        
+        // Cargar métricas detalladas
         cargarMetricasDetalladas(eventos, asistencias, objetos);
         generarGraficoTiposEventos(eventos);
         generarGraficoAsistenciaMensual(asistencias);
+    }
+
+    private List<Evento> filtrarEventosPorFecha(List<Evento> eventos) {
+        if (fechaInicio == null && fechaFin == null) {
+            return eventos;
+        }
+        
+        List<Evento> eventosFiltrados = new ArrayList<>();
+        for (Evento evento : eventos) {
+            boolean incluir = true;
+            
+            if (fechaInicio != null && evento.getFechaInicio().before(fechaInicio)) {
+                incluir = false;
+            }
+            
+            if (fechaFin != null && evento.getFechaInicio().after(fechaFin)) {
+                incluir = false;
+            }
+            
+            if (incluir) {
+                eventosFiltrados.add(evento);
+            }
+        }
+        
+        return eventosFiltrados;
+    }
+
+    private List<Asistencia> filtrarAsistenciasPorFecha(List<Asistencia> asistencias, List<Evento> eventosFiltrados) {
+        if (fechaInicio == null && fechaFin == null) {
+            return asistencias;
+        }
+        
+        List<Asistencia> asistenciasFiltradas = new ArrayList<>();
+        List<Evento> todosEventos = dataManager.getEventos();
+        
+        for (Asistencia asistencia : asistencias) {
+            // Buscar el evento correspondiente
+            for (Evento evento : todosEventos) {
+                if (evento.getId().equals(asistencia.getEventoId())) {
+                    // Verificar si el evento está en la lista filtrada
+                    boolean eventoIncluido = false;
+                    for (Evento eventoFiltrado : eventosFiltrados) {
+                        if (eventoFiltrado.getId().equals(evento.getId())) {
+                            eventoIncluido = true;
+                            break;
+                        }
+                    }
+                    
+                    if (eventoIncluido) {
+                        asistenciasFiltradas.add(asistencia);
+                    }
+                    break;
+                }
+            }
+        }
+        
+        return asistenciasFiltradas;
     }
 
     private void cargarMetricasDetalladas(List<Evento> eventos, List<Asistencia> asistencias, List<ObjetoPerdido> objetos) {
@@ -315,30 +475,6 @@ public class EstadisticasFragment extends Fragment {
             }
         }
         tvEventosRecurrentes.setText("Eventos Recurrentes: " + eventosRecurrentes);
-        
-        // Promedio de asistencia
-        if (!asistencias.isEmpty()) {
-            int totalAsistencias = 0;
-            int totalEventos = 0;
-            Map<String, Integer> asistenciasPorEvento = new HashMap<>();
-            
-            for (Asistencia asistencia : asistencias) {
-                String eventoId = asistencia.getEventoId();
-                int count = asistenciasPorEvento.containsKey(eventoId) ? asistenciasPorEvento.get(eventoId) : 0;
-                asistenciasPorEvento.put(eventoId, count + 1);
-            }
-            
-            for (Evento evento : eventos) {
-                totalEventos++;
-                int count = asistenciasPorEvento.containsKey(evento.getId()) ? asistenciasPorEvento.get(evento.getId()) : 0;
-                totalAsistencias += count;
-            }
-            
-            double promedio = totalEventos > 0 ? (double) totalAsistencias / totalEventos : 0;
-            tvPromedioAsistencia.setText(String.format("Promedio Asistencia: %.1f por evento", promedio));
-        } else {
-            tvPromedioAsistencia.setText("Promedio Asistencia: 0 por evento");
-        }
         
         // Objetos encontrados
         int objetosEncontrados = 0;
@@ -522,6 +658,70 @@ public class EstadisticasFragment extends Fragment {
         
         layoutGraficoAsistencia.addView(graficoContainer);
         tvGraficoAsistencia.setVisibility(View.GONE);
+    }
+
+    private void configurarFiltrosFecha() {
+        buttonFechaInicio.setOnClickListener(v -> mostrarSelectorFecha(true));
+        buttonFechaFin.setOnClickListener(v -> mostrarSelectorFecha(false));
+    }
+
+    private void configurarBotonLimpiar(Button buttonLimpiarFiltros) {
+        buttonLimpiarFiltros.setOnClickListener(v -> {
+            fechaInicio = null;
+            fechaFin = null;
+            buttonFechaInicio.setText("Seleccionar");
+            buttonFechaFin.setText("Seleccionar");
+            spinnerEquipos.setSelection(0);
+            spinnerJugadores.setSelection(0);
+            jugadorSeleccionado = null;
+            contenedorEstadisticasJugador.removeAllViews();
+            cargarEstadisticas();
+        });
+    }
+
+    private void mostrarSelectorFecha(boolean esFechaInicio) {
+        Calendar calendar = Calendar.getInstance();
+        if (esFechaInicio && fechaInicio != null) {
+            calendar.setTime(fechaInicio);
+        } else if (!esFechaInicio && fechaFin != null) {
+            calendar.setTime(fechaFin);
+        }
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+            requireContext(),
+            (view, year, month, dayOfMonth) -> {
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, month);
+                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                
+                if (esFechaInicio) {
+                    fechaInicio = calendar.getTime();
+                    buttonFechaInicio.setText(dateFormat.format(fechaInicio));
+                } else {
+                    fechaFin = calendar.getTime();
+                    buttonFechaFin.setText(dateFormat.format(fechaFin));
+                }
+                
+                // Aplicar filtros automáticamente
+                aplicarFiltrosFecha();
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        );
+        datePickerDialog.show();
+    }
+
+    private void aplicarFiltrosFecha() {
+        if (fechaInicio != null && fechaFin != null) {
+            if (fechaInicio.after(fechaFin)) {
+                Toast.makeText(requireContext(), "La fecha de inicio debe ser anterior a la fecha de fin", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+        
+        // Recargar estadísticas con filtros de fecha
+        cargarEstadisticas();
     }
 
     @Override

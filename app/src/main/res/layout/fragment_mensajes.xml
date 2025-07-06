@@ -3,39 +3,89 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
     android:background="@color/background">
 
+    <!-- Header profesional -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@color/blue_profesional"
+        android:padding="20dp"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Mensajes"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary" />
+
+        <Button
+            android:id="@+id/buttonFiltroEquipo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Filtrar"
+            android:background="@drawable/button_gold_background"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+    <!-- Información del chat -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@drawable/card_profesional"
         android:padding="16dp"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="16dp"
+        android:layout_marginHorizontal="16dp">
 
         <TextView
+            android:id="@+id/textViewChatInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Chat General"
-            style="@style/TitleText"
+            android:text="Chat General del Club"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary"
             android:gravity="center"
-            android:layout_marginBottom="0dp" />
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/textViewEquipoFiltro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Todos los equipos"
+            android:textSize="14sp"
+            android:textColor="@color/text_secondary"
+            android:gravity="center" />
+
     </LinearLayout>
 
+    <!-- Lista de mensajes -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewMensajes"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_marginBottom="16dp"
+        android:layout_marginHorizontal="16dp"
         android:background="@android:color/transparent" />
 
+    <!-- Área de escritura -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:padding="16dp"
+        android:background="@color/white">
 
         <EditText
             android:id="@+id/editTextMensaje"
@@ -47,13 +97,14 @@
             android:background="@drawable/edit_text_background"
             android:textColor="@color/text_primary"
             android:textColorHint="@color/text_secondary"
-            android:layout_marginEnd="8dp"
-            android:maxLines="3" />
+            android:layout_marginEnd="12dp"
+            android:maxLines="3"
+            android:minHeight="48dp" />
 
         <Button
             android:id="@+id/buttonEnviar"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:text="Enviar"
             android:padding="12dp"
             android:background="@drawable/button_gold_background"

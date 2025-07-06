@@ -1,95 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/background">
 
-    <!-- Header con contador -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:background="@drawable/card_profesional"
-        android:elevation="4dp"
-        android:layout_marginBottom="16dp">
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_notification"
-            app:tint="@color/text_primary"
-            android:layout_gravity="center_vertical" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Notificaciones"
-            style="@style/TitleText"
-            android:layout_marginStart="12dp"
-            android:layout_gravity="center_vertical" />
-
-        <TextView
-            android:id="@+id/textViewContador"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:background="@drawable/badge_background"
-            android:text="0"
-            android:textColor="@color/white"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:layout_gravity="center_vertical"
-            android:visibility="gone" />
-
-    </LinearLayout>
-
-    <!-- RecyclerView para notificaciones -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewNotificaciones"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:padding="8dp"
-        android:clipToPadding="false"
-        android:background="@android:color/transparent" />
-
-    <!-- Mensaje cuando no hay notificaciones -->
-    <LinearLayout
-        android:id="@+id/layoutNoNotificaciones"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="center"
-        android:visibility="gone">
+        android:padding="16dp">
 
-        <ImageView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@drawable/ic_notification_empty"
-            app:tint="@color/gray_light"
-            android:layout_marginBottom="16dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
+        <!-- Header con título y estadísticas -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="No hay notificaciones"
-            style="@style/SubtitleText"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/colorPrimary">
 
-        <TextView
-            android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Notificaciones"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_marginBottom="12dp" />
+
+                <TextView
+                    android:id="@+id/textViewEstadisticas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Total: 0 | No leídas: 0 | Recordatorios: 0 | Mensajes: 0"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:gravity="center"
+                    android:background="@drawable/rounded_background_white_transparent"
+                    android:padding="8dp" />
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- Estadísticas adicionales -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Las notificaciones aparecerán aquí cuando recibas mensajes, eventos o actualizaciones"
-            style="@style/BodyText"
+            android:orientation="horizontal"
             android:gravity="center"
-            android:layout_marginHorizontal="32dp" />
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:id="@+id/textViewNoLeidas"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="No leídas: 0"
+                android:textColor="@color/colorAccent"
+                android:textSize="14sp"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@+id/textViewTotal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Total: 0"
+                android:textColor="@color/colorPrimary"
+                android:textSize="14sp"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <!-- Filtros y acciones -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="8dp">
+
+            <Button
+                android:id="@+id/buttonMarcarLeidas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Marcar todas como leídas"
+                android:textColor="@color/white"
+                android:background="@drawable/button_blue_background"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/buttonFiltroTodas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Todas"
+                android:textColor="@color/white"
+                android:background="@drawable/button_gray_background"
+                android:layout_marginEnd="4dp" />
+
+            <Button
+                android:id="@+id/buttonFiltroNoLeidas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No leídas"
+                android:textColor="@color/white"
+                android:background="@drawable/button_red_background"
+                android:layout_marginEnd="4dp" />
+
+            <Button
+                android:id="@+id/buttonFiltroLeidas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Leídas"
+                android:textColor="@color/white"
+                android:background="@drawable/button_green_background" />
+        </LinearLayout>
+
+        <!-- Layout para mostrar mensaje si no hay notificaciones -->
+        <LinearLayout
+            android:id="@+id/layoutNoNotificaciones"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="24dp"
+            android:visibility="gone">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No hay notificaciones disponibles"
+                android:textColor="@color/colorTextSecondary"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <!-- Lista de notificaciones -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewNotificaciones"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:scrollbars="vertical"
+            android:clipToPadding="false"
+            android:paddingBottom="80dp" />
 
     </LinearLayout>
 
-</LinearLayout> 
+    <!-- Floating Action Button para crear notificación -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabCrearNotificacion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_add"
+        app:backgroundTint="@color/colorAccent"
+        app:tint="@color/white"
+        app:fabSize="normal" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout> 

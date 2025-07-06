@@ -33,4 +33,7 @@
     <color name="blue_profesional_light">#1f4068</color>
     <color name="blue_profesional_card">#23395d</color>
     <color name="blue_profesional_accent">#21e6c1</color>
+    <color name="colorPrimary">#162447</color>
+    <color name="colorAccent">#FFD700</color>
+    <color name="colorTextSecondary">#444444</color>
 </resources>

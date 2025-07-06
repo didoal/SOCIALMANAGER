@@ -468,4 +468,74 @@ public class DataManager {
         }
         return jugadores;
     }
+
+    // Buscar evento por ID
+    public Evento getEventoById(String eventoId) {
+        for (Evento evento : getEventos()) {
+            if (evento.getId().equals(eventoId)) {
+                return evento;
+            }
+        }
+        return null;
+    }
+
+    // Verificar si existe un equipo por nombre
+    public boolean existeEquipo(String nombre) {
+        for (Equipo equipo : getEquipos()) {
+            if (equipo.getNombre().equalsIgnoreCase(nombre)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Eliminar equipo por nombre
+    public void eliminarEquipo(String nombre) {
+        List<Equipo> equipos = getEquipos();
+        List<Equipo> nuevos = new ArrayList<>();
+        for (Equipo equipo : equipos) {
+            if (!equipo.getNombre().equalsIgnoreCase(nombre)) {
+                nuevos.add(equipo);
+            }
+        }
+        guardarEquipos(nuevos);
+    }
+
+    // Obtener nombres de todos los equipos
+    public List<String> getNombresEquipos() {
+        List<String> nombres = new ArrayList<>();
+        for (Equipo equipo : getEquipos()) {
+            nombres.add(equipo.getNombre());
+        }
+        return nombres;
+    }
+
+    // Verificar si existe un usuario por email
+    public boolean existeUsuario(String email) {
+        for (Usuario usuario : getUsuarios()) {
+            if (usuario.getEmail().equalsIgnoreCase(email)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Agregar usuario
+    public void agregarUsuario(Usuario usuario) {
+        List<Usuario> usuarios = getUsuarios();
+        usuarios.add(usuario);
+        guardarUsuarios(usuarios);
+    }
+
+    // Eliminar usuario por email
+    public void eliminarUsuario(String email) {
+        List<Usuario> usuarios = getUsuarios();
+        List<Usuario> nuevos = new ArrayList<>();
+        for (Usuario usuario : usuarios) {
+            if (!usuario.getEmail().equalsIgnoreCase(email)) {
+                nuevos.add(usuario);
+            }
+        }
+        guardarUsuarios(nuevos);
+    }
 } 

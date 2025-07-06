@@ -3,6 +3,7 @@ package com.gestionclub.padres.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,22 +17,22 @@ import java.util.Locale;
 public class NotificacionAdapter extends RecyclerView.Adapter<NotificacionAdapter.NotificacionViewHolder> {
     private List<Notificacion> notificaciones;
     private OnNotificacionClickListener listener;
-    private SimpleDateFormat dateFormat;
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
 
     public interface OnNotificacionClickListener {
-        void onNotificacionClick(Notificacion notificacion);
+        void onMarcarLeidaClick(Notificacion notificacion);
     }
 
     public NotificacionAdapter(List<Notificacion> notificaciones, OnNotificacionClickListener listener) {
         this.notificaciones = notificaciones;
         this.listener = listener;
-        this.dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
     }
 
     @NonNull
     @Override
     public NotificacionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_notificacion, parent, false);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_notificacion, parent, false);
         return new NotificacionViewHolder(view);
     }
 
@@ -54,27 +55,47 @@ public class NotificacionAdapter extends RecyclerView.Adapter<NotificacionAdapte
     class NotificacionViewHolder extends RecyclerView.ViewHolder {
         private TextView textViewTitulo;
         private TextView textViewMensaje;
+        private TextView textViewTipo;
         private TextView textViewFecha;
+        private ImageButton buttonMarcarLeida;
 
         public NotificacionViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewTitulo = itemView.findViewById(R.id.textViewTitulo);
             textViewMensaje = itemView.findViewById(R.id.textViewMensaje);
+            textViewTipo = itemView.findViewById(R.id.textViewTipo);
             textViewFecha = itemView.findViewById(R.id.textViewFecha);
-
-            itemView.setOnClickListener(v -> {
-                int position = getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION && listener != null) {
-                    listener.onNotificacionClick(notificaciones.get(position));
-                }
-            });
+            buttonMarcarLeida = itemView.findViewById(R.id.buttonMarcarLeida);
         }
 
         public void bind(Notificacion notificacion) {
             textViewTitulo.setText(notificacion.getTitulo());
             textViewMensaje.setText(notificacion.getMensaje());
-            String fechaFormateada = dateFormat.format(notificacion.getFechaCreacion());
-            textViewFecha.setText(fechaFormateada);
+            textViewFecha.setText("Fecha: " + dateFormat.format(notificacion.getFechaCreacion()));
+            
+            // Configurar tipo con color
+            textViewTipo.setText(notificacion.getTipo());
+            if ("Recordatorio".equals(notificacion.getTipo())) {
+                textViewTipo.setTextColor(itemView.getContext().getResources().getColor(R.color.colorAccent));
+                textViewTipo.setBackgroundResource(R.drawable.badge_recordatorio_background);
+            } else {
+                textViewTipo.setTextColor(itemView.getContext().getResources().getColor(R.color.colorPrimary));
+                textViewTipo.setBackgroundResource(R.drawable.badge_mensaje_background);
+            }
+            
+            // Configurar estado visual
+            if (notificacion.isLeida()) {
+                itemView.setAlpha(0.6f);
+                buttonMarcarLeida.setVisibility(View.GONE);
+            } else {
+                itemView.setAlpha(1.0f);
+                buttonMarcarLeida.setVisibility(View.VISIBLE);
+                buttonMarcarLeida.setOnClickListener(v -> {
+                    if (listener != null) {
+                        listener.onMarcarLeidaClick(notificacion);
+                    }
+                });
+            }
         }
     }
 } 

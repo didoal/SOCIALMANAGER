@@ -75,11 +75,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 dataManager.crearDatosEjemploNotificaciones();
             }
 
-            // Mostrar fragmento de perfil por defecto y marcarlo como seleccionado
+            // Mostrar fragmento de dashboard por defecto y marcarlo como seleccionado
             Log.d(TAG, "onCreate: Mostrando fragmento inicial");
             if (savedInstanceState == null) {
-                navigationView.setCheckedItem(R.id.nav_perfil);
-                mostrarFragmento(new PerfilFragment());
+                navigationView.setCheckedItem(R.id.nav_dashboard);
+                mostrarFragmento(new DashboardFragment());
             }
             
             Log.d(TAG, "onCreate: MainActivity inicializada correctamente");
@@ -179,7 +179,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             String titulo = "";
 
             int id = item.getItemId();
-            if (id == R.id.nav_perfil) {
+            if (id == R.id.nav_dashboard) {
+                fragment = new DashboardFragment();
+                titulo = "Dashboard";
+            } else if (id == R.id.nav_perfil) {
                 fragment = new PerfilFragment();
                 titulo = "Perfil";
             } else if (id == R.id.nav_calendario) {
@@ -200,6 +203,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             } else if (id == R.id.nav_estadisticas) {
                 fragment = new EstadisticasFragment();
                 titulo = "Estadísticas";
+            } else if (id == R.id.nav_gestion_usuarios) {
+                fragment = new GestionUsuariosFragment();
+                titulo = "Gestión de Usuarios";
+            } else if (id == R.id.nav_gestion_equipos) {
+                fragment = new GestionEquiposFragment();
+                titulo = "Gestión de Equipos";
+            } else if (id == R.id.nav_gestion_eventos) {
+                fragment = new GestionEventosFragment();
+                titulo = "Gestión de Eventos";
             } else if (id == R.id.nav_logins_admin) {
                 fragment = new LoginsAdminFragment();
                 titulo = "Logins (Admin)";

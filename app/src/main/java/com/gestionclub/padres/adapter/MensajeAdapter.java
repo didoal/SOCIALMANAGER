@@ -8,16 +8,19 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.gestionclub.padres.R;
 import com.gestionclub.padres.model.Mensaje;
+import com.gestionclub.padres.model.Usuario;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
 public class MensajeAdapter extends RecyclerView.Adapter<MensajeAdapter.MensajeViewHolder> {
     private List<Mensaje> mensajes;
+    private Usuario usuarioActual;
     private SimpleDateFormat dateFormat;
 
-    public MensajeAdapter(List<Mensaje> mensajes) {
+    public MensajeAdapter(List<Mensaje> mensajes, Usuario usuarioActual) {
         this.mensajes = mensajes;
+        this.usuarioActual = usuarioActual;
         this.dateFormat = new SimpleDateFormat("dd/MM HH:mm", Locale.getDefault());
     }
 
@@ -62,11 +65,18 @@ public class MensajeAdapter extends RecyclerView.Adapter<MensajeAdapter.MensajeV
             textViewFecha.setText(dateFormat.format(mensaje.getFechaCreacion()));
             textViewMensaje.setText(mensaje.getContenido());
 
-            // Cambiar color del autor si es admin
+            // Configurar colores según el tipo de usuario
             if (mensaje.isEsAdmin()) {
-                textViewAutor.setTextColor(itemView.getContext().getResources().getColor(R.color.purple_700));
+                // Mensaje de administrador
+                textViewAutor.setTextColor(itemView.getContext().getResources().getColor(R.color.gold));
+                textViewAutor.setText(mensaje.getAutorNombre() + " (Admin)");
+            } else if (usuarioActual != null && mensaje.getAutorId().equals(usuarioActual.getId())) {
+                // Mensaje propio
+                textViewAutor.setTextColor(itemView.getContext().getResources().getColor(R.color.blue_profesional));
+                textViewAutor.setText("Tú");
             } else {
-                textViewAutor.setTextColor(itemView.getContext().getResources().getColor(R.color.black));
+                // Mensaje de otro usuario
+                textViewAutor.setTextColor(itemView.getContext().getResources().getColor(R.color.text_primary));
             }
         }
     }

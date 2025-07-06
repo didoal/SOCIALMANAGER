@@ -16,7 +16,7 @@
         android:padding="16dp"
         android:gravity="center_vertical">
 
-        <!-- Información del usuario -->
+        <!-- Información de la asistencia -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -25,53 +25,62 @@
             android:layout_marginEnd="12dp">
 
             <TextView
-                android:id="@+id/textViewNombre"
+                android:id="@+id/textViewJugador"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Nombre del Usuario"
+                android:text="Jugador: Nombre del Jugador"
                 android:textColor="@color/colorPrimary"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="4dp" />
 
             <TextView
-                android:id="@+id/textViewEmail"
+                android:id="@+id/textViewEvento"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="email@ejemplo.com"
+                android:text="Evento: Entrenamiento Sub-12"
                 android:textColor="@color/colorTextSecondary"
                 android:textSize="14sp"
                 android:layout_marginBottom="4dp" />
 
             <TextView
-                android:id="@+id/textViewRol"
+                android:id="@+id/textViewFecha"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Rol"
-                android:textColor="@color/colorPrimary"
+                android:text="Fecha: 01/01/2024 18:00"
+                android:textColor="@color/colorTextSecondary"
+                android:textSize="12sp"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/textViewEstado"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="ASISTIÓ"
+                android:textColor="@color/green"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="4dp" />
 
             <TextView
-                android:id="@+id/textViewJugador"
+                android:id="@+id/textViewMotivo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Jugador: Nombre del Jugador"
+                android:text="Motivo: Enfermedad"
                 android:textColor="@color/colorTextSecondary"
                 android:textSize="12sp"
                 android:visibility="gone" />
 
         </LinearLayout>
 
-        <!-- Botón eliminar -->
+        <!-- Botón confirmar -->
         <ImageButton
-            android:id="@+id/buttonEliminar"
+            android:id="@+id/buttonConfirmar"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/ic_delete"
-            android:background="@drawable/circle_button_red"
-            android:contentDescription="Eliminar usuario"
+            android:src="@drawable/ic_check"
+            android:background="@drawable/circle_button_green"
+            android:contentDescription="Confirmar asistencia"
             android:scaleType="centerInside"
             android:padding="8dp" />
 

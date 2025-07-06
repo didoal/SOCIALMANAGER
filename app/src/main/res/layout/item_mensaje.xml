@@ -2,35 +2,73 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="12dp"
-    android:layout_marginBottom="8dp"
-    android:background="@drawable/card_profesional">
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:layout_marginBottom="8dp">
 
-    <TextView
-        android:id="@+id/textViewAutor"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/SubtitleText"
-        android:textStyle="bold"
-        android:textSize="14sp" />
+    <!-- Avatar del usuario -->
+    <ImageView
+        android:id="@+id/imageViewAvatar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_person"
+        android:background="@drawable/circle_background"
+        android:padding="8dp"
+        android:layout_marginEnd="12dp"
+        android:layout_gravity="top" />
 
-    <TextView
-        android:id="@+id/textViewMensaje"
-        android:layout_width="match_parent"
+    <!-- Contenido del mensaje -->
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        style="@style/BodyText"
-        android:textSize="16sp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp" />
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textViewFecha"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/BodyText"
-        android:textSize="12sp"
-        android:textColor="@color/text_secondary"
-        android:gravity="end" />
+        <!-- Header del mensaje -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="4dp">
+
+            <TextView
+                android:id="@+id/textViewAutor"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:textColor="@color/text_primary" />
+
+            <TextView
+                android:id="@+id/textViewFecha"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="@color/text_secondary" />
+
+        </LinearLayout>
+
+        <!-- Contenido del mensaje -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/mensaje_background"
+            android:padding="12dp"
+            android:maxWidth="280dp">
+
+            <TextView
+                android:id="@+id/textViewMensaje"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="@color/text_primary"
+                android:lineSpacingExtra="2dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </LinearLayout> 

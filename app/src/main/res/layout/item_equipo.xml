@@ -3,59 +3,76 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="4dp"
     app:cardCornerRadius="12dp"
-    app:cardElevation="4dp"
+    app:cardElevation="3dp"
     app:cardBackgroundColor="@color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
 
-        <!-- Nombre del equipo -->
-        <TextView
-            android:id="@+id/textViewNombre"
-            android:layout_width="match_parent"
+        <!-- Información del equipo -->
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Nombre del Equipo"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:layout_marginBottom="8dp" />
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginEnd="12dp">
 
-        <!-- Categoría -->
-        <TextView
-            android:id="@+id/textViewCategoria"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Categoría: Sub-12"
-            android:textSize="14sp"
-            android:textColor="@color/gold"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp" />
+            <TextView
+                android:id="@+id/textViewNombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Nombre del Equipo"
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp" />
 
-        <!-- Entrenador -->
-        <TextView
-            android:id="@+id/textViewEntrenador"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Entrenador: Juan Pérez"
-            android:textSize="14sp"
-            android:textColor="@color/gray_medium"
-            android:layout_marginBottom="8dp" />
+            <TextView
+                android:id="@+id/textViewCategoria"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Categoría: Sub-12"
+                android:textColor="@color/colorTextSecondary"
+                android:textSize="14sp"
+                android:layout_marginBottom="4dp" />
 
-        <!-- Descripción -->
-        <TextView
-            android:id="@+id/textViewDescripcion"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Descripción del equipo"
-            android:textSize="12sp"
-            android:textColor="@color/gray_light"
-            android:maxLines="3"
-            android:ellipsize="end" />
+            <TextView
+                android:id="@+id/textViewEntrenador"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Entrenador: Juan Pérez"
+                android:textColor="@color/colorTextSecondary"
+                android:textSize="14sp"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/textViewJugadores"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="15 jugadores"
+                android:textColor="@color/colorAccent"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- Botón eliminar -->
+        <ImageButton
+            android:id="@+id/buttonEliminar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_delete"
+            android:background="@drawable/circle_button_red"
+            android:contentDescription="Eliminar equipo"
+            android:scaleType="centerInside"
+            android:padding="8dp" />
 
     </LinearLayout>
 
