@@ -250,6 +250,60 @@ public class ObjetosPerdidosFragment extends Fragment implements ObjetoPerdidoAd
                 .show();
     }
 
+    @Override
+    public void onEsMioClick(ObjetoPerdido objeto) {
+        if (usuarioActual == null) {
+            Toast.makeText(requireContext(), "Error: Usuario no identificado", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Confirmar Propiedad")
+                .setMessage("¿Confirmas que este objeto es tuyo?")
+                .setPositiveButton("Sí, es mío", (dialog, which) -> {
+                    objeto.setEstado("RECLAMADO");
+                    objeto.setReclamadoPor(usuarioActual.getId());
+                    objeto.setReclamadoPorNombre(usuarioActual.getNombre());
+                    objeto.setFechaReclamo(new java.util.Date());
+                    
+                    dataManager.actualizarObjetoPerdido(objeto);
+                    cargarObjetos();
+                    actualizarEstadisticas();
+                    
+                    Toast.makeText(requireContext(), "Objeto reclamado exitosamente", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    @Override
+    public void onPreguntarClick(ObjetoPerdido objeto) {
+        if (usuarioActual == null) {
+            Toast.makeText(requireContext(), "Error: Usuario no identificado", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Hacer Pregunta sobre el Objeto")
+                .setMessage("¿Deseas preguntar al reportante por el objeto '" + objeto.getNombre() + "'?")
+                .setPositiveButton("Sí", (dialog, which) -> {
+                    // Enviar notificación al reportante
+                    if (objeto.getReportadoPor() != null && !objeto.getReportadoPor().isEmpty()) {
+                        String mensaje = usuarioActual.getNombre() + " tiene una consulta sobre el objeto: '" + objeto.getNombre() + "'.";
+                        dataManager.crearNotificacionSolicitud(
+                            "Consulta sobre objeto perdido",
+                            mensaje,
+                            "OBJETO_PREGUNTA"
+                        );
+                        Toast.makeText(requireContext(), "Se ha notificado al reportante.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(requireContext(), "No se pudo notificar al reportante.", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
     private void crearNotificacionObjeto(ObjetoPerdido objeto) {
         dataManager.crearNotificacionObjeto(objeto);
     }

@@ -64,9 +64,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="No leídas: 0"
+                android:text="0"
                 android:textColor="@color/colorAccent"
-                android:textSize="14sp"
+                android:textSize="16sp"
+                android:textStyle="bold"
                 android:gravity="center" />
 
             <TextView
@@ -74,13 +75,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Total: 0"
+                android:text="0"
                 android:textColor="@color/colorPrimary"
-                android:textSize="14sp"
+                android:textSize="16sp"
+                android:textStyle="bold"
                 android:gravity="center" />
         </LinearLayout>
 
-        <!-- Filtros y acciones -->
+        <!-- Filtros básicos -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -122,6 +124,89 @@
                 android:text="Leídas"
                 android:textColor="@color/white"
                 android:background="@drawable/button_green_background" />
+        </LinearLayout>
+
+        <!-- Botón para mostrar/ocultar filtros avanzados -->
+        <Button
+            android:id="@+id/buttonFiltrosAvanzados"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🔍 Filtros Avanzados"
+            android:textColor="@color/white"
+            android:background="@drawable/button_gold_background"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Filtros avanzados (inicialmente ocultos) -->
+        <LinearLayout
+            android:id="@+id/layoutFiltrosAvanzados"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_profesional"
+            android:padding="16dp"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Filtros Avanzados"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Filtro por tipo -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:text="Tipo:"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_secondary" />
+
+                <Spinner
+                    android:id="@+id/spinnerTipoNotificacion"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/spinner_background"
+                    android:padding="8dp" />
+
+            </LinearLayout>
+
+            <!-- Filtro por equipo -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:text="Equipo:"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_secondary" />
+
+                <Spinner
+                    android:id="@+id/spinnerEquipo"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/spinner_background"
+                    android:padding="8dp" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
         <!-- Layout para mostrar mensaje si no hay notificaciones -->

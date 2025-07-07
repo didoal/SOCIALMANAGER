@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background"
+    android:padding="24dp">
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPagerTutorial"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginBottom="24dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/buttonOmitir"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Omitir"
+            android:background="@drawable/button_gray_background"
+            android:textColor="@color/black"
+            android:layout_marginEnd="16dp" />
+
+        <Button
+            android:id="@+id/buttonSiguiente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Siguiente"
+            android:background="@drawable/button_gold_background"
+            android:textColor="@color/black" />
+    </LinearLayout>
+
+</LinearLayout> 

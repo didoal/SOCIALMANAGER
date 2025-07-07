@@ -71,7 +71,7 @@ public class GestionEventosFragment extends Fragment {
         eventoAdapter = new EventoAdapter(new ArrayList<>(), new EventoAdapter.OnEventoClickListener() {
             @Override
             public void onEditarClick(Evento evento) {
-                // Por ahora no implementamos edición
+                mostrarDialogoEditarEvento(evento);
             }
             
             @Override
@@ -245,6 +245,141 @@ public class GestionEventosFragment extends Fragment {
         
         Toast.makeText(requireContext(), "Evento creado exitosamente", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "crearEvento: Evento " + titulo + " creado correctamente");
+    }
+
+    private void mostrarDialogoEditarEvento(Evento evento) {
+        Log.d(TAG, "mostrarDialogoEditarEvento: Mostrando diálogo para " + evento.getTitulo());
+        
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_editar_evento, null);
+        
+        EditText editTextTitulo = dialogView.findViewById(R.id.editTextTitulo);
+        EditText editTextDescripcion = dialogView.findViewById(R.id.editTextDescripcion);
+        EditText editTextLugar = dialogView.findViewById(R.id.editTextLugar);
+        TextView textViewFecha = dialogView.findViewById(R.id.textViewFecha);
+        TextView textViewHora = dialogView.findViewById(R.id.textViewHora);
+        Spinner spinnerTipo = dialogView.findViewById(R.id.spinnerTipo);
+        Spinner spinnerEquipo = dialogView.findViewById(R.id.spinnerEquipo);
+        
+        // Pre-llenar campos con datos actuales
+        editTextTitulo.setText(evento.getTitulo());
+        editTextDescripcion.setText(evento.getDescripcion());
+        editTextLugar.setText(evento.getUbicacion());
+        
+        // Configurar spinner de tipos
+        String[] tipos = {"Entrenamiento", "Partido", "Torneo", "Reunión", "Otro"};
+        ArrayAdapter<String> tipoAdapter = new ArrayAdapter<>(requireContext(), 
+                android.R.layout.simple_spinner_item, tipos);
+        tipoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerTipo.setAdapter(tipoAdapter);
+        
+        // Seleccionar tipo actual
+        for (int i = 0; i < tipos.length; i++) {
+            if (tipos[i].equals(evento.getTipo())) {
+                spinnerTipo.setSelection(i);
+                break;
+            }
+        }
+        
+        // Configurar spinner de equipos
+        List<String> equipos = new ArrayList<>();
+        equipos.add("Todos los equipos");
+        for (String equipo : dataManager.getNombresEquipos()) {
+            equipos.add(equipo);
+        }
+        ArrayAdapter<String> equipoAdapter = new ArrayAdapter<>(requireContext(), 
+                android.R.layout.simple_spinner_item, equipos);
+        equipoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerEquipo.setAdapter(equipoAdapter);
+        
+        // Seleccionar equipo actual
+        String equipoActual = evento.getEquipo();
+        if (equipoActual != null && !equipoActual.isEmpty()) {
+            for (int i = 0; i < equipos.size(); i++) {
+                if (equipos.get(i).equals(equipoActual)) {
+                    spinnerEquipo.setSelection(i);
+                    break;
+                }
+            }
+        } else {
+            spinnerEquipo.setSelection(0); // "Todos los equipos"
+        }
+        
+        // Configurar fecha y hora actuales
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(evento.getFechaInicio());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        
+        textViewFecha.setText(dateFormat.format(calendar.getTime()));
+        textViewHora.setText(timeFormat.format(calendar.getTime()));
+        
+        textViewFecha.setOnClickListener(v -> {
+            DatePickerDialog datePickerDialog = new DatePickerDialog(
+                requireContext(),
+                (view, year, month, dayOfMonth) -> {
+                    calendar.set(Calendar.YEAR, year);
+                    calendar.set(Calendar.MONTH, month);
+                    calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                    textViewFecha.setText(dateFormat.format(calendar.getTime()));
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+            );
+            datePickerDialog.show();
+        });
+        
+        textViewHora.setOnClickListener(v -> {
+            TimePickerDialog timePickerDialog = new TimePickerDialog(
+                requireContext(),
+                (view, hourOfDay, minute) -> {
+                    calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                    calendar.set(Calendar.MINUTE, minute);
+                    textViewHora.setText(timeFormat.format(calendar.getTime()));
+                },
+                calendar.get(Calendar.HOUR_OF_DAY),
+                calendar.get(Calendar.MINUTE),
+                true
+            );
+            timePickerDialog.show();
+        });
+        
+        builder.setView(dialogView)
+                .setTitle("Editar Evento")
+                .setPositiveButton("Guardar", (dialog, which) -> {
+                    String titulo = editTextTitulo.getText().toString().trim();
+                    String descripcion = editTextDescripcion.getText().toString().trim();
+                    String lugar = editTextLugar.getText().toString().trim();
+                    String tipo = spinnerTipo.getSelectedItem().toString();
+                    String equipo = spinnerEquipo.getSelectedItem().toString();
+                    
+                    if (validarDatos(titulo, descripcion, lugar)) {
+                        editarEvento(evento, titulo, descripcion, lugar, tipo, equipo, calendar.getTime());
+                    }
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void editarEvento(Evento eventoOriginal, String titulo, String descripcion, String lugar, String tipo, String equipo, java.util.Date fecha) {
+        Log.d(TAG, "editarEvento: Editando evento " + eventoOriginal.getTitulo());
+        
+        // Actualizar datos del evento
+        eventoOriginal.setTitulo(titulo);
+        eventoOriginal.setDescripcion(descripcion);
+        eventoOriginal.setUbicacion(lugar);
+        eventoOriginal.setTipo(tipo);
+        eventoOriginal.setEquipo(equipo.equals("Todos los equipos") ? null : equipo);
+        eventoOriginal.setFechaInicio(fecha);
+        
+        // Guardar cambios
+        dataManager.actualizarEvento(eventoOriginal);
+        cargarEventos();
+        actualizarEstadisticas();
+        
+        Toast.makeText(requireContext(), "Evento actualizado exitosamente", Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "editarEvento: Evento " + titulo + " actualizado correctamente");
     }
 
     private void mostrarDialogoEliminarEvento(Evento evento) {

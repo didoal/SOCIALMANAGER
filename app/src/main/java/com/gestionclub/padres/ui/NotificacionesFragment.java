@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -38,11 +39,17 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
     private Button buttonFiltroTodas;
     private Button buttonFiltroNoLeidas;
     private Button buttonFiltroLeidas;
+    private Button buttonFiltrosAvanzados;
     private LinearLayout layoutNoNotificaciones;
+    private LinearLayout layoutFiltrosAvanzados;
+    private Spinner spinnerTipoNotificacion;
+    private Spinner spinnerEquipo;
     private NotificacionAdapter notificacionAdapter;
     private DataManager dataManager;
     private Usuario usuarioActual;
     private String filtroActual = "TODAS";
+    private String filtroTipo = "TODOS";
+    private String filtroEquipo = "TODOS";
     private static final String TAG = "NotificacionesFragment";
     private TextView textViewEstadisticas;
     private FloatingActionButton fabCrearNotificacion;
@@ -59,6 +66,7 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
             inicializarVistas(view);
             configurarRecyclerView();
             configurarFiltros();
+            configurarSpinners();
             cargarNotificaciones();
             generarRecordatoriosEventos();
             actualizarEstadisticas();
@@ -78,7 +86,11 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
         buttonFiltroTodas = view.findViewById(R.id.buttonFiltroTodas);
         buttonFiltroNoLeidas = view.findViewById(R.id.buttonFiltroNoLeidas);
         buttonFiltroLeidas = view.findViewById(R.id.buttonFiltroLeidas);
+        buttonFiltrosAvanzados = view.findViewById(R.id.buttonFiltrosAvanzados);
         layoutNoNotificaciones = view.findViewById(R.id.layoutNoNotificaciones);
+        layoutFiltrosAvanzados = view.findViewById(R.id.layoutFiltrosAvanzados);
+        spinnerTipoNotificacion = view.findViewById(R.id.spinnerTipoNotificacion);
+        spinnerEquipo = view.findViewById(R.id.spinnerEquipo);
         textViewEstadisticas = view.findViewById(R.id.textViewEstadisticas);
         fabCrearNotificacion = view.findViewById(R.id.fabCrearNotificacion);
         
@@ -95,6 +107,23 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
     private void configurarFiltros() {
         // Configurar estado inicial de los filtros
         actualizarEstadosFiltros();
+    }
+
+    private void configurarSpinners() {
+        // Configurar spinner de tipos de notificación
+        String[] tipos = {"TODOS", "EVENTO", "MENSAJE", "OBJETO", "RECORDATORIO", "SOLICITUD"};
+        android.widget.ArrayAdapter<String> adapterTipos = new android.widget.ArrayAdapter<>(
+            requireContext(), android.R.layout.simple_spinner_item, tipos);
+        adapterTipos.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerTipoNotificacion.setAdapter(adapterTipos);
+
+        // Configurar spinner de equipos
+        String[] equipos = {"TODOS", "Biberones", "Prebenjamín A", "Prebenjamín B", "Benjamín A", "Benjamín B", 
+                           "Alevín A", "Alevín B", "Infantil", "Cadete", "Juvenil"};
+        android.widget.ArrayAdapter<String> adapterEquipos = new android.widget.ArrayAdapter<>(
+            requireContext(), android.R.layout.simple_spinner_item, equipos);
+        adapterEquipos.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerEquipo.setAdapter(adapterEquipos);
     }
 
     private void actualizarEstadosFiltros() {
@@ -129,20 +158,33 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
         List<Notificacion> notificacionesFiltradas = new ArrayList<>();
         
         for (Notificacion notificacion : todasNotificaciones) {
+            boolean cumpleFiltroLeida = true;
+            boolean cumpleFiltroTipo = true;
+            boolean cumpleFiltroEquipo = true;
+            
+            // Filtro por estado de lectura
             switch (filtroActual) {
-                case "TODAS":
-                    notificacionesFiltradas.add(notificacion);
-                    break;
                 case "NO_LEIDAS":
-                    if (!notificacion.isLeida()) {
-                        notificacionesFiltradas.add(notificacion);
-                    }
+                    if (notificacion.isLeida()) cumpleFiltroLeida = false;
                     break;
                 case "LEIDAS":
-                    if (notificacion.isLeida()) {
-                        notificacionesFiltradas.add(notificacion);
-                    }
+                    if (!notificacion.isLeida()) cumpleFiltroLeida = false;
                     break;
+            }
+            
+            // Filtro por tipo
+            if (!filtroTipo.equals("TODOS") && !notificacion.getTipo().equals(filtroTipo)) {
+                cumpleFiltroTipo = false;
+            }
+            
+            // Filtro por equipo (si aplica)
+            if (!filtroEquipo.equals("TODOS")) {
+                // Aquí podrías implementar lógica específica por equipo
+                // Por ahora, solo filtramos notificaciones globales vs específicas
+            }
+            
+            if (cumpleFiltroLeida && cumpleFiltroTipo && cumpleFiltroEquipo) {
+                notificacionesFiltradas.add(notificacion);
             }
         }
         
@@ -198,43 +240,75 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
         
         String estadisticas = String.format("Total: %d | No leídas: %d | Eventos: %d | Objetos: %d | Recordatorios: %d", 
                 totalNotificaciones, noLeidas, eventos, objetos, recordatorios);
-        textViewEstadisticas.setText(estadisticas);
         
-        // Mostrar/ocultar botón de marcar como leídas
-        if (noLeidas > 0) {
-            buttonMarcarLeidas.setVisibility(View.VISIBLE);
-        } else {
-            buttonMarcarLeidas.setVisibility(View.GONE);
-        }
+        textViewEstadisticas.setText(estadisticas);
+        textViewNoLeidas.setText(String.valueOf(noLeidas));
+        textViewTotal.setText(String.valueOf(totalNotificaciones));
     }
 
     private void configurarListeners() {
-        buttonMarcarLeidas.setOnClickListener(v -> marcarTodasComoLeidas());
+        Log.d(TAG, "configurarListeners: Configurando listeners");
+        
         buttonFiltroTodas.setOnClickListener(v -> {
             filtroActual = "TODAS";
             actualizarEstadosFiltros();
             cargarNotificaciones();
         });
+        
         buttonFiltroNoLeidas.setOnClickListener(v -> {
             filtroActual = "NO_LEIDAS";
             actualizarEstadosFiltros();
             cargarNotificaciones();
         });
+        
         buttonFiltroLeidas.setOnClickListener(v -> {
             filtroActual = "LEIDAS";
             actualizarEstadosFiltros();
             cargarNotificaciones();
         });
+        
+        buttonFiltrosAvanzados.setOnClickListener(v -> {
+            if (layoutFiltrosAvanzados.getVisibility() == View.VISIBLE) {
+                layoutFiltrosAvanzados.setVisibility(View.GONE);
+                buttonFiltrosAvanzados.setText("🔍 Filtros Avanzados");
+            } else {
+                layoutFiltrosAvanzados.setVisibility(View.VISIBLE);
+                buttonFiltrosAvanzados.setText("🔍 Ocultar Filtros");
+            }
+        });
+        
+        buttonMarcarLeidas.setOnClickListener(v -> marcarTodasComoLeidas());
+        
+        // Listeners para spinners
+        spinnerTipoNotificacion.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                filtroTipo = parent.getItemAtPosition(position).toString();
+                cargarNotificaciones();
+            }
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+        });
+        
+        spinnerEquipo.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                filtroEquipo = parent.getItemAtPosition(position).toString();
+                cargarNotificaciones();
+            }
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+        });
     }
 
     private void marcarTodasComoLeidas() {
-        List<Notificacion> todasNotificaciones = dataManager.getNotificaciones();
-        for (Notificacion notificacion : todasNotificaciones) {
+        Log.d(TAG, "marcarTodasComoLeidas: Marcando todas como leídas");
+        List<Notificacion> notificaciones = dataManager.getNotificaciones();
+        for (Notificacion notificacion : notificaciones) {
             if (!notificacion.isLeida()) {
                 dataManager.marcarNotificacionComoLeida(notificacion.getId());
             }
         }
-        
         cargarNotificaciones();
         actualizarEstadisticas();
         Toast.makeText(requireContext(), "Todas las notificaciones marcadas como leídas", Toast.LENGTH_SHORT).show();
@@ -242,24 +316,27 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
 
     @Override
     public void onMarcarLeidaClick(Notificacion notificacion) {
-        // Marcar como leída
-        if (!notificacion.isLeida()) {
-            dataManager.marcarNotificacionComoLeida(notificacion.getId());
-            cargarNotificaciones();
-            actualizarEstadisticas();
-        }
-        // Mostrar detalles de la notificación si lo deseas
+        Log.d(TAG, "onMarcarLeidaClick: Marcando notificación como leída");
+        dataManager.marcarNotificacionComoLeida(notificacion.getId());
+        cargarNotificaciones();
+        actualizarEstadisticas();
         mostrarDetallesNotificacion(notificacion);
     }
 
     private void mostrarDetallesNotificacion(Notificacion notificacion) {
-        String mensaje = "Título: " + notificacion.getTitulo() + "\n\n" +
-                        "Mensaje: " + notificacion.getMensaje() + "\n\n" +
-                        "Tipo: " + notificacion.getTipo() + "\n" +
-                        "De: " + notificacion.getRemitenteNombre() + "\n" +
-                        "Fecha: " + dateFormat.format(notificacion.getFechaCreacion());
+        Log.d(TAG, "mostrarDetallesNotificacion: Mostrando detalles de notificación");
+        String fecha = dateFormat.format(notificacion.getFechaCreacion());
+        String detalles = "Título: " + notificacion.getTitulo() + "\n\n" +
+                         "Mensaje: " + notificacion.getMensaje() + "\n\n" +
+                         "Tipo: " + notificacion.getTipo() + "\n" +
+                         "Fecha: " + fecha + "\n" +
+                         "Remitente: " + notificacion.getRemitenteNombre();
         
-        Toast.makeText(requireContext(), mensaje, Toast.LENGTH_LONG).show();
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Detalles de la Notificación")
+                .setMessage(detalles)
+                .setPositiveButton("Cerrar", null)
+                .show();
     }
 
     @Override
@@ -267,18 +344,16 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
         super.onResume();
         Log.d(TAG, "onResume: Fragmento resumido");
         cargarNotificaciones();
-        generarRecordatoriosEventos();
         actualizarEstadisticas();
     }
 
     private void mostrarDialogoCrearNotificacion() {
         Log.d(TAG, "mostrarDialogoCrearNotificacion: Mostrando diálogo");
-        
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_crear_notificacion, null);
         
-        TextView editTextTitulo = dialogView.findViewById(R.id.editTextTitulo);
-        TextView editTextMensaje = dialogView.findViewById(R.id.editTextMensaje);
+        android.widget.EditText editTextTitulo = dialogView.findViewById(R.id.editTextTitulo);
+        android.widget.EditText editTextMensaje = dialogView.findViewById(R.id.editTextMensaje);
         
         builder.setView(dialogView)
                 .setTitle("Crear Notificación")
@@ -307,21 +382,10 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
     }
 
     private void crearNotificacion(String titulo, String mensaje) {
-        Log.d(TAG, "crearNotificacion: Creando notificación " + titulo);
-        
-        Notificacion nuevaNotificacion = new Notificacion();
-        nuevaNotificacion.setTitulo(titulo);
-        nuevaNotificacion.setMensaje(mensaje);
-        nuevaNotificacion.setTipo("Mensaje");
-        nuevaNotificacion.setFechaCreacion(new Date());
-        nuevaNotificacion.setLeida(false);
-        nuevaNotificacion.setId(String.valueOf(System.currentTimeMillis()));
-        
-        dataManager.agregarNotificacion(nuevaNotificacion);
+        Log.d(TAG, "crearNotificacion: Creando notificación");
+        dataManager.crearNotificacionSolicitud(titulo, mensaje, "GENERAL");
         cargarNotificaciones();
         actualizarEstadisticas();
-        
         Toast.makeText(requireContext(), "Notificación creada exitosamente", Toast.LENGTH_SHORT).show();
-        Log.d(TAG, "crearNotificacion: Notificación " + titulo + " creada correctamente");
     }
 } 

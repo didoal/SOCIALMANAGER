@@ -42,10 +42,23 @@ public class DataManager {
         // Solo inicializar si no hay datos existentes
         if (getMensajes().isEmpty()) {
             List<Mensaje> mensajesEjemplo = new ArrayList<>();
-            mensajesEjemplo.add(new Mensaje("admin1", "Administrador", 
-                "¡Bienvenidos al club! Este es el chat general para todos los miembros.", true));
+            
+            // Mensaje de bienvenida destacado
+            Mensaje mensajeBienvenida = new Mensaje("admin1", "Administrador", 
+                "¡Bienvenidos al club CD Santiaguiño de Guizán! Este es el chat general para todos los miembros.", true);
+            mensajeBienvenida.setDestacado(true);
+            mensajesEjemplo.add(mensajeBienvenida);
+            
+            // Mensaje sobre horarios destacado
+            Mensaje mensajeHorarios = new Mensaje("admin1", "Administrador", 
+                "📅 Horarios de entrenamiento: Lunes y Miércoles de 18:00 a 20:00. ¡No falten!", true);
+            mensajeHorarios.setDestacado(true);
+            mensajesEjemplo.add(mensajeHorarios);
+            
+            // Mensaje normal
             mensajesEjemplo.add(new Mensaje("user1", "Juan Pérez", 
-                "Hola a todos, ¿alguien sabe cuándo es el próximo entrenamiento?", false));
+                "Hola a todos, ¿alguien sabe cuándo es el próximo partido?", false));
+            
             guardarMensajes(mensajesEjemplo);
         }
 
@@ -162,6 +175,39 @@ public class DataManager {
         List<Mensaje> mensajes = getMensajes();
         mensajes.add(mensaje);
         guardarMensajes(mensajes);
+    }
+
+    public void actualizarMensaje(Mensaje mensajeActualizado) {
+        List<Mensaje> mensajes = getMensajes();
+        for (int i = 0; i < mensajes.size(); i++) {
+            if (mensajes.get(i).getId().equals(mensajeActualizado.getId())) {
+                mensajes.set(i, mensajeActualizado);
+                break;
+            }
+        }
+        guardarMensajes(mensajes);
+    }
+
+    public void toggleDestacadoMensaje(String mensajeId) {
+        List<Mensaje> mensajes = getMensajes();
+        for (Mensaje mensaje : mensajes) {
+            if (mensaje.getId().equals(mensajeId)) {
+                mensaje.setDestacado(!mensaje.isDestacado());
+                break;
+            }
+        }
+        guardarMensajes(mensajes);
+    }
+
+    public List<Mensaje> getMensajesDestacados() {
+        List<Mensaje> todosMensajes = getMensajes();
+        List<Mensaje> destacados = new ArrayList<>();
+        for (Mensaje mensaje : todosMensajes) {
+            if (mensaje.isDestacado()) {
+                destacados.add(mensaje);
+            }
+        }
+        return destacados;
     }
 
     // Gestión de Objetos Perdidos
@@ -721,6 +767,36 @@ public class DataManager {
             }
         }
         guardarEquipos(nuevos);
+    }
+
+    // Actualizar equipo
+    public void actualizarEquipo(Equipo equipoActualizado) {
+        List<Equipo> equipos = getEquipos();
+        for (int i = 0; i < equipos.size(); i++) {
+            if (equipos.get(i).getId().equals(equipoActualizado.getId())) {
+                equipos.set(i, equipoActualizado);
+                break;
+            }
+        }
+        guardarEquipos(equipos);
+    }
+
+    // Agregar jugador a equipo
+    public void agregarJugadorAEquipo(String equipoId, String jugadorId) {
+        Equipo equipo = getEquipoPorId(equipoId);
+        if (equipo != null) {
+            equipo.agregarJugador(jugadorId);
+            actualizarEquipo(equipo);
+        }
+    }
+
+    // Remover jugador de equipo
+    public void removerJugadorDeEquipo(String equipoId, String jugadorId) {
+        Equipo equipo = getEquipoPorId(equipoId);
+        if (equipo != null) {
+            equipo.removerJugador(jugadorId);
+            actualizarEquipo(equipo);
+        }
     }
 
     // Obtener nombres de todos los equipos

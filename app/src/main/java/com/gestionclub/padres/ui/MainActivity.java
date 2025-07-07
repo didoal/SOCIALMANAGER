@@ -75,6 +75,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 dataManager.crearDatosEjemploNotificaciones();
             }
 
+            // Mostrar tutorial si es la primera vez
+            boolean tutorialVisto = getSharedPreferences("config", 0).getBoolean("tutorial_visto", false);
+            if (!tutorialVisto) {
+                mostrarFragmento(new TutorialFragment());
+                return;
+            }
+
             // Mostrar fragmento de dashboard por defecto y marcarlo como seleccionado
             Log.d(TAG, "onCreate: Mostrando fragmento inicial");
             if (savedInstanceState == null) {
@@ -185,16 +192,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             } else if (id == R.id.nav_mi_equipo) {
                 fragment = new PerfilFragment();
                 titulo = "Mi Equipo";
-            } else if (id == R.id.nav_convocatorias) {
-                // Si tienes un fragmento para convocatorias, ponlo aquí
-                // fragment = new ConvocatoriasFragment();
-                // titulo = "Convocatorias";
             } else if (id == R.id.nav_calendario) {
                 fragment = new CalendarioFragment();
                 titulo = "Calendario";
             } else if (id == R.id.nav_mensajes) {
                 fragment = new MensajesFragment();
                 titulo = "Mensajes";
+            } else if (id == R.id.nav_muro_destacados) {
+                fragment = new MuroDestacadosFragment();
+                titulo = "Muro de Destacados";
             } else if (id == R.id.nav_objetos_perdidos) {
                 fragment = new ObjetosPerdidosFragment();
                 titulo = "Objetos Perdidos";
@@ -218,6 +224,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             } else if (id == R.id.nav_gestion_eventos) {
                 fragment = new GestionEventosFragment();
                 titulo = "Gestión de Eventos";
+            } else if (id == R.id.nav_configuracion) {
+                fragment = new ConfiguracionFragment();
+                titulo = "Configuración";
             } else if (id == R.id.nav_logout) {
                 Log.d(TAG, "onNavigationItemSelected: Cerrando sesión");
                 dataManager.cerrarSesion();

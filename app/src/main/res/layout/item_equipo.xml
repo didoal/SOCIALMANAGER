@@ -63,16 +63,49 @@
 
         </LinearLayout>
 
-        <!-- Botón eliminar -->
-        <ImageButton
-            android:id="@+id/buttonEliminar"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_delete"
-            android:background="@drawable/circle_button_red"
-            android:contentDescription="Eliminar equipo"
-            android:scaleType="centerInside"
-            android:padding="8dp" />
+        <!-- Botones de acción -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- Botón editar -->
+            <ImageButton
+                android:id="@+id/buttonEditar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_edit"
+                android:background="@drawable/circle_button_blue"
+                android:contentDescription="Editar equipo"
+                android:scaleType="centerInside"
+                android:padding="8dp"
+                android:layout_marginEnd="8dp" />
+
+            <!-- Botón gestionar jugadores -->
+            <ImageButton
+                android:id="@+id/buttonGestionarJugadores"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_group"
+                android:background="@drawable/circle_button_green"
+                android:contentDescription="Gestionar jugadores"
+                android:scaleType="centerInside"
+                android:padding="8dp"
+                android:layout_marginEnd="8dp" />
+
+            <!-- Botón eliminar -->
+            <ImageButton
+                android:id="@+id/buttonEliminar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_delete"
+                android:background="@drawable/circle_button_red"
+                android:contentDescription="Eliminar equipo"
+                android:scaleType="centerInside"
+                android:padding="8dp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

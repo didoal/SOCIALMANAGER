@@ -6,7 +6,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,9 +20,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.gestionclub.padres.R;
 import com.gestionclub.padres.adapter.EquipoAdapter;
+import com.gestionclub.padres.adapter.JugadorEquipoAdapter;
 import com.gestionclub.padres.data.DataManager;
 import com.gestionclub.padres.model.Equipo;
-import com.gestionclub.padres.model.Notificacion;
+import com.gestionclub.padres.model.Usuario;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -62,7 +65,10 @@ public class GestionEquiposFragment extends Fragment {
     private void configurarRecyclerView() {
         Log.d(TAG, "configurarRecyclerView: Configurando RecyclerView");
         recyclerViewEquipos.setLayoutManager(new LinearLayoutManager(requireContext()));
-        equipoAdapter = new EquipoAdapter(new ArrayList<>(), this::mostrarDialogoEliminarEquipo);
+        equipoAdapter = new EquipoAdapter(new ArrayList<>(), 
+            this::mostrarDialogoEliminarEquipo,
+            this::mostrarDialogoEditarEquipo,
+            this::mostrarDialogoGestionarJugadores);
         recyclerViewEquipos.setAdapter(equipoAdapter);
     }
 
@@ -80,7 +86,9 @@ public class GestionEquiposFragment extends Fragment {
         int totalJugadores = 0;
         
         for (Equipo equipo : equipos) {
-            // totalJugadores += equipo.getJugadores().size(); // Revisar si equipo tiene lista de jugadores
+            if (equipo.getJugadoresIds() != null) {
+                totalJugadores += equipo.getJugadoresIds().size();
+            }
         }
         
         String estadisticas = String.format("Total Equipos: %d | Total Jugadores: %d", totalEquipos, totalJugadores);
@@ -93,14 +101,21 @@ public class GestionEquiposFragment extends Fragment {
         View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_crear_equipo, null);
         
         EditText editTextNombre = dialogView.findViewById(R.id.editTextNombre);
-        EditText editTextCategoria = dialogView.findViewById(R.id.editTextCategoria);
+        Spinner spinnerCategoria = dialogView.findViewById(R.id.spinnerCategoria);
         EditText editTextEntrenador = dialogView.findViewById(R.id.editTextEntrenador);
+        
+        // Configurar spinner de categorías
+        String[] categorias = {"Biberones", "Prebenjamín", "Benjamín", "Alevín", "Infantil", "Cadete", "Juvenil"};
+        ArrayAdapter<String> categoriaAdapter = new ArrayAdapter<>(requireContext(), 
+                android.R.layout.simple_spinner_item, categorias);
+        categoriaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerCategoria.setAdapter(categoriaAdapter);
         
         builder.setView(dialogView)
                 .setTitle("Crear Nuevo Equipo")
                 .setPositiveButton("Crear", (dialog, which) -> {
                     String nombre = editTextNombre.getText().toString().trim();
-                    String categoria = editTextCategoria.getText().toString().trim();
+                    String categoria = spinnerCategoria.getSelectedItem().toString();
                     String entrenador = editTextEntrenador.getText().toString().trim();
                     
                     if (validarDatos(nombre, categoria)) {
@@ -141,6 +156,167 @@ public class GestionEquiposFragment extends Fragment {
         
         Toast.makeText(requireContext(), "Equipo creado exitosamente", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "crearEquipo: Equipo " + nombre + " creado correctamente");
+    }
+
+    private void mostrarDialogoEditarEquipo(Equipo equipo) {
+        Log.d(TAG, "mostrarDialogoEditarEquipo: Mostrando diálogo para " + equipo.getNombre());
+        
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_editar_equipo, null);
+        
+        EditText editTextNombre = dialogView.findViewById(R.id.editTextNombre);
+        Spinner spinnerCategoria = dialogView.findViewById(R.id.spinnerCategoria);
+        EditText editTextEntrenador = dialogView.findViewById(R.id.editTextEntrenador);
+        
+        // Pre-llenar campos
+        editTextNombre.setText(equipo.getNombre());
+        editTextEntrenador.setText(equipo.getEntrenador());
+        
+        // Configurar spinner de categorías
+        String[] categorias = {"Biberones", "Prebenjamín", "Benjamín", "Alevín", "Infantil", "Cadete", "Juvenil"};
+        ArrayAdapter<String> categoriaAdapter = new ArrayAdapter<>(requireContext(), 
+                android.R.layout.simple_spinner_item, categorias);
+        categoriaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerCategoria.setAdapter(categoriaAdapter);
+        
+        // Seleccionar categoría actual
+        for (int i = 0; i < categorias.length; i++) {
+            if (categorias[i].equals(equipo.getCategoria())) {
+                spinnerCategoria.setSelection(i);
+                break;
+            }
+        }
+        
+        builder.setView(dialogView)
+                .setTitle("Editar Equipo")
+                .setPositiveButton("Guardar", (dialog, which) -> {
+                    String nombre = editTextNombre.getText().toString().trim();
+                    String categoria = spinnerCategoria.getSelectedItem().toString();
+                    String entrenador = editTextEntrenador.getText().toString().trim();
+                    
+                    if (validarDatosEdicion(nombre, categoria, equipo.getNombre())) {
+                        editarEquipo(equipo, nombre, categoria, entrenador);
+                    }
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private boolean validarDatosEdicion(String nombre, String categoria, String nombreOriginal) {
+        if (nombre.isEmpty()) {
+            Toast.makeText(requireContext(), "El nombre del equipo es obligatorio", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (categoria.isEmpty()) {
+            Toast.makeText(requireContext(), "La categoría es obligatoria", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        // Verificar si el nombre ya existe (excepto para el equipo actual)
+        if (!nombre.equalsIgnoreCase(nombreOriginal) && dataManager.existeEquipo(nombre)) {
+            Toast.makeText(requireContext(), "Ya existe un equipo con ese nombre", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+    private void editarEquipo(Equipo equipoOriginal, String nombre, String categoria, String entrenador) {
+        Log.d(TAG, "editarEquipo: Editando equipo " + equipoOriginal.getNombre());
+        
+        // Actualizar datos del equipo
+        equipoOriginal.setNombre(nombre);
+        equipoOriginal.setCategoria(categoria);
+        equipoOriginal.setEntrenador(entrenador);
+        
+        // Guardar cambios
+        dataManager.actualizarEquipo(equipoOriginal);
+        cargarEquipos();
+        actualizarEstadisticas();
+        
+        Toast.makeText(requireContext(), "Equipo actualizado exitosamente", Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "editarEquipo: Equipo " + nombre + " actualizado correctamente");
+    }
+
+    private void mostrarDialogoGestionarJugadores(Equipo equipo) {
+        Log.d(TAG, "mostrarDialogoGestionarJugadores: Mostrando diálogo para " + equipo.getNombre());
+        
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_gestionar_jugadores, null);
+        
+        RecyclerView recyclerViewJugadoresDisponibles = dialogView.findViewById(R.id.recyclerViewJugadoresDisponibles);
+        RecyclerView recyclerViewJugadoresEquipo = dialogView.findViewById(R.id.recyclerViewJugadoresEquipo);
+        TextView textViewTitulo = dialogView.findViewById(R.id.textViewTitulo);
+        
+        textViewTitulo.setText("Gestionar Jugadores - " + equipo.getNombre());
+        
+        // Obtener todos los usuarios que son padres/tutores con jugadores
+        List<Usuario> todosUsuarios = dataManager.getUsuarios();
+        List<Usuario> jugadoresDisponibles = new ArrayList<>();
+        List<Usuario> jugadoresEquipo = new ArrayList<>();
+        
+        for (Usuario usuario : todosUsuarios) {
+            if (usuario.isEsPadre() && usuario.getJugador() != null && !usuario.getJugador().isEmpty()) {
+                if (equipo.getJugadoresIds() != null && equipo.getJugadoresIds().contains(usuario.getId())) {
+                    jugadoresEquipo.add(usuario);
+                } else {
+                    jugadoresDisponibles.add(usuario);
+                }
+            }
+        }
+        
+        // Adaptadores como arreglos finales para referencia en lambdas
+        final JugadorEquipoAdapter[] adapterDisponibles = new JugadorEquipoAdapter[1];
+        final JugadorEquipoAdapter[] adapterEquipo = new JugadorEquipoAdapter[1];
+
+        adapterDisponibles[0] = new JugadorEquipoAdapter(
+            jugadoresDisponibles,
+            jugador -> {
+                jugadoresDisponibles.remove(jugador);
+                jugadoresEquipo.add(jugador);
+                adapterDisponibles[0].actualizarJugadores(jugadoresDisponibles);
+                adapterEquipo[0].actualizarJugadores(jugadoresEquipo);
+            },
+            false // agregar
+        );
+
+        adapterEquipo[0] = new JugadorEquipoAdapter(
+            jugadoresEquipo,
+            jugador -> {
+                jugadoresEquipo.remove(jugador);
+                jugadoresDisponibles.add(jugador);
+                adapterDisponibles[0].actualizarJugadores(jugadoresDisponibles);
+                adapterEquipo[0].actualizarJugadores(jugadoresEquipo);
+            },
+            true // quitar
+        );
+
+        recyclerViewJugadoresDisponibles.setLayoutManager(new LinearLayoutManager(requireContext()));
+        recyclerViewJugadoresEquipo.setLayoutManager(new LinearLayoutManager(requireContext()));
+        recyclerViewJugadoresDisponibles.setAdapter(adapterDisponibles[0]);
+        recyclerViewJugadoresEquipo.setAdapter(adapterEquipo[0]);
+        
+        builder.setView(dialogView)
+                .setTitle("Gestionar Jugadores")
+                .setPositiveButton("Guardar", (dialog, which) -> {
+                    // Guardar cambios en el equipo
+                    guardarCambiosEquipo(equipo, jugadoresEquipo);
+                    cargarEquipos();
+                    actualizarEstadisticas();
+                    Toast.makeText(requireContext(), "Jugadores actualizados", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void guardarCambiosEquipo(Equipo equipo, List<Usuario> jugadoresEquipo) {
+        // Actualizar la lista de IDs de jugadores en el equipo
+        List<String> nuevosJugadoresIds = new ArrayList<>();
+        for (Usuario jugador : jugadoresEquipo) {
+            nuevosJugadoresIds.add(jugador.getId());
+        }
+        equipo.setJugadoresIds(nuevosJugadoresIds);
+        
+        // Guardar el equipo actualizado
+        dataManager.actualizarEquipo(equipo);
     }
 
     private void mostrarDialogoEliminarEquipo(Equipo equipo) {

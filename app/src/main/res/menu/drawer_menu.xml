@@ -21,6 +21,11 @@
             android:id="@+id/nav_mensajes"
             android:icon="@drawable/ic_message"
             android:title="Mensajes" />
+
+        <item
+            android:id="@+id/nav_muro_destacados"
+            android:icon="@drawable/ic_star"
+            android:title="Muro de Destacados" />
         
         <item
             android:id="@+id/nav_objetos_perdidos"
@@ -41,6 +46,11 @@
             android:id="@+id/nav_estadisticas"
             android:icon="@drawable/ic_stats"
             android:title="Estadísticas" />
+        
+        <item
+            android:id="@+id/nav_configuracion"
+            android:icon="@drawable/ic_settings"
+            android:title="Configuración" />
     </group>
 
     <!-- Opciones solo para administrador -->

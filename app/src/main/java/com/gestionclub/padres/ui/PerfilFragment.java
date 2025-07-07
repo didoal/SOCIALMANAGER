@@ -1,137 +1,235 @@
 package com.gestionclub.padres.ui;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import com.gestionclub.padres.R;
-import com.gestionclub.padres.adapter.UsuarioAdapter;
 import com.gestionclub.padres.data.DataManager;
 import com.gestionclub.padres.model.Usuario;
-import java.util.ArrayList;
-import java.util.List;
 
-public class PerfilFragment extends Fragment implements UsuarioAdapter.OnUsuarioClickListener {
-    private EditText editTextNombreUsuario, editTextJugador, editTextPassword;
-    private Button btnCrearUsuario, btnLogout;
-    private RecyclerView recyclerViewUsuarios;
-    private UsuarioAdapter usuarioAdapter;
+public class PerfilFragment extends Fragment {
     private DataManager dataManager;
-    private List<Usuario> usuarios;
+    private Usuario usuarioActual;
+    
+    // Vistas del perfil
+    private TextView textViewNombre;
+    private TextView textViewEmail;
+    private TextView textViewRol;
+    private TextView textViewEquipo;
+    private TextView textViewJugador;
+    private TextView textViewFechaRegistro;
+    
+    // Botones de acción
+    private Button buttonEditarPerfil;
+    private Button buttonCambiarPassword;
+    private Button buttonConfiguracion;
+    private Button buttonCerrarSesion;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_perfil, container, false);
-        dataManager = new DataManager(requireContext());
-        inicializarVistas(view);
-        cargarUsuarios();
-        configurarListeners();
+        
+        try {
+            dataManager = new DataManager(requireContext());
+            usuarioActual = dataManager.getUsuarioActual();
+            
+            inicializarVistas(view);
+            cargarInformacionPerfil();
+            configurarListeners();
+            
+        } catch (Exception e) {
+            Toast.makeText(requireContext(), "Error al cargar el perfil", Toast.LENGTH_LONG).show();
+        }
+        
         return view;
     }
 
     private void inicializarVistas(View view) {
-        editTextNombreUsuario = view.findViewById(R.id.editTextNombreUsuario);
-        editTextJugador = view.findViewById(R.id.editTextJugador);
-        editTextPassword = view.findViewById(R.id.editTextPassword);
-        btnCrearUsuario = view.findViewById(R.id.btnCrearUsuario);
-        btnLogout = view.findViewById(R.id.btn_logout);
-        recyclerViewUsuarios = view.findViewById(R.id.recyclerViewUsuarios);
-        recyclerViewUsuarios.setLayoutManager(new LinearLayoutManager(requireContext()));
-        usuarios = new ArrayList<>();
-        usuarioAdapter = new UsuarioAdapter(usuarios, this);
-        recyclerViewUsuarios.setAdapter(usuarioAdapter);
+        // Vistas de información
+        textViewNombre = view.findViewById(R.id.textViewNombre);
+        textViewEmail = view.findViewById(R.id.textViewEmail);
+        textViewRol = view.findViewById(R.id.textViewRol);
+        textViewEquipo = view.findViewById(R.id.textViewEquipo);
+        textViewJugador = view.findViewById(R.id.textViewJugador);
+        textViewFechaRegistro = view.findViewById(R.id.textViewFechaRegistro);
+        
+        // Botones
+        buttonEditarPerfil = view.findViewById(R.id.buttonEditarPerfil);
+        buttonCambiarPassword = view.findViewById(R.id.buttonCambiarPassword);
+        buttonConfiguracion = view.findViewById(R.id.buttonConfiguracion);
+        buttonCerrarSesion = view.findViewById(R.id.buttonCerrarSesion);
     }
 
-    private void cargarUsuarios() {
-        usuarios = dataManager.getUsuarios();
-        usuarioAdapter.actualizarUsuarios(usuarios);
+    private void cargarInformacionPerfil() {
+        if (usuarioActual != null) {
+            textViewNombre.setText(usuarioActual.getNombre());
+            textViewEmail.setText(usuarioActual.getEmail());
+            textViewRol.setText(usuarioActual.isEsAdmin() ? "Administrador" : "Usuario");
+            
+            String equipo = usuarioActual.getEquipo();
+            if (equipo != null && !equipo.isEmpty()) {
+                textViewEquipo.setText(equipo);
+            } else {
+                textViewEquipo.setText("No asignado");
+            }
+            
+            String jugador = usuarioActual.getJugador();
+            if (jugador != null && !jugador.isEmpty()) {
+                textViewJugador.setText(jugador);
+            } else {
+                textViewJugador.setText("No asignado");
+            }
+            
+            // Formatear fecha de registro
+            String fechaRegistro = usuarioActual.getFechaRegistro().toString().substring(0, 10);
+            textViewFechaRegistro.setText(fechaRegistro);
+        }
     }
 
     private void configurarListeners() {
-        btnCrearUsuario.setOnClickListener(v -> mostrarDialogoCrearUsuario());
-        btnLogout.setOnClickListener(v -> {
-            dataManager.cerrarSesion();
-            requireActivity().finish();
-        });
+        buttonEditarPerfil.setOnClickListener(v -> mostrarDialogoEditarPerfil());
+        buttonCambiarPassword.setOnClickListener(v -> mostrarDialogoCambiarPassword());
+        buttonConfiguracion.setOnClickListener(v -> mostrarDialogoConfiguracion());
+        buttonCerrarSesion.setOnClickListener(v -> confirmarCerrarSesion());
     }
 
-    private void mostrarDialogoCrearUsuario() {
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(requireContext());
-        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_usuario, null);
-
+    private void mostrarDialogoEditarPerfil() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_editar_perfil, null);
+        
         EditText editTextNombre = dialogView.findViewById(R.id.editTextNombre);
         EditText editTextEmail = dialogView.findViewById(R.id.editTextEmail);
-        EditText editTextPassword = dialogView.findViewById(R.id.editTextPassword);
-        Spinner spinnerRol = dialogView.findViewById(R.id.spinnerRol);
-        Spinner spinnerEquipo = dialogView.findViewById(R.id.spinnerEquipo);
-
-        // Opciones de rol permitidas
-        String[] roles = {"Madre", "Padre", "Tutor", "Jugador"};
-        ArrayAdapter<String> adapterRol = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, roles);
-        adapterRol.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerRol.setAdapter(adapterRol);
-
-        // Opciones de equipo/categoría (puedes personalizar)
-        String[] equipos = {"Biberones", "Prebenjamín A", "Prebenjamín B", "Benjamín A", "Benjamín B", "Alevín A", "Alevín B", "Infantil", "Cadete", "Juvenil"};
-        ArrayAdapter<String> adapterEquipo = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, equipos);
-        adapterEquipo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerEquipo.setAdapter(adapterEquipo);
-
+        EditText editTextJugador = dialogView.findViewById(R.id.editTextJugador);
+        
+        // Pre-llenar con datos actuales
+        editTextNombre.setText(usuarioActual.getNombre());
+        editTextEmail.setText(usuarioActual.getEmail());
+        editTextJugador.setText(usuarioActual.getJugador());
+        
         builder.setView(dialogView)
-                .setTitle("Crear Usuario")
-                .setPositiveButton("Crear", (dialog, which) -> {
-                    String nombre = editTextNombre.getText().toString().trim();
-                    String email = editTextEmail.getText().toString().trim();
-                    String password = editTextPassword.getText().toString().trim();
-                    String rol = spinnerRol.getSelectedItem().toString().toLowerCase();
-                    String equipo = spinnerEquipo.getSelectedItem().toString();
-
-                    if (nombre.isEmpty() || password.isEmpty()) {
-                        Toast.makeText(requireContext(), "Completa todos los campos", Toast.LENGTH_SHORT).show();
+                .setTitle("Editar Perfil")
+                .setPositiveButton("Guardar", (dialog, which) -> {
+                    String nuevoNombre = editTextNombre.getText().toString().trim();
+                    String nuevoEmail = editTextEmail.getText().toString().trim();
+                    String nuevoJugador = editTextJugador.getText().toString().trim();
+                    
+                    if (nuevoNombre.isEmpty()) {
+                        Toast.makeText(requireContext(), "El nombre no puede estar vacío", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    // Validar duplicados (nombre + equipo)
-                    for (Usuario u : dataManager.getUsuarios()) {
-                        if (u.getNombre().equalsIgnoreCase(nombre) && u.getEquipo() != null && u.getEquipo().equalsIgnoreCase(equipo)) {
-                            Toast.makeText(requireContext(), "Ya existe un usuario con ese nombre y equipo", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                    }
-                    Usuario nuevo = new Usuario(nombre, equipo, password, rol);
-                    nuevo.setEmail(email);
-                    nuevo.setEquipo(equipo);
-                    List<Usuario> lista = dataManager.getUsuarios();
-                    lista.add(nuevo);
-                    dataManager.guardarUsuarios(lista);
-                    cargarUsuarios();
-                    Toast.makeText(requireContext(), "Usuario creado", Toast.LENGTH_SHORT).show();
+                    
+                    // Actualizar usuario
+                    usuarioActual.setNombre(nuevoNombre);
+                    usuarioActual.setEmail(nuevoEmail);
+                    usuarioActual.setJugador(nuevoJugador);
+                    
+                    dataManager.actualizarUsuario(usuarioActual);
+                    dataManager.guardarUsuarioActual(usuarioActual);
+                    
+                    cargarInformacionPerfil();
+                    Toast.makeText(requireContext(), "Perfil actualizado correctamente", Toast.LENGTH_SHORT).show();
                 })
                 .setNegativeButton("Cancelar", null)
                 .show();
     }
 
+    private void mostrarDialogoCambiarPassword() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_cambiar_password, null);
+        
+        EditText editTextPasswordActual = dialogView.findViewById(R.id.editTextPasswordActual);
+        EditText editTextPasswordNueva = dialogView.findViewById(R.id.editTextPasswordNueva);
+        EditText editTextPasswordConfirmar = dialogView.findViewById(R.id.editTextPasswordConfirmar);
+        
+        builder.setView(dialogView)
+                .setTitle("Cambiar Contraseña")
+                .setPositiveButton("Cambiar", (dialog, which) -> {
+                    String passwordActual = editTextPasswordActual.getText().toString();
+                    String passwordNueva = editTextPasswordNueva.getText().toString();
+                    String passwordConfirmar = editTextPasswordConfirmar.getText().toString();
+                    
+                    // Validaciones
+                    if (passwordActual.isEmpty() || passwordNueva.isEmpty() || passwordConfirmar.isEmpty()) {
+                        Toast.makeText(requireContext(), "Completa todos los campos", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    
+                    if (!passwordActual.equals(usuarioActual.getPassword())) {
+                        Toast.makeText(requireContext(), "La contraseña actual es incorrecta", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    
+                    if (!passwordNueva.equals(passwordConfirmar)) {
+                        Toast.makeText(requireContext(), "Las contraseñas nuevas no coinciden", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    
+                    if (passwordNueva.length() < 6) {
+                        Toast.makeText(requireContext(), "La contraseña debe tener al menos 6 caracteres", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    
+                    // Actualizar contraseña
+                    usuarioActual.setPassword(passwordNueva);
+                    dataManager.actualizarUsuario(usuarioActual);
+                    dataManager.guardarUsuarioActual(usuarioActual);
+                    
+                    Toast.makeText(requireContext(), "Contraseña cambiada correctamente", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void mostrarDialogoConfiguracion() {
+        String[] opciones = {"Notificaciones", "Privacidad", "Tema", "Idioma"};
+        
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Configuración")
+                .setItems(opciones, (dialog, which) -> {
+                    switch (which) {
+                        case 0:
+                            Toast.makeText(requireContext(), "Configuración de notificaciones", Toast.LENGTH_SHORT).show();
+                            break;
+                        case 1:
+                            Toast.makeText(requireContext(), "Configuración de privacidad", Toast.LENGTH_SHORT).show();
+                            break;
+                        case 2:
+                            Toast.makeText(requireContext(), "Configuración de tema", Toast.LENGTH_SHORT).show();
+                            break;
+                        case 3:
+                            Toast.makeText(requireContext(), "Configuración de idioma", Toast.LENGTH_SHORT).show();
+                            break;
+                    }
+                })
+                .setNegativeButton("Cerrar", null)
+                .show();
+    }
+
+    private void confirmarCerrarSesion() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Cerrar Sesión")
+                .setMessage("¿Estás seguro de que quieres cerrar sesión?")
+                .setPositiveButton("Sí", (dialog, which) -> {
+                    dataManager.cerrarSesion();
+                    requireActivity().finish();
+                })
+                .setNegativeButton("No", null)
+                .show();
+    }
+
     @Override
-    public void onEliminarClick(Usuario usuario) {
-        List<Usuario> lista = dataManager.getUsuarios();
-        List<Usuario> nuevaLista = new ArrayList<>();
-        for (Usuario u : lista) {
-            if (!u.getId().equals(usuario.getId())) {
-                nuevaLista.add(u);
-            }
-        }
-        dataManager.guardarUsuarios(nuevaLista);
-        cargarUsuarios();
-        Toast.makeText(requireContext(), "Usuario eliminado", Toast.LENGTH_SHORT).show();
+    public void onResume() {
+        super.onResume();
+        cargarInformacionPerfil();
     }
 } 

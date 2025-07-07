@@ -29,12 +29,14 @@ public class MensajesFragment extends Fragment {
     private EditText editTextMensaje;
     private Button buttonEnviar;
     private Button buttonFiltroEquipo;
+    private Button buttonDestacados;
     private TextView textViewChatInfo;
     private TextView textViewEquipoFiltro;
     private MensajeAdapter mensajeAdapter;
     private DataManager dataManager;
     private Usuario usuarioActual;
     private String equipoFiltroActual = "Todos";
+    private boolean mostrandoDestacados = false;
 
     @Nullable
     @Override
@@ -59,22 +61,31 @@ public class MensajesFragment extends Fragment {
         editTextMensaje = view.findViewById(R.id.editTextMensaje);
         buttonEnviar = view.findViewById(R.id.buttonEnviar);
         buttonFiltroEquipo = view.findViewById(R.id.buttonFiltroEquipo);
+        buttonDestacados = view.findViewById(R.id.buttonDestacados);
         textViewChatInfo = view.findViewById(R.id.textViewChatInfo);
         textViewEquipoFiltro = view.findViewById(R.id.textViewEquipoFiltro);
     }
 
     private void configurarRecyclerView() {
         mensajeAdapter = new MensajeAdapter(new ArrayList<>(), usuarioActual);
+        mensajeAdapter.setOnMensajeClickListener(new MensajeAdapter.OnMensajeClickListener() {
+            @Override
+            public void onMensajeLongClick(Mensaje mensaje, View view) {
+                mostrarDialogoDestacar(mensaje);
+            }
+        });
         recyclerViewMensajes.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerViewMensajes.setAdapter(mensajeAdapter);
     }
 
     private void configurarFiltroEquipo() {
-        // Mostrar botón de filtro solo para administradores
+        // Mostrar botones de filtro y destacados solo para administradores
         if (usuarioActual != null && usuarioActual.isEsAdmin()) {
             buttonFiltroEquipo.setVisibility(View.VISIBLE);
+            buttonDestacados.setVisibility(View.VISIBLE);
         } else {
             buttonFiltroEquipo.setVisibility(View.GONE);
+            buttonDestacados.setVisibility(View.GONE);
             // Para usuarios normales, filtrar automáticamente por su equipo
             if (usuarioActual != null && usuarioActual.getEquipo() != null) {
                 equipoFiltroActual = usuarioActual.getEquipo();
@@ -84,18 +95,32 @@ public class MensajesFragment extends Fragment {
     }
 
     private void cargarMensajes() {
-        List<Mensaje> todosMensajes = dataManager.getMensajes();
         List<Mensaje> mensajesFiltrados = new ArrayList<>();
         
-        for (Mensaje mensaje : todosMensajes) {
-            // Si es "Todos", mostrar todos los mensajes
-            if ("Todos".equals(equipoFiltroActual)) {
-                mensajesFiltrados.add(mensaje);
-            } else {
-                // Filtrar por equipo específico
-                if (equipoFiltroActual.equals(mensaje.getEquipo()) || 
-                    (mensaje.getEquipo() == null && usuarioActual != null && equipoFiltroActual.equals(usuarioActual.getEquipo()))) {
+        if (mostrandoDestacados) {
+            // Mostrar solo mensajes destacados
+            List<Mensaje> todosMensajes = dataManager.getMensajesDestacados();
+            for (Mensaje mensaje : todosMensajes) {
+                if ("Todos".equals(equipoFiltroActual)) {
                     mensajesFiltrados.add(mensaje);
+                } else {
+                    if (equipoFiltroActual.equals(mensaje.getEquipo()) || 
+                        (mensaje.getEquipo() == null && usuarioActual != null && equipoFiltroActual.equals(usuarioActual.getEquipo()))) {
+                        mensajesFiltrados.add(mensaje);
+                    }
+                }
+            }
+        } else {
+            // Mostrar todos los mensajes
+            List<Mensaje> todosMensajes = dataManager.getMensajes();
+            for (Mensaje mensaje : todosMensajes) {
+                if ("Todos".equals(equipoFiltroActual)) {
+                    mensajesFiltrados.add(mensaje);
+                } else {
+                    if (equipoFiltroActual.equals(mensaje.getEquipo()) || 
+                        (mensaje.getEquipo() == null && usuarioActual != null && equipoFiltroActual.equals(usuarioActual.getEquipo()))) {
+                        mensajesFiltrados.add(mensaje);
+                    }
                 }
             }
         }
@@ -109,11 +134,44 @@ public class MensajesFragment extends Fragment {
     private void configurarListeners() {
         buttonEnviar.setOnClickListener(v -> enviarMensaje());
         buttonFiltroEquipo.setOnClickListener(v -> mostrarDialogoFiltro());
+        buttonDestacados.setOnClickListener(v -> toggleDestacados());
         
         editTextMensaje.setOnEditorActionListener((v, actionId, event) -> {
             enviarMensaje();
             return true;
         });
+    }
+
+    private void toggleDestacados() {
+        mostrandoDestacados = !mostrandoDestacados;
+        if (mostrandoDestacados) {
+            buttonDestacados.setText("Ver Todos");
+            textViewChatInfo.setText("Muro de Mensajes Destacados");
+        } else {
+            buttonDestacados.setText("Ver Destacados");
+            textViewChatInfo.setText("Chat General del Club");
+        }
+        cargarMensajes();
+    }
+
+    private void mostrarDialogoDestacar(Mensaje mensaje) {
+        String accion = mensaje.isDestacado() ? "Quitar de destacados" : "Destacar mensaje";
+        String mensajeDialogo = mensaje.isDestacado() ? 
+            "¿Quieres quitar este mensaje de los destacados?" : 
+            "¿Quieres destacar este mensaje para que aparezca en el muro?";
+
+        new AlertDialog.Builder(requireContext())
+            .setTitle(accion)
+            .setMessage(mensajeDialogo)
+            .setPositiveButton("Sí", (dialog, which) -> {
+                dataManager.toggleDestacadoMensaje(mensaje.getId());
+                cargarMensajes();
+                String confirmacion = mensaje.isDestacado() ? 
+                    "Mensaje quitado de destacados" : "Mensaje destacado";
+                Toast.makeText(requireContext(), confirmacion, Toast.LENGTH_SHORT).show();
+            })
+            .setNegativeButton("No", null)
+            .show();
     }
 
     private void mostrarDialogoFiltro() {

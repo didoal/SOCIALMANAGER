@@ -44,7 +44,6 @@ public class AsistenciaFragment extends Fragment {
     private FloatingActionButton fabRegistrarAsistencia;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
     private Usuario usuarioActual;
-    private LinearLayout layoutNoAsistencias;
 
     @Nullable
     @Override
@@ -67,7 +66,6 @@ public class AsistenciaFragment extends Fragment {
         recyclerViewAsistencias = view.findViewById(R.id.recyclerViewAsistencias);
         textViewEstadisticas = view.findViewById(R.id.textViewEstadisticas);
         fabRegistrarAsistencia = view.findViewById(R.id.fabRegistrarAsistencia);
-        layoutNoAsistencias = view.findViewById(R.id.layoutNoAsistencias);
         
         fabRegistrarAsistencia.setOnClickListener(v -> mostrarDialogoRegistrarAsistencia());
     }
@@ -104,15 +102,6 @@ public class AsistenciaFragment extends Fragment {
         asistenciasFiltradas.sort((a1, a2) -> a2.getFecha().compareTo(a1.getFecha()));
         
         asistenciaAdapter.actualizarAsistencias(asistenciasFiltradas);
-        
-        // Mostrar/ocultar mensaje de sin asistencias
-        if (asistenciasFiltradas.isEmpty()) {
-            layoutNoAsistencias.setVisibility(View.VISIBLE);
-            recyclerViewAsistencias.setVisibility(View.GONE);
-        } else {
-            layoutNoAsistencias.setVisibility(View.GONE);
-            recyclerViewAsistencias.setVisibility(View.VISIBLE);
-        }
         
         // Verificar eventos pendientes de confirmación
         verificarEventosPendientesConfirmacion();

@@ -190,6 +190,17 @@
                     android:text="Limpiar Filtros"
                     android:textColor="@color/white"
                     android:background="@drawable/button_gray_background"
+                    android:padding="8dp"
+                    android:layout_marginBottom="8dp" />
+
+                <!-- Botón exportar reporte -->
+                <Button
+                    android:id="@+id/buttonExportarReporte"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="📊 Exportar Reporte"
+                    android:textColor="@color/white"
+                    android:background="@drawable/button_gold_background"
                     android:padding="8dp" />
 
             </LinearLayout>

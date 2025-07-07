@@ -17,15 +17,28 @@ import java.util.List;
 public class EquipoAdapter extends RecyclerView.Adapter<EquipoAdapter.EquipoViewHolder> {
     
     private List<Equipo> equipos;
-    private OnEquipoClickListener listener;
+    private OnEliminarClickListener listenerEliminar;
+    private OnEditarClickListener listenerEditar;
+    private OnGestionarJugadoresListener listenerGestionarJugadores;
 
-    public interface OnEquipoClickListener {
+    public interface OnEliminarClickListener {
         void onEliminarClick(Equipo equipo);
     }
 
-    public EquipoAdapter(List<Equipo> equipos, OnEquipoClickListener listener) {
+    public interface OnEditarClickListener {
+        void onEditarClick(Equipo equipo);
+    }
+
+    public interface OnGestionarJugadoresListener {
+        void onGestionarJugadoresClick(Equipo equipo);
+    }
+
+    public EquipoAdapter(List<Equipo> equipos, OnEliminarClickListener listenerEliminar, 
+                        OnEditarClickListener listenerEditar, OnGestionarJugadoresListener listenerGestionarJugadores) {
         this.equipos = equipos;
-        this.listener = listener;
+        this.listenerEliminar = listenerEliminar;
+        this.listenerEditar = listenerEditar;
+        this.listenerGestionarJugadores = listenerGestionarJugadores;
     }
 
     @NonNull
@@ -57,6 +70,8 @@ public class EquipoAdapter extends RecyclerView.Adapter<EquipoAdapter.EquipoView
         private TextView textViewCategoria;
         private TextView textViewEntrenador;
         private TextView textViewJugadores;
+        private ImageButton buttonEditar;
+        private ImageButton buttonGestionarJugadores;
         private ImageButton buttonEliminar;
 
         public EquipoViewHolder(@NonNull View itemView) {
@@ -65,22 +80,42 @@ public class EquipoAdapter extends RecyclerView.Adapter<EquipoAdapter.EquipoView
             textViewCategoria = itemView.findViewById(R.id.textViewCategoria);
             textViewEntrenador = itemView.findViewById(R.id.textViewEntrenador);
             textViewJugadores = itemView.findViewById(R.id.textViewJugadores);
+            buttonEditar = itemView.findViewById(R.id.buttonEditar);
+            buttonGestionarJugadores = itemView.findViewById(R.id.buttonGestionarJugadores);
             buttonEliminar = itemView.findViewById(R.id.buttonEliminar);
         }
 
         public void bind(Equipo equipo) {
             textViewNombre.setText(equipo.getNombre());
             textViewCategoria.setText("Categoría: " + equipo.getCategoria());
-            textViewEntrenador.setText("Entrenador: " + equipo.getEntrenador());
+            
+            if (equipo.getEntrenador() != null && !equipo.getEntrenador().isEmpty()) {
+                textViewEntrenador.setText("Entrenador: " + equipo.getEntrenador());
+                textViewEntrenador.setVisibility(View.VISIBLE);
+            } else {
+                textViewEntrenador.setVisibility(View.GONE);
+            }
             
             // Mostrar número de jugadores
             int numJugadores = equipo.getJugadoresIds() != null ? equipo.getJugadoresIds().size() : 0;
             textViewJugadores.setText(numJugadores + " jugador" + (numJugadores != 1 ? "es" : ""));
             
-            // Configurar botón eliminar
+            // Configurar botones
+            buttonEditar.setOnClickListener(v -> {
+                if (listenerEditar != null) {
+                    listenerEditar.onEditarClick(equipo);
+                }
+            });
+            
+            buttonGestionarJugadores.setOnClickListener(v -> {
+                if (listenerGestionarJugadores != null) {
+                    listenerGestionarJugadores.onGestionarJugadoresClick(equipo);
+                }
+            });
+            
             buttonEliminar.setOnClickListener(v -> {
-                if (listener != null) {
-                    listener.onEliminarClick(equipo);
+                if (listenerEliminar != null) {
+                    listenerEliminar.onEliminarClick(equipo);
                 }
             });
         }

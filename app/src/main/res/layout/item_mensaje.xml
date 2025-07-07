@@ -41,6 +41,16 @@
                 android:textSize="14sp"
                 android:textColor="@color/text_primary" />
 
+            <!-- Ícono de destacado -->
+            <ImageView
+                android:id="@+id/imageViewDestacado"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_star"
+                android:visibility="gone"
+                android:layout_marginEnd="8dp"
+                android:tint="@color/gold" />
+
             <TextView
                 android:id="@+id/textViewFecha"
                 android:layout_width="wrap_content"
@@ -52,6 +62,7 @@
 
         <!-- Contenido del mensaje -->
         <LinearLayout
+            android:id="@+id/layoutMensaje"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"

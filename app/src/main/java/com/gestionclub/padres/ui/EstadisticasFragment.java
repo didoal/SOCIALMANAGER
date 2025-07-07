@@ -78,9 +78,11 @@ public class EstadisticasFragment extends Fragment {
         buttonFechaInicio = view.findViewById(R.id.buttonFechaInicio);
         buttonFechaFin = view.findViewById(R.id.buttonFechaFin);
         Button buttonLimpiarFiltros = view.findViewById(R.id.buttonLimpiarFiltros);
+        Button buttonExportarReporte = view.findViewById(R.id.buttonExportarReporte);
         
         configurarFiltrosFecha();
         configurarBotonLimpiar(buttonLimpiarFiltros);
+        configurarBotonExportar(buttonExportarReporte);
     }
 
     private void configurarSpinners() {
@@ -677,6 +679,88 @@ public class EstadisticasFragment extends Fragment {
             contenedorEstadisticasJugador.removeAllViews();
             cargarEstadisticas();
         });
+    }
+
+    private void configurarBotonExportar(Button buttonExportarReporte) {
+        buttonExportarReporte.setOnClickListener(v -> {
+            generarYCompartirReporte();
+        });
+    }
+
+    private void generarYCompartirReporte() {
+        try {
+            // Generar contenido del reporte
+            StringBuilder reporte = new StringBuilder();
+            reporte.append("REPORTE DE ESTADÍSTICAS - CD SANTIAGUIÑO\n");
+            reporte.append("==========================================\n\n");
+            
+            // Fecha del reporte
+            reporte.append("Fecha del reporte: ").append(dateFormat.format(new Date())).append("\n");
+            
+            // Filtros aplicados
+            if (fechaInicio != null || fechaFin != null) {
+                reporte.append("Período: ");
+                if (fechaInicio != null) reporte.append("Desde ").append(dateFormat.format(fechaInicio));
+                if (fechaFin != null) reporte.append(" hasta ").append(dateFormat.format(fechaFin));
+                reporte.append("\n");
+            }
+            
+            // Estadísticas generales
+            List<Evento> eventos = dataManager.getEventos();
+            List<Asistencia> asistencias = dataManager.getAsistencias();
+            List<ObjetoPerdido> objetos = dataManager.getObjetosPerdidos();
+            
+            // Aplicar filtros de fecha
+            eventos = filtrarEventosPorFecha(eventos);
+            asistencias = filtrarAsistenciasPorFecha(asistencias, eventos);
+            
+            reporte.append("\nESTADÍSTICAS GENERALES:\n");
+            reporte.append("• Total Eventos: ").append(eventos.size()).append("\n");
+            reporte.append("• Total Asistencias: ").append(asistencias.size()).append("\n");
+            reporte.append("• Total Mensajes: ").append(dataManager.getMensajes().size()).append("\n");
+            reporte.append("• Total Objetos Perdidos: ").append(objetos.size()).append("\n");
+            
+            // Calcular promedio de asistencia
+            int asistenciasPositivas = 0;
+            for (Asistencia a : asistencias) {
+                if (a.isAsistio()) asistenciasPositivas++;
+            }
+            double promedioAsistencia = asistencias.size() > 0 ? (double) asistenciasPositivas / asistencias.size() * 100 : 0;
+            reporte.append("• Promedio Asistencia: ").append(String.format("%.1f%%", promedioAsistencia)).append("\n");
+            
+            // Estadísticas por tipo de evento
+            reporte.append("\nEVENTOS POR TIPO:\n");
+            Map<String, Integer> tiposEventos = new HashMap<>();
+            for (Evento evento : eventos) {
+                String tipo = evento.getTipo();
+                tiposEventos.put(tipo, tiposEventos.getOrDefault(tipo, 0) + 1);
+            }
+            for (Map.Entry<String, Integer> entry : tiposEventos.entrySet()) {
+                reporte.append("• ").append(entry.getKey()).append(": ").append(entry.getValue()).append(" eventos\n");
+            }
+            
+            // Estadísticas de objetos perdidos
+            int objetosEncontrados = 0;
+            for (ObjetoPerdido objeto : objetos) {
+                if (objeto.isEncontrado()) {
+                    objetosEncontrados++;
+                }
+            }
+            reporte.append("\nOBJETOS PERDIDOS:\n");
+            reporte.append("• Encontrados: ").append(objetosEncontrados).append("/").append(objetos.size()).append("\n");
+            reporte.append("• Porcentaje de éxito: ").append(objetos.size() > 0 ? String.format("%.1f%%", (double) objetosEncontrados / objetos.size() * 100) : "0%").append("\n");
+            
+            // Compartir reporte
+            android.content.Intent intent = new android.content.Intent(android.content.Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Reporte de Estadísticas - CD Santiaguiño");
+            intent.putExtra(android.content.Intent.EXTRA_TEXT, reporte.toString());
+            
+            startActivity(android.content.Intent.createChooser(intent, "Compartir Reporte"));
+            
+        } catch (Exception e) {
+            android.widget.Toast.makeText(requireContext(), "Error al generar el reporte: " + e.getMessage(), android.widget.Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void mostrarSelectorFecha(boolean esFechaInicio) {

@@ -11,7 +11,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Crear Nuevo Equipo"
+        android:text="Editar Equipo"
         android:textColor="@color/colorPrimary"
         android:textSize="20sp"
         android:textStyle="bold"

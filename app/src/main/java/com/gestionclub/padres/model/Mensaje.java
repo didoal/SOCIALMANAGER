@@ -10,10 +10,12 @@ public class Mensaje {
     private Date fechaCreacion;
     private boolean esAdmin;
     private String equipoId;
+    private boolean destacado;
 
     public Mensaje() {
         this.id = String.valueOf(System.currentTimeMillis());
         this.fechaCreacion = new Date();
+        this.destacado = false;
     }
 
     public Mensaje(String autorId, String autorNombre, String contenido, boolean esAdmin) {
@@ -79,6 +81,14 @@ public class Mensaje {
 
     public void setEquipoId(String equipoId) {
         this.equipoId = equipoId;
+    }
+
+    public boolean isDestacado() {
+        return destacado;
+    }
+
+    public void setDestacado(boolean destacado) {
+        this.destacado = destacado;
     }
 
     // Métodos para compatibilidad con el código existente
