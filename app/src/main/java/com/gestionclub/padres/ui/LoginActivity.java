@@ -36,43 +36,94 @@ public class LoginActivity extends AppCompatActivity {
         try {
             Log.d(TAG, "onCreate: Iniciando LoginActivity");
             super.onCreate(savedInstanceState);
+            
+            // Verificar que el layout existe antes de cargarlo
+            Log.d(TAG, "onCreate: Cargando layout activity_login");
             setContentView(R.layout.activity_login);
             Log.d(TAG, "onCreate: Layout cargado correctamente");
 
-            // Inicializar DataManager
+            // Inicializar DataManager con manejo de errores
             Log.d(TAG, "onCreate: Inicializando DataManager");
-            dataManager = new DataManager(this);
-            Log.d(TAG, "onCreate: DataManager inicializado");
+            try {
+                dataManager = new DataManager(this);
+                Log.d(TAG, "onCreate: DataManager inicializado correctamente");
+            } catch (Exception e) {
+                Log.e(TAG, "onCreate: Error al inicializar DataManager", e);
+                Toast.makeText(this, "Error al inicializar datos: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                // Continuar sin DataManager para evitar crash
+                dataManager = null;
+            }
 
             // Verificar si ya hay una sesión activa
             Log.d(TAG, "onCreate: Verificando sesión existente");
-            SessionManager sessionManager = new SessionManager(this);
-            if (sessionManager.getUser() != null) {
-                Log.d(TAG, "onCreate: Sesión existente encontrada, redirigiendo a MainActivity");
-                startActivity(new Intent(this, MainActivity.class));
-                finish();
-                return;
+            try {
+                SessionManager sessionManager = new SessionManager(this);
+                if (sessionManager.getUser() != null) {
+                    Log.d(TAG, "onCreate: Sesión existente encontrada, redirigiendo a MainActivity");
+                    startActivity(new Intent(this, MainActivity.class));
+                    finish();
+                    return;
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "onCreate: Error al verificar sesión", e);
+                // Continuar sin verificar sesión
             }
 
+            Log.d(TAG, "onCreate: Inicializando vistas");
             inicializarVistas();
+            
+            Log.d(TAG, "onCreate: Configurando listeners");
             configurarListeners();
-            crearDatosEjemplo();
+            
+            Log.d(TAG, "onCreate: Creando datos de ejemplo");
+            if (dataManager != null) {
+                crearDatosEjemplo();
+            }
+            
             Log.d(TAG, "onCreate: LoginActivity inicializada correctamente");
             
         } catch (Exception e) {
-            Log.e(TAG, "onCreate: Error crítico", e);
-            Toast.makeText(this, "Error al inicializar: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Log.e(TAG, "onCreate: Error crítico en LoginActivity", e);
+            // Mostrar un mensaje de error más amigable
+            try {
+                Toast.makeText(this, "Error al iniciar la aplicación. Reinicia la app.", Toast.LENGTH_LONG).show();
+            } catch (Exception toastError) {
+                Log.e(TAG, "onCreate: Error al mostrar Toast", toastError);
+            }
         }
     }
 
     private void inicializarVistas() {
         try {
             Log.d(TAG, "inicializarVistas: Iniciando");
+            
+            // Buscar cada vista individualmente con validación
             etUsuario = findViewById(R.id.et_usuario);
+            if (etUsuario == null) {
+                throw new RuntimeException("No se pudo encontrar et_usuario en el layout");
+            }
+            
             etPassword = findViewById(R.id.et_password);
+            if (etPassword == null) {
+                throw new RuntimeException("No se pudo encontrar et_password en el layout");
+            }
+            
             btnLogin = findViewById(R.id.btn_login);
+            if (btnLogin == null) {
+                throw new RuntimeException("No se pudo encontrar btn_login en el layout");
+            }
+            
             ivTogglePassword = findViewById(R.id.iv_toggle_password);
+            if (ivTogglePassword == null) {
+                throw new RuntimeException("No se pudo encontrar iv_toggle_password en el layout");
+            }
+            
             tvError = findViewById(R.id.tv_error);
+            if (tvError == null) {
+                throw new RuntimeException("No se pudo encontrar tv_error en el layout");
+            }
+            
+            Log.d(TAG, "inicializarVistas: Todas las vistas encontradas correctamente");
             
             // Configurar focus change listeners para mejor manejo del teclado
             etUsuario.setOnFocusChangeListener((v, hasFocus) -> {
@@ -89,7 +140,7 @@ public class LoginActivity extends AppCompatActivity {
             
             Log.d(TAG, "inicializarVistas: Vistas inicializadas correctamente");
         } catch (Exception e) {
-            Log.e(TAG, "inicializarVistas: Error", e);
+            Log.e(TAG, "inicializarVistas: Error al inicializar vistas", e);
             throw e;
         }
     }
@@ -110,26 +161,35 @@ public class LoginActivity extends AppCompatActivity {
         try {
             Log.d(TAG, "configurarListeners: Configurando listeners");
             
+            // Verificar que las vistas estén inicializadas
+            if (ivTogglePassword == null || etPassword == null || btnLogin == null) {
+                throw new RuntimeException("Vistas no inicializadas correctamente");
+            }
+            
             // Mostrar/ocultar contraseña con mejor manejo del teclado
             ivTogglePassword.setOnClickListener(v -> {
-                passwordVisible = !passwordVisible;
-                int cursorPosition = etPassword.getSelectionStart();
-                
-                if (passwordVisible) {
-                    etPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                    ivTogglePassword.setImageResource(R.drawable.ic_lock);
-                } else {
-                    etPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                    ivTogglePassword.setImageResource(R.drawable.ic_eye);
+                try {
+                    passwordVisible = !passwordVisible;
+                    int cursorPosition = etPassword.getSelectionStart();
+                    
+                    if (passwordVisible) {
+                        etPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                        ivTogglePassword.setImageResource(R.drawable.ic_lock);
+                    } else {
+                        etPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                        ivTogglePassword.setImageResource(R.drawable.ic_eye);
+                    }
+                    
+                    // Restaurar posición del cursor
+                    if (cursorPosition >= 0 && cursorPosition <= etPassword.getText().length()) {
+                        etPassword.setSelection(cursorPosition);
+                    }
+                    
+                    // Forzar actualización del teclado
+                    etPassword.requestFocus();
+                } catch (Exception e) {
+                    Log.e(TAG, "configurarListeners: Error en toggle password", e);
                 }
-                
-                // Restaurar posición del cursor
-                if (cursorPosition >= 0 && cursorPosition <= etPassword.getText().length()) {
-                    etPassword.setSelection(cursorPosition);
-                }
-                
-                // Forzar actualización del teclado
-                etPassword.requestFocus();
             });
             
             btnLogin.setOnClickListener(v -> realizarLogin());
@@ -154,14 +214,17 @@ public class LoginActivity extends AppCompatActivity {
             });
 
             // Botón de debug temporal - doble tap en el título
-            findViewById(R.id.app_title).setOnClickListener(v -> {
-                // Forzar creación de datos de ejemplo
-                forzarCreacionDatosEjemplo();
-            });
+            View appTitle = findViewById(R.id.app_title);
+            if (appTitle != null) {
+                appTitle.setOnClickListener(v -> {
+                    // Forzar creación de datos de ejemplo
+                    forzarCreacionDatosEjemplo();
+                });
+            }
             
             Log.d(TAG, "configurarListeners: Listeners configurados correctamente");
         } catch (Exception e) {
-            Log.e(TAG, "configurarListeners: Error", e);
+            Log.e(TAG, "configurarListeners: Error al configurar listeners", e);
             throw e;
         }
     }
@@ -211,6 +274,14 @@ public class LoginActivity extends AppCompatActivity {
     private void realizarLogin() {
         try {
             Log.d(TAG, "realizarLogin: Iniciando proceso de login");
+            
+            // Verificar que el DataManager esté disponible
+            if (dataManager == null) {
+                Log.e(TAG, "realizarLogin: DataManager no disponible");
+                mostrarError("Error interno de la aplicación. Reinicia la app.");
+                return;
+            }
+            
             String usuarioInput = etUsuario.getText().toString().trim();
             String passwordInput = etPassword.getText().toString().trim();
             tvError.setVisibility(View.GONE);
@@ -238,16 +309,23 @@ public class LoginActivity extends AppCompatActivity {
 
             // Simular delay de red
             btnLogin.postDelayed(() -> {
-                Usuario usuario = buscarUsuario(usuarioInput, passwordInput);
-                if (usuario == null) {
-                    Log.d(TAG, "realizarLogin: Usuario no encontrado o contraseña incorrecta");
-                    mostrarError("Usuario o contraseña incorrectos. Intenta de nuevo o consulta con el administrador.");
+                try {
+                    Usuario usuario = buscarUsuario(usuarioInput, passwordInput);
+                    if (usuario == null) {
+                        Log.d(TAG, "realizarLogin: Usuario no encontrado o contraseña incorrecta");
+                        mostrarError("Usuario o contraseña incorrectos. Intenta de nuevo o consulta con el administrador.");
+                        btnLogin.setEnabled(true);
+                        btnLogin.setText("INICIAR SESIÓN");
+                        return;
+                    }
+                    // Login exitoso
+                    loginExitoso(usuario);
+                } catch (Exception e) {
+                    Log.e(TAG, "realizarLogin: Error en búsqueda de usuario", e);
+                    mostrarError("Error interno. Intenta de nuevo.");
                     btnLogin.setEnabled(true);
                     btnLogin.setText("INICIAR SESIÓN");
-                    return;
                 }
-                // Login exitoso
-                loginExitoso(usuario);
             }, 800);
             
         } catch (Exception e) {
