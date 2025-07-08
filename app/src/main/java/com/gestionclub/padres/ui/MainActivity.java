@@ -202,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fragment = new AsistenciaFragment();
                 titulo = "Asistencia";
             } else if (id == R.id.nav_objetos_perdidos) {
-                // Objetos perdidos eliminado - redirigir a mensajes
+                // Chat - redirigir a mensajes
                 fragment = new MensajesFragment();
                 titulo = "Mensajes";
             } else if (id == R.id.nav_notificaciones) {

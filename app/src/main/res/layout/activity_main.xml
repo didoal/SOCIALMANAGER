@@ -4,7 +4,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:background="@color/white">
 
     <!-- Contenido principal -->
     <LinearLayout
@@ -17,25 +17,25 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/blue_profesional"
+            android:background="@color/blue_info"
             android:elevation="8dp"
             app:title="CD Santiaguiño Guizán"
             app:titleTextColor="@color/white"
             app:subtitle="Gestión Club"
-            app:subtitleTextColor="@color/blue_profesional_accent" />
+            app:subtitleTextColor="@color/white" />
 
         <!-- Contenedor de fragmentos con indicador de actualización -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/background">
+            android:background="@color/white">
 
             <!-- Contenedor de fragmentos -->
             <FrameLayout
                 android:id="@+id/fragment_container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/background" />
+                android:background="@color/white" />
 
         </FrameLayout>
 
@@ -48,8 +48,8 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         style="@style/NavigationViewStyle"
-        app:itemTextColor="@color/white"
-        app:itemIconTint="@color/blue_profesional_accent"
+        app:itemTextColor="@color/text_primary"
+        app:itemIconTint="@color/blue_info"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/drawer_menu" />
 

@@ -30,10 +30,10 @@
     <color name="text_primary">#222222</color>
     <color name="text_secondary">#222222</color>
     <color name="text_title">#111111</color>
-    <color name="blue_profesional">#162447</color>
-    <color name="blue_profesional_light">#1f4068</color>
-    <color name="blue_profesional_card">#23395d</color>
-    <color name="blue_profesional_accent">#21e6c1</color>
+    <color name="blue_profesional">#2196F3</color>
+    <color name="blue_profesional_light">#42A5F5</color>
+    <color name="blue_profesional_card">#E3F2FD</color>
+    <color name="blue_profesional_accent">#1976D2</color>
     <color name="colorPrimary">#162447</color>
     <color name="colorAccent">#FFD700</color>
     <color name="colorTextSecondary">#222222</color>
