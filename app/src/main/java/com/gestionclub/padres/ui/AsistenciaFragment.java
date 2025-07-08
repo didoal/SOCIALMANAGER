@@ -73,7 +73,7 @@ public class AsistenciaFragment extends Fragment {
     private void configurarRecyclerView() {
         Log.d(TAG, "configurarRecyclerView: Configurando RecyclerView");
         recyclerViewAsistencias.setLayoutManager(new LinearLayoutManager(requireContext()));
-        asistenciaAdapter = new AsistenciaAdapter(new ArrayList<>(), this::manejarClicEnAsistencia);
+        asistenciaAdapter = new AsistenciaAdapter(requireContext(), new ArrayList<>(), this::manejarClicEnAsistencia);
         recyclerViewAsistencias.setAdapter(asistenciaAdapter);
     }
 

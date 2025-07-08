@@ -17,10 +17,12 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/black_light"
-            android:elevation="4dp"
-            app:title="SocialManager"
-            app:titleTextColor="@color/gold" />
+            android:background="@color/blue_profesional"
+            android:elevation="8dp"
+            app:title="CD Santiaguiño Guizán"
+            app:titleTextColor="@color/white"
+            app:subtitle="Gestión Club"
+            app:subtitleTextColor="@color/blue_profesional_accent" />
 
         <!-- Contenedor de fragmentos con indicador de actualización -->
         <FrameLayout
@@ -47,7 +49,7 @@
         android:layout_gravity="start"
         style="@style/NavigationViewStyle"
         app:itemTextColor="@color/white"
-        app:itemIconTint="@color/gold"
+        app:itemIconTint="@color/blue_profesional_accent"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/drawer_menu" />
 

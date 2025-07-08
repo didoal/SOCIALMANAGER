@@ -1,52 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="220dp"
+    android:layout_height="200dp"
     android:background="@color/blue_profesional"
-    android:gravity="center"
     android:orientation="vertical"
-    android:paddingTop="32dp"
-    android:paddingBottom="16dp">
+    android:padding="16dp"
+    android:gravity="center">
 
-    <ImageView
-        android:id="@+id/imageViewAvatar"
+    <!-- Logo del club -->
+    <FrameLayout
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:src="@drawable/ic_avatar_default"
-        android:background="@drawable/circle_gold"
-        android:scaleType="centerCrop"
-        android:layout_gravity="center"
-        android:contentDescription="Avatar" />
+        android:layout_marginBottom="16dp"
+        android:elevation="8dp">
 
+        <View
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/circle_background"
+            android:alpha="0.9" />
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:src="@drawable/logo_santiaguino"
+            android:scaleType="fitCenter" />
+
+    </FrameLayout>
+
+    <!-- Nombre del club -->
     <TextView
-        android:id="@+id/textViewUserName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Nombre Usuario"
+        android:text="CD Santiaguiño Guizán"
         android:textColor="@color/white"
         android:textSize="18sp"
         android:textStyle="bold"
         android:gravity="center"
-        android:layout_marginTop="8dp" />
+        android:layout_marginBottom="4dp" />
 
+    <!-- Subtítulo -->
     <TextView
-        android:id="@+id/textViewUserRole"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Rol"
+        android:text="Gestión Club Profesional"
         android:textColor="@color/blue_profesional_accent"
         android:textSize="14sp"
         android:gravity="center"
-        android:layout_marginTop="2dp" />
+        android:alpha="0.9" />
 
+    <!-- Información del usuario -->
     <TextView
-        android:id="@+id/textViewUserEquipo"
+        android:id="@+id/textViewUsuarioHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Equipo / Categoría"
-        android:textColor="@color/blue_profesional_light"
-        android:textSize="13sp"
+        android:text="Usuario"
+        android:textColor="@color/white"
+        android:textSize="16sp"
         android:gravity="center"
-        android:layout_marginTop="2dp" />
+        android:layout_marginTop="12dp"
+        android:alpha="0.8" />
 
 </LinearLayout> 

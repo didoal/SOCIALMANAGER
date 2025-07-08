@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:background="@color/background"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -10,345 +12,282 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Header del Dashboard -->
-        <LinearLayout
+        <!-- Header de bienvenida -->
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@color/blue_profesional"
-            android:padding="20dp"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp"
+            app:cardBackgroundColor="@color/blue_profesional">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Santiaguiño de Guizán"
-                android:textSize="28sp"
-                android:textStyle="bold"
-                android:textColor="@color/white"
-                android:layout_marginBottom="8dp" />
-
-            <TextView
-                android:id="@+id/textViewBienvenida"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Bienvenido al Club CD Santiaguiño"
-                android:textSize="16sp"
-                android:textColor="@color/white"
-                android:alpha="0.8" />
-
-        </LinearLayout>
-
-        <!-- Tarjetas de Resumen -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="16dp">
-
-            <!-- Tarjeta Eventos Próximos -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:orientation="vertical"
-                android:background="@drawable/card_profesional"
-                android:padding="16dp"
-                android:layout_marginEnd="8dp">
+                android:padding="24dp">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:id="@+id/textViewBienvenida"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Eventos Próximos"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/text_primary"
-                    android:layout_marginBottom="8dp" />
-
-                <TextView
-                    android:id="@+id/textViewEventosProximos"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0"
+                    android:text="¡Bienvenido al Club!"
+                    android:textColor="@color/white"
                     android:textSize="24sp"
                     android:textStyle="bold"
-                    android:textColor="@color/gold" />
-
-            </LinearLayout>
-
-            <!-- Tarjeta Notificaciones -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:background="@drawable/card_profesional"
-                android:padding="16dp"
-                android:layout_marginStart="8dp">
+                    android:gravity="center" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:id="@+id/textViewUsuario"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Notificaciones"
+                    android:text="Usuario"
+                    android:textColor="@color/blue_profesional_accent"
+                    android:textSize="18sp"
+                    android:gravity="center"
+                    android:layout_marginTop="8dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Gestiona tu club de fútbol de manera profesional"
+                    android:textColor="@color/white"
                     android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/text_primary"
-                    android:layout_marginBottom="8dp" />
-
-                <TextView
-                    android:id="@+id/textViewNotificaciones"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/gold" />
+                    android:gravity="center"
+                    android:layout_marginTop="8dp"
+                    android:alpha="0.8" />
 
             </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
-        </LinearLayout>
-
-        <!-- Tarjetas de Acceso Rápido -->
+        <!-- Acciones rápidas -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Acceso Rápido"
-            android:textSize="18sp"
+            android:text="Acciones Rápidas"
+            android:textColor="@color/blue_profesional"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="@color/text_primary"
             android:layout_marginBottom="12dp" />
 
-        <!-- Fila 1 de Accesos -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="12dp">
+            android:layout_marginBottom="20dp">
 
-            <!-- Calendario -->
-            <LinearLayout
-                android:id="@+id/cardCalendario"
+            <!-- Botón Crear Evento -->
+            <androidx.cardview.widget.CardView
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="120dp"
                 android:layout_weight="1"
-                android:orientation="vertical"
-                android:background="@drawable/card_profesional"
-                android:padding="16dp"
-                android:layout_marginEnd="6dp"
-                android:gravity="center">
+                android:layout_marginEnd="8dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/blue_profesional_light">
 
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/ic_calendar"
-                    android:tint="@color/gold"
-                    android:layout_marginBottom="8dp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="16dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Calendario"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/text_primary" />
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/ic_event"
+                        app:tint="@color/blue_profesional" />
 
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Crear Evento"
+                        android:textColor="@color/blue_profesional"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="8dp" />
 
-            <!-- Asistencia -->
-            <LinearLayout
-                android:id="@+id/cardAsistencia"
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Botón Nueva Publicación -->
+            <androidx.cardview.widget.CardView
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="120dp"
                 android:layout_weight="1"
-                android:orientation="vertical"
-                android:background="@drawable/card_profesional"
-                android:padding="16dp"
-                android:layout_marginStart="6dp"
-                android:gravity="center">
+                android:layout_marginStart="8dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/blue_profesional_light">
 
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/ic_attendance"
-                    android:tint="@color/gold"
-                    android:layout_marginBottom="8dp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="16dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Asistencia"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/text_primary" />
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/ic_message"
+                        app:tint="@color/blue_profesional" />
 
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Nueva Publicación"
+                        android:textColor="@color/blue_profesional"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="8dp" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
         </LinearLayout>
 
-        <!-- Fila 2 de Accesos -->
+        <!-- Próximos Eventos -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Próximos Eventos"
+            android:textColor="@color/blue_profesional"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewEventos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:nestedScrollingEnabled="false" />
+
+        <!-- Muro de Destacados -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Muro de Destacados"
+            android:textColor="@color/blue_profesional"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewDestacados"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:nestedScrollingEnabled="false" />
+
+        <!-- Estadísticas Rápidas -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Estadísticas Rápidas"
+            android:textColor="@color/blue_profesional"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="12dp">
+            android:layout_marginBottom="20dp">
 
-            <!-- Mensajes -->
-            <LinearLayout
-                android:id="@+id/cardMensajes"
+            <!-- Tarjeta Estadística 1 -->
+            <androidx.cardview.widget.CardView
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="100dp"
                 android:layout_weight="1"
-                android:orientation="vertical"
-                android:background="@drawable/card_profesional"
-                android:padding="16dp"
-                android:layout_marginEnd="6dp"
-                android:gravity="center">
+                android:layout_marginEnd="8dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/white">
 
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/ic_message"
-                    android:tint="@color/gold"
-                    android:layout_marginBottom="8dp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="12dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Mensajes"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/text_primary" />
+                    <TextView
+                        android:id="@+id/textViewTotalEventos"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textColor="@color/blue_profesional"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
 
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Eventos"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
 
-            <!-- Objetos Perdidos -->
-            <LinearLayout
-                android:id="@+id/cardObjetosPerdidos"
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Tarjeta Estadística 2 -->
+            <androidx.cardview.widget.CardView
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="100dp"
                 android:layout_weight="1"
-                android:orientation="vertical"
-                android:background="@drawable/card_profesional"
-                android:padding="16dp"
-                android:layout_marginStart="6dp"
-                android:gravity="center">
+                android:layout_marginStart="8dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/white">
 
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/ic_object"
-                    android:tint="@color/gold"
-                    android:layout_marginBottom="8dp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="12dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Objetos Perdidos"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/text_primary" />
+                    <TextView
+                        android:id="@+id/textViewTotalUsuarios"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textColor="@color/blue_profesional"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
 
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Usuarios"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
         </LinearLayout>
 
-        <!-- Fila 3 de Accesos (solo para admin) -->
-        <LinearLayout
-            android:id="@+id/layoutAdminAccesos"
+        <!-- Notificaciones Recientes -->
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="12dp"
-            android:visibility="gone">
+            android:text="Notificaciones Recientes"
+            android:textColor="@color/blue_profesional"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp" />
 
-            <!-- Estadísticas -->
-            <LinearLayout
-                android:id="@+id/cardEstadisticas"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:background="@drawable/card_profesional"
-                android:padding="16dp"
-                android:layout_marginEnd="6dp"
-                android:gravity="center">
-
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/ic_stats"
-                    android:tint="@color/gold"
-                    android:layout_marginBottom="8dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Estadísticas"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/text_primary" />
-
-            </LinearLayout>
-
-            <!-- Gestión -->
-            <LinearLayout
-                android:id="@+id/cardGestion"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:background="@drawable/card_profesional"
-                android:padding="16dp"
-                android:layout_marginStart="6dp"
-                android:gravity="center">
-
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/ic_admin"
-                    android:tint="@color/gold"
-                    android:layout_marginBottom="8dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Gestión"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/text_primary" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <!-- Información del Usuario -->
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewNotificaciones"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/card_profesional"
-            android:padding="16dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Información del Usuario"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_primary"
-                android:layout_marginBottom="12dp" />
-
-            <TextView
-                android:id="@+id/textViewUsuarioInfo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Cargando información..."
-                android:textSize="14sp"
-                android:textColor="@color/text_primary"
-                android:lineSpacingExtra="4dp" />
-
-        </LinearLayout>
+            android:layout_marginBottom="20dp"
+            android:nestedScrollingEnabled="false" />
 
     </LinearLayout>
-
 </ScrollView> 

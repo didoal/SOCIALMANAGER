@@ -1,5 +1,6 @@
 package com.gestionclub.padres.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,10 +30,10 @@ public class AsistenciaAdapter extends RecyclerView.Adapter<AsistenciaAdapter.As
         void onConfirmarClick(Asistencia asistencia);
     }
 
-    public AsistenciaAdapter(List<Asistencia> asistencias, OnAsistenciaClickListener listener) {
+    public AsistenciaAdapter(Context context, List<Asistencia> asistencias, OnAsistenciaClickListener listener) {
         this.asistencias = asistencias;
         this.listener = listener;
-        this.dataManager = new DataManager(null); // Se inicializará en el ViewHolder
+        this.dataManager = new DataManager(context);
     }
 
     @NonNull
@@ -66,7 +67,6 @@ public class AsistenciaAdapter extends RecyclerView.Adapter<AsistenciaAdapter.As
         private TextView textViewFecha;
         private TextView textViewMotivo;
         private ImageButton buttonConfirmar;
-        private DataManager dataManager;
 
         public AsistenciaViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -76,7 +76,6 @@ public class AsistenciaAdapter extends RecyclerView.Adapter<AsistenciaAdapter.As
             textViewFecha = itemView.findViewById(R.id.textViewFecha);
             textViewMotivo = itemView.findViewById(R.id.textViewMotivo);
             buttonConfirmar = itemView.findViewById(R.id.buttonConfirmar);
-            dataManager = new DataManager(itemView.getContext());
         }
 
         public void bind(Asistencia asistencia) {
