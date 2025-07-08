@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.gestionclub.padres.model.Mensaje;
-import com.gestionclub.padres.model.ObjetoPerdido;
 import com.gestionclub.padres.model.Notificacion;
 import com.gestionclub.padres.model.Evento;
 import com.gestionclub.padres.model.Asistencia;
@@ -21,7 +20,6 @@ import java.util.List;
 public class DataManager {
     private static final String PREF_NAME = "SocialManagerPrefs";
     private static final String KEY_MENSAJES = "mensajes";
-    private static final String KEY_OBJETOS_PERDIDOS = "objetos_perdidos";
     private static final String KEY_NOTIFICACIONES = "notificaciones";
     private static final String KEY_EVENTOS = "eventos";
     private static final String KEY_ASISTENCIAS = "asistencias";
@@ -62,24 +60,13 @@ public class DataManager {
             guardarMensajes(mensajesEjemplo);
         }
 
-        if (getObjetosPerdidos().isEmpty()) {
-            List<ObjetoPerdido> objetosEjemplo = new ArrayList<>();
-            objetosEjemplo.add(new ObjetoPerdido("Botella de agua", 
-                "Botella azul de 500ml con el logo del club", "Gimnasio", 
-                "user1", "Juan Pérez", false));
-            objetosEjemplo.add(new ObjetoPerdido("Mochila deportiva", 
-                "Mochila negra con rayas rojas, contiene ropa deportiva", "Vestuarios", 
-                "user2", "María García", false));
-            guardarObjetosPerdidos(objetosEjemplo);
-        }
-
         if (getNotificaciones().isEmpty()) {
             List<Notificacion> notificacionesEjemplo = new ArrayList<>();
             notificacionesEjemplo.add(new Notificacion("Nuevo evento", 
                 "Se ha programado un nuevo entrenamiento para el próximo sábado", "EVENTO", 
                 null, "admin1", "Administrador", true));
-            notificacionesEjemplo.add(new Notificacion("Objeto encontrado", 
-                "Se encontró una botella de agua en el gimnasio", "OBJETO", 
+            notificacionesEjemplo.add(new Notificacion("Bienvenida al club", 
+                "¡Bienvenido al CD Santiaguiño de Guizán! Esperamos que disfrutes tu experiencia.", "SISTEMA", 
                 null, "admin1", "Administrador", true));
             guardarNotificaciones(notificacionesEjemplo);
         }
@@ -124,21 +111,41 @@ public class DataManager {
             List<Usuario> usuariosEjemplo = new ArrayList<>();
             
             // Administrador principal
-            Usuario admin = new Usuario("Administrador", "admin@club.com", "admin123", "administrador");
+            Usuario admin = new Usuario("Administrador", null, "admin123", "administrador");
+            admin.setId("admin_001");
+            admin.setEmail("admin@club.com");
             usuariosEjemplo.add(admin);
             
-            // Administrador alternativo para el usuario actual
-            Usuario adminUsuario = new Usuario("Diego", "diego@club.com", "admin123", "administrador");
-            usuariosEjemplo.add(adminUsuario);
+            // Administrador alternativo
+            Usuario adminAlt = new Usuario("Diego", null, "admin123", "administrador");
+            adminAlt.setId("admin_002");
+            adminAlt.setEmail("diego@club.com");
+            usuariosEjemplo.add(adminAlt);
             
-            // Padres/Tutores
-            Usuario padre1 = new Usuario("Juan Pérez", "juan@club.com", "padre123", "padre");
-            padre1.setJugador("Titi");
+            // Padres/Tutores organizados
+            Usuario padre1 = new Usuario("Juan Pérez", "Carlos Pérez", "padre123", "padre");
+            padre1.setId("padre_001");
+            padre1.setEmail("juan@club.com");
+            padre1.setEquipoId("equipo_alevin_a");
             usuariosEjemplo.add(padre1);
             
-            Usuario padre2 = new Usuario("María García", "maria@club.com", "padre123", "padre");
-            padre2.setJugador("Carlos");
+            Usuario padre2 = new Usuario("María García", "Ana García", "padre123", "padre");
+            padre2.setId("padre_002");
+            padre2.setEmail("maria@club.com");
+            padre2.setEquipoId("equipo_infantil_b");
             usuariosEjemplo.add(padre2);
+            
+            Usuario padre3 = new Usuario("Luis Martínez", "Pedro Martínez", "padre123", "padre");
+            padre3.setId("padre_003");
+            padre3.setEmail("luis@club.com");
+            padre3.setEquipoId("equipo_cadete_a");
+            usuariosEjemplo.add(padre3);
+            
+            Usuario padre4 = new Usuario("Carmen López", "Miguel López", "padre123", "padre");
+            padre4.setId("padre_004");
+            padre4.setEmail("carmen@club.com");
+            padre4.setEquipoId("equipo_alevin_a");
+            usuariosEjemplo.add(padre4);
             
             guardarUsuarios(usuariosEjemplo);
         }
@@ -146,16 +153,26 @@ public class DataManager {
         if (getEquipos().isEmpty()) {
             List<Equipo> equiposEjemplo = new ArrayList<>();
             
-            // Equipos de ejemplo
-            Equipo equipo1 = new Equipo("Alevín A", "Alevín", "Carlos López");
-            Equipo equipo2 = new Equipo("Infantil B", "Infantil", "María Rodríguez");
-            Equipo equipo3 = new Equipo("Cadete A", "Cadete", "Juan García");
+            // Equipos organizados con IDs únicos
+            Equipo alevinA = new Equipo("Alevín A", "Alevín", "Carlos López");
+            alevinA.setId("equipo_alevin_a");
+            equiposEjemplo.add(alevinA);
             
-            equiposEjemplo.add(equipo1);
-            equiposEjemplo.add(equipo2);
-            equiposEjemplo.add(equipo3);
+            Equipo infantilB = new Equipo("Infantil B", "Infantil", "María Rodríguez");
+            infantilB.setId("equipo_infantil_b");
+            equiposEjemplo.add(infantilB);
+            
+            Equipo cadeteA = new Equipo("Cadete A", "Cadete", "Juan García");
+            cadeteA.setId("equipo_cadete_a");
+            equiposEjemplo.add(cadeteA);
             
             guardarEquipos(equiposEjemplo);
+            
+            // Asignar jugadores a equipos después de crear los equipos
+            agregarJugadorAEquipo("equipo_alevin_a", "padre_001");
+            agregarJugadorAEquipo("equipo_alevin_a", "padre_004");
+            agregarJugadorAEquipo("equipo_infantil_b", "padre_002");
+            agregarJugadorAEquipo("equipo_cadete_a", "padre_003");
         }
     }
 
@@ -208,35 +225,6 @@ public class DataManager {
             }
         }
         return destacados;
-    }
-
-    // Gestión de Objetos Perdidos
-    public List<ObjetoPerdido> getObjetosPerdidos() {
-        String json = sharedPreferences.getString(KEY_OBJETOS_PERDIDOS, "[]");
-        Type type = new TypeToken<ArrayList<ObjetoPerdido>>(){}.getType();
-        return gson.fromJson(json, type);
-    }
-
-    public void guardarObjetosPerdidos(List<ObjetoPerdido> objetos) {
-        String json = gson.toJson(objetos);
-        sharedPreferences.edit().putString(KEY_OBJETOS_PERDIDOS, json).apply();
-    }
-
-    public void agregarObjetoPerdido(ObjetoPerdido objeto) {
-        List<ObjetoPerdido> objetos = getObjetosPerdidos();
-        objetos.add(objeto);
-        guardarObjetosPerdidos(objetos);
-    }
-
-    public void actualizarObjetoPerdido(ObjetoPerdido objetoActualizado) {
-        List<ObjetoPerdido> objetos = getObjetosPerdidos();
-        for (int i = 0; i < objetos.size(); i++) {
-            if (objetos.get(i).getId().equals(objetoActualizado.getId())) {
-                objetos.set(i, objetoActualizado);
-                break;
-            }
-        }
-        guardarObjetosPerdidos(objetos);
     }
 
     // Gestión de Notificaciones
@@ -566,97 +554,37 @@ public class DataManager {
     }
 
     public void crearNotificacionMensaje(Mensaje mensaje) {
-        Notificacion notificacion = new Notificacion(
-            "Nuevo mensaje de " + mensaje.getAutorNombre(),
-            mensaje.getContenido(),
-            "MENSAJE",
-            null, // Notificación global
-            mensaje.getAutorId(),
-            mensaje.getAutorNombre(),
-            mensaje.isEsAdmin()
-        );
-        agregarNotificacion(notificacion);
-    }
-
-    public void crearNotificacionObjeto(ObjetoPerdido objeto) {
-        // Notificación principal del objeto perdido
-        Notificacion notificacion = new Notificacion(
-            "Nuevo objeto perdido: " + objeto.getNombre(),
-            "Se reportó: " + objeto.getDescripcion() + "\nUbicación: " + objeto.getUbicacion() + 
-            "\nFecha: " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault()).format(objeto.getFechaReporte()),
-            "OBJETO",
-            null, // Notificación global
-            objeto.getReportadoPor(),
-            objeto.getReportadoPorNombre(),
-            objeto.isEsAdmin()
-        );
-        agregarNotificacion(notificacion);
-        
-        // Crear notificación automática para el equipo si el objeto tiene equipo asociado
-        if (objeto.getEquipoId() != null && !objeto.getEquipoId().isEmpty()) {
-            crearNotificacionObjetoParaEquipo(objeto);
-        }
-        
-        // Crear recordatorio automático para revisar objetos perdidos (cada 3 días)
-        crearRecordatorioObjetosPerdidos();
-    }
-    
-    /**
-     * Crea notificación específica para el equipo del objeto perdido
-     */
-    private void crearNotificacionObjetoParaEquipo(ObjetoPerdido objeto) {
         try {
-            List<Usuario> jugadoresEquipo = getJugadoresPorEquipo(objeto.getEquipoId());
+            // Crear notificación para todos los usuarios del equipo del mensaje
+            List<Usuario> usuariosNotificar = new ArrayList<>();
             
-            for (Usuario jugador : jugadoresEquipo) {
-                Notificacion notificacionEquipo = new Notificacion(
-                    "Objeto perdido en tu equipo: " + objeto.getNombre(),
-                    "Se reportó un objeto perdido en tu equipo:\n" + objeto.getDescripcion() + 
-                    "\nUbicación: " + objeto.getUbicacion() + 
-                    "\nFecha: " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault()).format(objeto.getFechaReporte()) +
-                    "\n\nRevisa si es tuyo en la sección de Objetos Perdidos.",
-                    "OBJETO_EQUIPO",
-                    jugador.getId(), // Notificación específica para este jugador
-                    objeto.getReportadoPor(),
-                    objeto.getReportadoPorNombre(),
-                    objeto.isEsAdmin()
-                );
-                agregarNotificacion(notificacionEquipo);
-            }
-        } catch (Exception e) {
-            android.util.Log.e("DataManager", "Error creando notificación de objeto para equipo: " + e.getMessage());
-        }
-    }
-    
-    /**
-     * Crea recordatorio automático para revisar objetos perdidos
-     */
-    private void crearRecordatorioObjetosPerdidos() {
-        try {
-            List<ObjetoPerdido> objetosPerdidos = getObjetosPerdidos();
-            int objetosSinReclamar = 0;
-            
-            for (ObjetoPerdido objeto : objetosPerdidos) {
-                if (!objeto.isEncontrado()) {
-                    objetosSinReclamar++;
+            if (mensaje.getEquipo() != null && !mensaje.getEquipo().isEmpty()) {
+                // Mensaje específico para un equipo
+                for (Usuario usuario : getUsuarios()) {
+                    if (usuario.getEquipo() != null && usuario.getEquipo().equals(mensaje.getEquipo())) {
+                        usuariosNotificar.add(usuario);
+                    }
                 }
+            } else {
+                // Mensaje global - notificar a todos los usuarios
+                usuariosNotificar.addAll(getUsuarios());
             }
             
-            if (objetosSinReclamar > 0) {
-                Notificacion recordatorio = new Notificacion(
-                    "Recordatorio: Objetos perdidos sin reclamar",
-                    "Hay " + objetosSinReclamar + " objeto(s) perdido(s) sin reclamar. " +
-                    "Revisa la sección de Objetos Perdidos para ver si alguno es tuyo.",
-                    "RECORDATORIO_OBJETOS",
-                    null, // Notificación global
-                    "sistema",
-                    "Sistema Automático",
+            // Crear notificación para cada usuario
+            for (Usuario usuario : usuariosNotificar) {
+                Notificacion notificacion = new Notificacion(
+                    "Nuevo mensaje: " + mensaje.getAutorNombre(),
+                    mensaje.getContenido(),
+                    "MENSAJE",
+                    usuario.getId(),
+                    mensaje.getAutorId(),
+                    mensaje.getAutorNombre(),
                     true
                 );
-                agregarNotificacion(recordatorio);
+                agregarNotificacion(notificacion);
             }
         } catch (Exception e) {
-            android.util.Log.e("DataManager", "Error creando recordatorio de objetos perdidos: " + e.getMessage());
+            android.util.Log.e("DataManager", "Error creando notificación de mensaje: " + e.getMessage());
         }
     }
 
@@ -688,9 +616,9 @@ public class DataManager {
         );
         
         crearNotificacionSolicitud(
-            "Reporte de objeto encontrado",
-            "Se encontró una mochila en el vestuario. Revisa la sección de objetos perdidos.",
-            "OBJETO"
+            "Nuevo evento programado",
+            "Se ha programado un nuevo entrenamiento para el próximo fin de semana.",
+            "EVENTO"
         );
     }
 

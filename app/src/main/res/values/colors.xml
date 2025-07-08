@@ -44,4 +44,11 @@
     <color name="primary">#2196F3</color>
     <color name="accent">#FFD700</color>
     <color name="divider">#E0E0E0</color>
+    
+    <!-- Colores para estadísticas profesionales -->
+    <color name="green_success">#4CAF50</color>
+    <color name="orange_warning">#FF9800</color>
+    <color name="purple_accent">#9C27B0</color>
+    <color name="red_error">#F44336</color>
+    <color name="blue_info">#2196F3</color>
 </resources>

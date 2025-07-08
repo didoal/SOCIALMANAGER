@@ -73,4 +73,13 @@ public class Usuario {
     public void setEquipo(String equipo) {
         this.equipo = equipo;
     }
+
+    // Métodos para compatibilidad con equipoId
+    public String getEquipoId() {
+        return equipo;
+    }
+    
+    public void setEquipoId(String equipoId) {
+        this.equipo = equipoId;
+    }
 }

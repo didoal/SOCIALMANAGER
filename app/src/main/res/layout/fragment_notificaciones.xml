@@ -11,30 +11,30 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Header con título y estadísticas -->
+        <!-- Header profesional -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
-            app:cardBackgroundColor="@color/colorPrimary">
+            android:layout_marginBottom="20dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="12dp"
+            app:cardBackgroundColor="@color/blue_profesional">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="24dp">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Notificaciones"
+                    android:text="🔔 Notificaciones"
                     android:textColor="@color/white"
-                    android:textSize="24sp"
+                    android:textSize="26sp"
                     android:textStyle="bold"
                     android:gravity="center"
-                    android:layout_marginBottom="12dp" />
+                    android:layout_marginBottom="16dp" />
 
                 <TextView
                     android:id="@+id/textViewEstadisticas"
@@ -42,88 +42,167 @@
                     android:layout_height="wrap_content"
                     android:text="Total: 0 | No leídas: 0 | Recordatorios: 0 | Mensajes: 0"
                     android:textColor="@color/white"
-                    android:textSize="14sp"
+                    android:textSize="16sp"
                     android:gravity="center"
                     android:background="@drawable/rounded_background_white_transparent"
-                    android:padding="8dp" />
+                    android:padding="12dp" />
 
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>
 
-        <!-- Estadísticas adicionales -->
+        <!-- Tarjetas de estadísticas rápidas -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="20dp">
 
-            <TextView
-                android:id="@+id/textViewNoLeidas"
+            <!-- Tarjeta No Leídas -->
+            <androidx.cardview.widget.CardView
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="80dp"
                 android:layout_weight="1"
-                android:text="0"
-                android:textColor="@color/colorAccent"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:gravity="center" />
+                android:layout_marginEnd="8dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="@color/white">
 
-            <TextView
-                android:id="@+id/textViewTotal"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="12dp"
+                    android:background="@drawable/gradient_red_light">
+
+                    <TextView
+                        android:id="@+id/textViewNoLeidas"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textColor="@color/red_error"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No Leídas"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Tarjeta Total -->
+            <androidx.cardview.widget.CardView
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="80dp"
                 android:layout_weight="1"
-                android:text="0"
-                android:textColor="@color/colorPrimary"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:gravity="center" />
+                android:layout_marginStart="8dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="@color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="12dp"
+                    android:background="@drawable/gradient_blue_light">
+
+                    <TextView
+                        android:id="@+id/textViewTotal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textColor="@color/blue_profesional"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Total"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
         </LinearLayout>
 
-        <!-- Filtros básicos -->
+        <!-- Filtros básicos mejorados -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginBottom="8dp">
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp">
 
+            <!-- Botón principal -->
             <Button
                 android:id="@+id/buttonMarcarLeidas"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Marcar todas como leídas"
+                android:text="✅ Marcar todas como leídas"
                 android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
                 android:background="@drawable/button_blue_background"
-                android:layout_marginEnd="8dp" />
+                android:layout_marginBottom="12dp"
+                android:padding="16dp" />
 
-            <Button
-                android:id="@+id/buttonFiltroTodas"
-                android:layout_width="wrap_content"
+            <!-- Botones de filtro -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Todas"
-                android:textColor="@color/white"
-                android:background="@drawable/button_gray_background"
-                android:layout_marginEnd="4dp" />
+                android:orientation="horizontal"
+                android:gravity="center">
 
-            <Button
-                android:id="@+id/buttonFiltroNoLeidas"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="No leídas"
-                android:textColor="@color/white"
-                android:background="@drawable/button_red_background"
-                android:layout_marginEnd="4dp" />
+                <Button
+                    android:id="@+id/buttonFiltroTodas"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="📋 Todas"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_gray_background"
+                    android:layout_marginEnd="4dp"
+                    android:padding="12dp" />
 
-            <Button
-                android:id="@+id/buttonFiltroLeidas"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Leídas"
-                android:textColor="@color/white"
-                android:background="@drawable/button_green_background" />
+                <Button
+                    android:id="@+id/buttonFiltroNoLeidas"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="🔴 No leídas"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_red_background"
+                    android:layout_marginEnd="4dp"
+                    android:padding="12dp" />
+
+                <Button
+                    android:id="@+id/buttonFiltroLeidas"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="✅ Leídas"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_green_background"
+                    android:padding="12dp" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
         <!-- Botón para mostrar/ocultar filtros avanzados -->
@@ -133,8 +212,11 @@
             android:layout_height="wrap_content"
             android:text="🔍 Filtros Avanzados"
             android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
             android:background="@drawable/button_gold_background"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="16dp"
+            android:padding="16dp" />
 
         <!-- Filtros avanzados (inicialmente ocultos) -->
         <LinearLayout
@@ -143,18 +225,19 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@drawable/card_profesional"
-            android:padding="16dp"
-            android:layout_marginBottom="8dp"
+            android:padding="20dp"
+            android:layout_marginBottom="16dp"
             android:visibility="gone">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Filtros Avanzados"
-                android:textSize="16sp"
+                android:text="⚙️ Filtros Avanzados"
+                android:textSize="18sp"
                 android:textStyle="bold"
-                android:textColor="@color/text_primary"
-                android:layout_marginBottom="12dp" />
+                android:textColor="@color/blue_profesional"
+                android:gravity="center"
+                android:layout_marginBottom="16dp" />
 
             <!-- Filtro por tipo -->
             <LinearLayout
@@ -162,12 +245,12 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="8dp">
+                android:layout_marginBottom="12dp">
 
                 <TextView
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
-                    android:text="Tipo:"
+                    android:text="📝 Tipo:"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:textColor="@color/text_secondary" />
@@ -178,7 +261,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@drawable/spinner_background"
-                    android:padding="8dp" />
+                    android:padding="12dp" />
 
             </LinearLayout>
 
@@ -192,7 +275,7 @@
                 <TextView
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
-                    android:text="Equipo:"
+                    android:text="🏆 Equipo:"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:textColor="@color/text_secondary" />
@@ -203,7 +286,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@drawable/spinner_background"
-                    android:padding="8dp" />
+                    android:padding="12dp" />
 
             </LinearLayout>
 
@@ -216,14 +299,35 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center"
-            android:padding="24dp"
+            android:padding="40dp"
             android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📭"
+                android:textSize="48sp"
+                android:gravity="center"
+                android:layout_marginBottom="16dp" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="No hay notificaciones disponibles"
-                android:textColor="@color/colorTextSecondary"
-                android:textSize="16sp" />
+                android:textColor="@color/text_secondary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:gravity="center" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Las notificaciones aparecerán aquí cuando lleguen"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:layout_marginTop="8dp" />
+
         </LinearLayout>
 
         <!-- Lista de notificaciones -->
@@ -244,10 +348,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
+        android:layout_margin="20dp"
         android:src="@drawable/ic_add"
-        app:backgroundTint="@color/colorAccent"
+        app:backgroundTint="@color/blue_profesional"
         app:tint="@color/white"
-        app:fabSize="normal" />
+        app:fabSize="normal"
+        app:elevation="12dp" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout> 

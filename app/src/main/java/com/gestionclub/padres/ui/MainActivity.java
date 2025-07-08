@@ -134,28 +134,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Log.d(TAG, "actualizarHeaderUsuario: Actualizando");
             View headerView = navigationView.getHeaderView(0);
             
-            // Buscar las vistas del nuevo header
-            TextView textViewUserName = headerView.findViewById(R.id.textViewUserName);
-            TextView textViewUserRole = headerView.findViewById(R.id.textViewUserRole);
-            TextView textViewUserEquipo = headerView.findViewById(R.id.textViewUserEquipo);
-            TextView textViewUserEmail = headerView.findViewById(R.id.textViewUserEmail);
+            // Buscar la vista del nuevo header
+            TextView textViewUsuarioHeader = headerView.findViewById(R.id.textViewUsuarioHeader);
 
-            if (usuarioActual != null) {
-                if (textViewUserName != null) {
-                    textViewUserName.setText(usuarioActual.getNombre());
+            if (usuarioActual != null && textViewUsuarioHeader != null) {
+                String infoUsuario = usuarioActual.getNombre();
+                if (usuarioActual.getEquipo() != null) {
+                    infoUsuario += " - " + usuarioActual.getEquipo();
                 }
-                if (textViewUserRole != null) {
-                    textViewUserRole.setText(usuarioActual.isEsAdmin() ? "Administrador" : "Usuario");
-                }
-                if (textViewUserEquipo != null) {
-                    // Mostrar equipo/categoría si existe
-                    String equipo = usuarioActual.getEquipo() != null ? usuarioActual.getEquipo() : 
-                                  (usuarioActual.getJugador() != null ? usuarioActual.getJugador() : "Sin equipo");
-                    textViewUserEquipo.setText(equipo);
-                }
-                if (textViewUserEmail != null) {
-                    textViewUserEmail.setText(usuarioActual.getEmail() != null ? usuarioActual.getEmail() : "");
-                }
+                textViewUsuarioHeader.setText(infoUsuario);
                 Log.d(TAG, "actualizarHeaderUsuario: Header actualizado para " + usuarioActual.getNombre());
             }
         } catch (Exception e) {
@@ -215,8 +202,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fragment = new AsistenciaFragment();
                 titulo = "Asistencia";
             } else if (id == R.id.nav_objetos_perdidos) {
-                fragment = new ObjetosPerdidosFragment();
-                titulo = "Objetos Perdidos";
+                // Objetos perdidos eliminado - redirigir a mensajes
+                fragment = new MensajesFragment();
+                titulo = "Mensajes";
             } else if (id == R.id.nav_notificaciones) {
                 fragment = new NotificacionesFragment();
                 titulo = "Notificaciones";
@@ -238,7 +226,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             } else if (id == R.id.nav_configuracion) {
                 fragment = new ConfiguracionFragment();
                 titulo = "Configuración";
-            } else if (id == R.id.nav_cerrar_sesion) {
+            } else if (id == R.id.nav_logout) {
                 cerrarSesion();
                 return true;
             }
@@ -262,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         try {
             Log.d(TAG, "cerrarSesion: Cerrando sesión");
             SessionManager sessionManager = new SessionManager(this);
-            sessionManager.logout();
+            sessionManager.clearSession();
             
             Intent intent = new Intent(this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

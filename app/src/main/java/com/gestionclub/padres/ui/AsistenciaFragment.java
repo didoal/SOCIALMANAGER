@@ -41,9 +41,21 @@ public class AsistenciaFragment extends Fragment {
     private RecyclerView recyclerViewAsistencias;
     private AsistenciaAdapter asistenciaAdapter;
     private TextView textViewEstadisticas;
+    private TextView textViewConfirmados;
+    private TextView textViewEnEspera;
+    private TextView textViewNoAsisten;
+    private Spinner spinnerEquipo;
+    private Button buttonFiltroTodos;
+    private Button buttonFiltroConfirmados;
+    private Button buttonFiltroEnEspera;
+    private Button buttonFiltroNoAsisten;
     private FloatingActionButton fabRegistrarAsistencia;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
     private Usuario usuarioActual;
+    
+    // Filtros
+    private String filtroEquipo = "TODOS";
+    private String filtroEstado = "TODOS";
 
     @Nullable
     @Override
@@ -56,7 +68,6 @@ public class AsistenciaFragment extends Fragment {
         inicializarVistas(view);
         configurarRecyclerView();
         cargarAsistencias();
-        actualizarEstadisticas();
         
         return view;
     }
@@ -65,9 +76,74 @@ public class AsistenciaFragment extends Fragment {
         Log.d(TAG, "inicializarVistas: Inicializando vistas");
         recyclerViewAsistencias = view.findViewById(R.id.recyclerViewAsistencias);
         textViewEstadisticas = view.findViewById(R.id.textViewEstadisticas);
+        textViewConfirmados = view.findViewById(R.id.textViewConfirmados);
+        textViewEnEspera = view.findViewById(R.id.textViewEnEspera);
+        textViewNoAsisten = view.findViewById(R.id.textViewNoAsisten);
+        spinnerEquipo = view.findViewById(R.id.spinnerEquipo);
+        buttonFiltroTodos = view.findViewById(R.id.buttonFiltroTodos);
+        buttonFiltroConfirmados = view.findViewById(R.id.buttonFiltroConfirmados);
+        buttonFiltroEnEspera = view.findViewById(R.id.buttonFiltroEnEspera);
+        buttonFiltroNoAsisten = view.findViewById(R.id.buttonFiltroNoAsisten);
         fabRegistrarAsistencia = view.findViewById(R.id.fabRegistrarAsistencia);
         
         fabRegistrarAsistencia.setOnClickListener(v -> mostrarDialogoRegistrarAsistencia());
+        
+        // Configurar filtros
+        configurarFiltros();
+    }
+
+    private void configurarFiltros() {
+        // Configurar spinner de equipos
+        List<String> equipos = new ArrayList<>();
+        equipos.add("TODOS");
+        equipos.addAll(dataManager.getNombresEquipos());
+        
+        ArrayAdapter<String> equipoAdapter = new ArrayAdapter<>(requireContext(), 
+                android.R.layout.simple_spinner_item, equipos);
+        equipoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerEquipo.setAdapter(equipoAdapter);
+        
+        // Configurar listeners de filtros
+        spinnerEquipo.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                filtroEquipo = parent.getItemAtPosition(position).toString();
+                cargarAsistencias();
+            }
+            
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+        });
+        
+        // Configurar botones de filtro de estado
+        buttonFiltroTodos.setOnClickListener(v -> {
+            filtroEstado = "TODOS";
+            cargarAsistencias();
+        });
+        
+        buttonFiltroConfirmados.setOnClickListener(v -> {
+            filtroEstado = "CONFIRMADOS";
+            cargarAsistencias();
+        });
+        
+        buttonFiltroEnEspera.setOnClickListener(v -> {
+            filtroEstado = "EN_ESPERA";
+            cargarAsistencias();
+        });
+        
+        buttonFiltroNoAsisten.setOnClickListener(v -> {
+            filtroEstado = "NO_ASISTEN";
+            cargarAsistencias();
+        });
+        
+        // Configurar filtro inicial para usuarios no admin
+        if (usuarioActual != null && !usuarioActual.isEsAdmin() && usuarioActual.getEquipo() != null) {
+            filtroEquipo = usuarioActual.getEquipo();
+            int posicionEquipo = equipos.indexOf(filtroEquipo);
+            if (posicionEquipo >= 0) {
+                spinnerEquipo.setSelection(posicionEquipo);
+            }
+        }
     }
 
     private void configurarRecyclerView() {
@@ -83,19 +159,41 @@ public class AsistenciaFragment extends Fragment {
         List<Asistencia> todasAsistencias = dataManager.getAsistencias();
         List<Asistencia> asistenciasFiltradas = new ArrayList<>();
         
-        // Filtrar por usuario actual si no es admin
-        if (usuarioActual != null && !usuarioActual.isEsAdmin()) {
-            String equipoUsuario = usuarioActual.getEquipo();
-            for (Asistencia asistencia : todasAsistencias) {
-                // Mostrar asistencias del jugador del usuario actual
-                if (asistencia.getJugadorNombre() != null && 
-                    asistencia.getJugadorNombre().equals(usuarioActual.getJugador())) {
-                    asistenciasFiltradas.add(asistencia);
+        // Aplicar filtros
+        for (Asistencia asistencia : todasAsistencias) {
+            boolean cumpleFiltroEquipo = true;
+            boolean cumpleFiltroEstado = true;
+            
+            // Filtro por equipo
+            if (!filtroEquipo.equals("TODOS")) {
+                Evento evento = dataManager.getEventoById(asistencia.getEventoId());
+                if (evento != null && evento.getEquipo() != null) {
+                    cumpleFiltroEquipo = evento.getEquipo().equals(filtroEquipo);
+                } else {
+                    cumpleFiltroEquipo = false;
                 }
             }
-        } else {
-            // Para admin, mostrar todas las asistencias
-            asistenciasFiltradas = todasAsistencias;
+            
+            // Filtro por estado
+            if (!filtroEstado.equals("TODOS")) {
+                switch (filtroEstado) {
+                    case "CONFIRMADOS":
+                        cumpleFiltroEstado = asistencia.isAsistio();
+                        break;
+                    case "NO_ASISTEN":
+                        cumpleFiltroEstado = !asistencia.isAsistio();
+                        break;
+                    case "EN_ESPERA":
+                        // Para este ejemplo, consideramos "en espera" las asistencias sin confirmar
+                        // En una implementación real, necesitarías un campo adicional en el modelo
+                        cumpleFiltroEstado = asistencia.getObservaciones() == null || asistencia.getObservaciones().isEmpty();
+                        break;
+                }
+            }
+            
+            if (cumpleFiltroEquipo && cumpleFiltroEstado) {
+                asistenciasFiltradas.add(asistencia);
+            }
         }
         
         // Ordenar por fecha (más recientes primero)
@@ -103,15 +201,18 @@ public class AsistenciaFragment extends Fragment {
         
         asistenciaAdapter.actualizarAsistencias(asistenciasFiltradas);
         
+        // Actualizar estadísticas
+        actualizarEstadisticas(asistenciasFiltradas);
+        
         // Verificar eventos pendientes de confirmación
         verificarEventosPendientesConfirmacion();
     }
 
-    private void actualizarEstadisticas() {
+    private void actualizarEstadisticas(List<Asistencia> asistencias) {
         Log.d(TAG, "actualizarEstadisticas: Actualizando estadísticas");
-        List<Asistencia> asistencias = dataManager.getAsistencias();
+        
         int totalAsistencias = asistencias.size();
-        int asistenciasPositivas = 0, asistenciasNegativas = 0;
+        int asistenciasPositivas = 0, asistenciasNegativas = 0, enEspera = 0;
         
         for (Asistencia asistencia : asistencias) {
             if (asistencia.isAsistio()) {
@@ -119,14 +220,36 @@ public class AsistenciaFragment extends Fragment {
             } else {
                 asistenciasNegativas++;
             }
+            
+            // Contar en espera (sin observaciones)
+            if (asistencia.getObservaciones() == null || asistencia.getObservaciones().isEmpty()) {
+                enEspera++;
+            }
         }
         
         double porcentajeAsistencia = totalAsistencias > 0 ? 
             (double) asistenciasPositivas / totalAsistencias * 100 : 0;
         
+        // Actualizar tarjetas de estadísticas
+        if (textViewConfirmados != null) {
+            textViewConfirmados.setText(String.valueOf(asistenciasPositivas));
+        }
+        
+        if (textViewEnEspera != null) {
+            textViewEnEspera.setText(String.valueOf(enEspera));
+        }
+        
+        if (textViewNoAsisten != null) {
+            textViewNoAsisten.setText(String.valueOf(asistenciasNegativas));
+        }
+        
+        // Actualizar estadísticas generales
         String estadisticas = String.format("Total: %d | Asistencias: %d | Ausencias: %d | Porcentaje: %.1f%%", 
                 totalAsistencias, asistenciasPositivas, asistenciasNegativas, porcentajeAsistencia);
-        textViewEstadisticas.setText(estadisticas);
+        
+        if (textViewEstadisticas != null) {
+            textViewEstadisticas.setText(estadisticas);
+        }
     }
 
     private void mostrarDialogoRegistrarAsistencia() {
@@ -239,6 +362,7 @@ public class AsistenciaFragment extends Fragment {
         Button buttonAsisto = dialogView.findViewById(R.id.buttonAsisto);
         Button buttonNoAsisto = dialogView.findViewById(R.id.buttonNoAsisto);
         EditText editTextMotivo = dialogView.findViewById(R.id.editTextMotivo);
+        View layoutMotivo = dialogView.findViewById(R.id.layoutMotivo);
         
         // Actualizar información del evento
         TextView textViewInfoEvento = dialogView.findViewById(R.id.textViewInfoEvento);
@@ -256,13 +380,21 @@ public class AsistenciaFragment extends Fragment {
         });
         
         buttonNoAsisto.setOnClickListener(v -> {
-            String motivo = editTextMotivo.getText().toString().trim();
-            if (motivo.isEmpty()) {
-                Toast.makeText(requireContext(), "Por favor, indica el motivo de la ausencia", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            registrarAsistencia(evento, jugador, false, motivo);
-            ((AlertDialog) v.getTag()).dismiss();
+            // Mostrar campo de motivo cuando se selecciona "NO ASISTO"
+            layoutMotivo.setVisibility(View.VISIBLE);
+            editTextMotivo.requestFocus();
+            
+            // Cambiar el texto del botón para confirmar
+            buttonNoAsisto.setText("CONFIRMAR AUSENCIA");
+            buttonNoAsisto.setOnClickListener(confirmV -> {
+                String motivo = editTextMotivo.getText().toString().trim();
+                if (motivo.isEmpty()) {
+                    Toast.makeText(requireContext(), "Por favor, indica el motivo de la ausencia", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                registrarAsistencia(evento, jugador, false, motivo);
+                ((AlertDialog) confirmV.getTag()).dismiss();
+            });
         });
         
         AlertDialog dialog = builder.setView(dialogView)
@@ -298,7 +430,6 @@ public class AsistenciaFragment extends Fragment {
         
         dataManager.agregarAsistencia(nuevaAsistencia);
         cargarAsistencias();
-        actualizarEstadisticas();
         
         String mensaje = asistio ? "Asistencia registrada exitosamente" : "Ausencia registrada exitosamente";
         Toast.makeText(requireContext(), mensaje, Toast.LENGTH_SHORT).show();
@@ -319,7 +450,6 @@ public class AsistenciaFragment extends Fragment {
         super.onResume();
         Log.d(TAG, "onResume: Fragmento resumido");
         cargarAsistencias();
-        actualizarEstadisticas();
     }
 
     private void manejarClicEnAsistencia(Asistencia asistencia) {

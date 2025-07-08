@@ -5,42 +5,43 @@
     android:layout_height="match_parent"
     android:background="@drawable/login_background">
 
-    <!-- Logo circular con borde azul y sombra -->
+    <!-- Logo circular con borde azul y sombra mejorada -->
     <FrameLayout
         android:id="@+id/logo_container"
-        android:layout_width="140dp"
-        android:layout_height="140dp"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="60dp"
-        android:elevation="12dp">
+        android:layout_marginTop="80dp"
+        android:elevation="16dp">
 
         <View
-            android:layout_width="140dp"
-            android:layout_height="140dp"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
             android:background="@drawable/circle_background"
-            android:elevation="8dp" />
+            android:elevation="12dp" />
 
         <ImageView
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
             android:layout_gravity="center"
             android:src="@drawable/logo_santiaguino"
-            android:elevation="12dp" />
+            android:elevation="16dp" />
     </FrameLayout>
 
-    <!-- Branding -->
+    <!-- Branding mejorado -->
     <TextView
         android:id="@+id/app_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/logo_container"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:text="CD Santiaguiño Guizán"
-        android:textSize="28sp"
+        android:textSize="32sp"
         android:textStyle="bold"
         android:textColor="@color/blue_profesional"
-        android:fontFamily="sans-serif-medium" />
+        android:fontFamily="sans-serif-medium"
+        android:elevation="8dp" />
 
     <TextView
         android:id="@+id/app_subtitle"
@@ -49,63 +50,66 @@
         android:layout_below="@id/app_title"
         android:layout_centerHorizontal="true"
         android:text="Bienvenido a la familia del Santiaguiño"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:textColor="@color/white"
-        android:alpha="0.8"
+        android:alpha="0.9"
         android:fontFamily="sans-serif"
-        android:layout_marginBottom="12dp" />
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp" />
 
-    <!-- Tarjeta de login -->
+    <!-- Tarjeta de login mejorada -->
     <androidx.cardview.widget.CardView
         android:id="@+id/login_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/app_subtitle"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        app:cardCornerRadius="24dp"
-        app:cardElevation="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        app:cardCornerRadius="28dp"
+        app:cardElevation="20dp"
         app:cardBackgroundColor="@color/surface">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="32dp">
+            android:padding="40dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Iniciar Sesión"
-                android:textSize="22sp"
+                android:textSize="26sp"
                 android:textStyle="bold"
                 android:textColor="@color/blue_profesional"
                 android:gravity="center"
-                android:layout_marginBottom="24dp" />
+                android:layout_marginBottom="32dp" />
 
-            <!-- Campo Usuario -->
+            <!-- Campo Usuario mejorado -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:background="@drawable/edit_text_background"
-                android:padding="14dp"
-                android:layout_marginBottom="18dp">
+                android:padding="16dp"
+                android:layout_marginBottom="20dp"
+                android:elevation="4dp">
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
                     android:src="@drawable/ic_person"
                     app:tint="@color/blue_profesional"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="10dp" />
+                    android:layout_marginEnd="12dp" />
 
                 <EditText
                     android:id="@+id/et_usuario"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:hint="Usuario o Email"
                     android:textColor="@color/white"
                     android:textColorHint="@color/gray_light"
@@ -114,26 +118,38 @@
                     android:imeOptions="actionNext"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:textSize="16sp"
-                    android:fontFamily="sans-serif" />
+                    android:textSize="17sp"
+                    android:fontFamily="sans-serif"
+                    android:padding="4dp" />
+
+                <ImageView
+                    android:id="@+id/iv_clear_usuario"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_clear"
+                    app:tint="@color/gray_light"
+                    android:layout_gravity="center_vertical"
+                    android:visibility="gone"
+                    android:background="?attr/selectableItemBackgroundBorderless" />
             </LinearLayout>
 
-            <!-- Campo Contraseña con mostrar/ocultar -->
+            <!-- Campo Contraseña mejorado -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:background="@drawable/edit_text_background"
-                android:padding="14dp"
-                android:layout_marginBottom="24dp">
+                android:padding="16dp"
+                android:layout_marginBottom="28dp"
+                android:elevation="4dp">
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
                     android:src="@drawable/ic_lock"
                     app:tint="@color/blue_profesional"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="10dp" />
+                    android:layout_marginEnd="12dp" />
 
                 <EditText
                     android:id="@+id/et_password"
@@ -148,46 +164,72 @@
                     android:imeOptions="actionDone"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:textSize="16sp"
-                    android:fontFamily="sans-serif" />
+                    android:textSize="17sp"
+                    android:fontFamily="sans-serif"
+                    android:padding="4dp" />
+
+                <ImageView
+                    android:id="@+id/iv_clear_password"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_clear"
+                    app:tint="@color/gray_light"
+                    android:layout_gravity="center_vertical"
+                    android:visibility="gone"
+                    android:background="?attr/selectableItemBackgroundBorderless" />
 
                 <ImageView
                     android:id="@+id/iv_toggle_password"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
                     android:src="@drawable/ic_eye"
                     app:tint="@color/blue_profesional"
                     android:layout_gravity="center_vertical"
-                    android:padding="2dp" />
+                    android:padding="4dp"
+                    android:background="?attr/selectableItemBackgroundBorderless" />
             </LinearLayout>
 
-            <!-- Mensaje de error animado -->
+            <!-- Mensaje de error animado mejorado -->
             <TextView
                 android:id="@+id/tv_error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/red"
-                android:textSize="14sp"
+                android:textSize="15sp"
                 android:visibility="gone"
                 android:gravity="center"
-                android:layout_marginBottom="12dp" />
+                android:layout_marginBottom="16dp"
+                android:padding="8dp"
+                android:background="@drawable/error_background"
+                android:alpha="0.95" />
 
-            <!-- Botón de Login -->
+            <!-- Botón de Login mejorado -->
             <Button
                 android:id="@+id/btn_login"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="60dp"
                 android:text="INICIAR SESIÓN"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@color/white"
                 android:background="@drawable/button_blue_background"
-                android:elevation="8dp" />
+                android:elevation="12dp"
+                android:stateListAnimator="@null" />
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- Información adicional -->
-    <!-- TextView eliminado por seguridad, no mostrar credenciales -->
+    <!-- Información de ayuda -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="32dp"
+        android:text="💡 Toca el título para crear datos de ejemplo"
+        android:textSize="14sp"
+        android:textColor="@color/white"
+        android:alpha="0.7"
+        android:fontFamily="sans-serif" />
 
 </RelativeLayout> 

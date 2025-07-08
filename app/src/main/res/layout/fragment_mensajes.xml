@@ -22,7 +22,7 @@
             android:text="Mensajes"
             android:textSize="22sp"
             android:textStyle="bold"
-            android:textColor="@color/text_primary" />
+            android:textColor="@color/white" />
 
         <Button
             android:id="@+id/buttonDestacados"
@@ -96,7 +96,7 @@
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:padding="16dp"
-        android:background="@color/black">
+        android:background="@color/white">
 
         <EditText
             android:id="@+id/editTextMensaje"
@@ -106,8 +106,8 @@
             android:hint="Escribe tu mensaje..."
             android:padding="12dp"
             android:background="@drawable/edit_text_background"
-            android:textColor="@color/white"
-            android:textColorHint="@color/gray_light"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_secondary"
             android:layout_marginEnd="12dp"
             android:maxLines="3"
             android:minHeight="48dp" />
