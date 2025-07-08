@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Crear Nuevo Usuario"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/blue_profesional"
         android:textSize="20sp"
         android:textStyle="bold"
         android:gravity="center"
@@ -24,8 +24,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:hint="Nombre completo"
-        app:boxStrokeColor="@color/colorPrimary"
-        app:hintTextColor="@color/colorPrimary">
+        app:boxStrokeColor="@color/blue_profesional"
+        app:hintTextColor="@color/blue_profesional">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editTextNombre"
@@ -42,8 +42,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:hint="Email"
-        app:boxStrokeColor="@color/colorPrimary"
-        app:hintTextColor="@color/colorPrimary">
+        app:boxStrokeColor="@color/blue_profesional"
+        app:hintTextColor="@color/blue_profesional">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editTextEmail"
@@ -60,8 +60,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:hint="Contraseña"
-        app:boxStrokeColor="@color/colorPrimary"
-        app:hintTextColor="@color/colorPrimary"
+        app:boxStrokeColor="@color/blue_profesional"
+        app:hintTextColor="@color/blue_profesional"
         app:passwordToggleEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -79,8 +79,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:hint="Confirmar contraseña"
-        app:boxStrokeColor="@color/colorPrimary"
-        app:hintTextColor="@color/colorPrimary"
+        app:boxStrokeColor="@color/blue_profesional"
+        app:hintTextColor="@color/blue_profesional"
         app:passwordToggleEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -97,7 +97,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Rol:"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/blue_profesional"
         android:textSize="16sp"
         android:textStyle="bold"
         android:layout_marginBottom="8dp" />
@@ -115,7 +115,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Equipo:"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/blue_profesional"
         android:textSize="16sp"
         android:textStyle="bold"
         android:layout_marginBottom="8dp" />
@@ -134,8 +134,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:hint="Jugador asociado (opcional)"
-        app:boxStrokeColor="@color/colorPrimary"
-        app:hintTextColor="@color/colorPrimary">
+        app:boxStrokeColor="@color/blue_profesional"
+        app:hintTextColor="@color/blue_profesional">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editTextJugador"

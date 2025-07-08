@@ -2,17 +2,20 @@
     <!-- Base application theme. -->
     <style name="Theme.Socialmanager" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/rojo_club</item>
-        <item name="colorPrimaryVariant">@color/rojo_club_dark</item>
+        <item name="colorPrimary">@color/blue_profesional</item>
+        <item name="colorPrimaryVariant">@color/blue_profesional_light</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/rojo_club_light</item>
-        <item name="colorSecondaryVariant">@color/rojo_club</item>
+        <item name="colorSecondary">@color/blue_profesional_accent</item>
+        <item name="colorSecondaryVariant">@color/blue_profesional_accent</item>
         <item name="colorOnSecondary">@color/white</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor">@color/blue_profesional</item>
         <!-- Fondo y superficie -->
         <item name="android:windowBackground">@color/background</item>
+        <!-- Text colors -->
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
         <!-- Customize your theme here. -->
     </style>
 </resources>

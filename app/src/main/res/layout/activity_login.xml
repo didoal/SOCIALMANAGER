@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/login_background">
 
-    <!-- Logo circular con borde rojo y sombra -->
+    <!-- Logo circular con borde azul y sombra -->
     <FrameLayout
         android:id="@+id/logo_container"
         android:layout_width="140dp"
@@ -17,7 +17,7 @@
         <View
             android:layout_width="140dp"
             android:layout_height="140dp"
-            android:background="@drawable/circle_red"
+            android:background="@drawable/circle_background"
             android:elevation="8dp" />
 
         <ImageView
@@ -39,7 +39,7 @@
         android:text="CD Santiaguiño Guizán"
         android:textSize="28sp"
         android:textStyle="bold"
-        android:textColor="@color/rojo_club"
+        android:textColor="@color/blue_profesional"
         android:fontFamily="sans-serif-medium" />
 
     <TextView
@@ -81,7 +81,7 @@
                 android:text="Iniciar Sesión"
                 android:textSize="22sp"
                 android:textStyle="bold"
-                android:textColor="@color/gold"
+                android:textColor="@color/blue_profesional"
                 android:gravity="center"
                 android:layout_marginBottom="24dp" />
 
@@ -98,7 +98,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_person"
-                    app:tint="@color/gold"
+                    app:tint="@color/blue_profesional"
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="10dp" />
 
@@ -131,7 +131,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_lock"
-                    app:tint="@color/gold"
+                    app:tint="@color/blue_profesional"
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="10dp" />
 
@@ -156,7 +156,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_eye"
-                    app:tint="@color/gold"
+                    app:tint="@color/blue_profesional"
                     android:layout_gravity="center_vertical"
                     android:padding="2dp" />
             </LinearLayout>
@@ -180,8 +180,8 @@
                 android:text="INICIAR SESIÓN"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:textColor="@color/black"
-                android:background="@drawable/button_gold_background"
+                android:textColor="@color/white"
+                android:background="@drawable/button_blue_background"
                 android:elevation="8dp" />
 
         </LinearLayout>

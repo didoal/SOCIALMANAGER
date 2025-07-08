@@ -230,21 +230,23 @@ public class GestionEventosFragment extends Fragment {
     private void crearEvento(String titulo, String descripcion, String lugar, String tipo, String equipo, java.util.Date fecha) {
         Log.d(TAG, "crearEvento: Creando evento " + titulo);
         
-        Evento nuevoEvento = new Evento();
-        nuevoEvento.setTitulo(titulo);
-        nuevoEvento.setDescripcion(descripcion);
-        nuevoEvento.setUbicacion(lugar);
-        nuevoEvento.setTipo(tipo);
-        nuevoEvento.setEquipo(equipo.equals("Todos los equipos") ? null : equipo);
-        nuevoEvento.setFechaInicio(fecha);
-        nuevoEvento.setId(String.valueOf(System.currentTimeMillis()));
+        Evento nuevoEvento = new Evento(titulo, descripcion, fecha, fecha, lugar, tipo, 
+                "admin1", "Administrador", true);
+        nuevoEvento.setEquipo(equipo);
         
         dataManager.agregarEvento(nuevoEvento);
+        
+        // Crear notificación automática para el evento
+        dataManager.crearNotificacionEvento(nuevoEvento);
+        
+        // Crear solicitudes de confirmación de asistencia para padres del equipo
+        dataManager.crearSolicitudesConfirmacionAsistencia(nuevoEvento);
+        
         cargarEventos();
         actualizarEstadisticas();
         
-        Toast.makeText(requireContext(), "Evento creado exitosamente", Toast.LENGTH_SHORT).show();
-        Log.d(TAG, "crearEvento: Evento " + titulo + " creado correctamente");
+        Toast.makeText(requireContext(), "Evento creado exitosamente. Se han enviado notificaciones a los padres.", Toast.LENGTH_LONG).show();
+        Log.d(TAG, "crearEvento: Evento " + titulo + " creado correctamente con notificaciones");
     }
 
     private void mostrarDialogoEditarEvento(Evento evento) {
