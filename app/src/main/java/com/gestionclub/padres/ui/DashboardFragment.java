@@ -22,20 +22,22 @@ public class DashboardFragment extends Fragment {
     private DataManager dataManager;
     private Usuario usuarioActual;
     
-    // Vistas
+    // Vistas principales
     private TextView textViewBienvenida;
     private TextView textViewEventosProximos;
     private TextView textViewNotificaciones;
     private TextView textViewUsuarioInfo;
     private LinearLayout layoutAdminAccesos;
     
-    // Tarjetas de acceso rápido
+    // Tarjetas de acceso rápido del nuevo diseño
     private View cardCalendario;
     private View cardAsistencia;
     private View cardMensajes;
     private View cardObjetosPerdidos;
     private View cardEstadisticas;
-    private View cardGestion;
+    private View cardGestionEquipos;
+    private View cardGestionEventos;
+    private View cardGestionUsuarios;
 
     @Nullable
     @Override
@@ -59,29 +61,50 @@ public class DashboardFragment extends Fragment {
     }
 
     private void inicializarVistas(View view) {
+        // Vistas principales
         textViewBienvenida = view.findViewById(R.id.textViewBienvenida);
         textViewEventosProximos = view.findViewById(R.id.textViewEventosProximos);
         textViewNotificaciones = view.findViewById(R.id.textViewNotificaciones);
         textViewUsuarioInfo = view.findViewById(R.id.textViewUsuarioInfo);
         layoutAdminAccesos = view.findViewById(R.id.layoutAdminAccesos);
         
-        // Tarjetas de acceso
+        // Tarjetas de acceso rápido del nuevo diseño
         cardCalendario = view.findViewById(R.id.cardCalendario);
         cardAsistencia = view.findViewById(R.id.cardAsistencia);
         cardMensajes = view.findViewById(R.id.cardMensajes);
         cardObjetosPerdidos = view.findViewById(R.id.cardObjetosPerdidos);
         cardEstadisticas = view.findViewById(R.id.cardEstadisticas);
-        cardGestion = view.findViewById(R.id.cardGestion);
+        cardGestionEquipos = view.findViewById(R.id.cardGestionEquipos);
+        cardGestionEventos = view.findViewById(R.id.cardGestionEventos);
+        cardGestionUsuarios = view.findViewById(R.id.cardGestionUsuarios);
     }
 
     private void configurarAccesosRapidos() {
         // Configurar listeners para las tarjetas de acceso rápido
-        cardCalendario.setOnClickListener(v -> navegarAFragmento(new CalendarioFragment()));
-        cardAsistencia.setOnClickListener(v -> navegarAFragmento(new AsistenciaFragment()));
-        cardMensajes.setOnClickListener(v -> navegarAFragmento(new MensajesFragment()));
-        cardObjetosPerdidos.setOnClickListener(v -> navegarAFragmento(new ObjetosPerdidosFragment()));
-        cardEstadisticas.setOnClickListener(v -> navegarAFragmento(new EstadisticasFragment()));
-        cardGestion.setOnClickListener(v -> navegarAFragmento(new GestionUsuariosFragment()));
+        if (cardCalendario != null) {
+            cardCalendario.setOnClickListener(v -> navegarAFragmento(new CalendarioFragment()));
+        }
+        if (cardAsistencia != null) {
+            cardAsistencia.setOnClickListener(v -> navegarAFragmento(new AsistenciaFragment()));
+        }
+        if (cardMensajes != null) {
+            cardMensajes.setOnClickListener(v -> navegarAFragmento(new MensajesFragment()));
+        }
+        if (cardObjetosPerdidos != null) {
+            cardObjetosPerdidos.setOnClickListener(v -> navegarAFragmento(new ObjetosPerdidosFragment()));
+        }
+        if (cardEstadisticas != null) {
+            cardEstadisticas.setOnClickListener(v -> navegarAFragmento(new EstadisticasFragment()));
+        }
+        if (cardGestionEquipos != null) {
+            cardGestionEquipos.setOnClickListener(v -> navegarAFragmento(new GestionEquiposFragment()));
+        }
+        if (cardGestionEventos != null) {
+            cardGestionEventos.setOnClickListener(v -> navegarAFragmento(new GestionEventosFragment()));
+        }
+        if (cardGestionUsuarios != null) {
+            cardGestionUsuarios.setOnClickListener(v -> navegarAFragmento(new GestionUsuariosFragment()));
+        }
     }
 
     private void navegarAFragmento(Fragment fragment) {
@@ -94,7 +117,9 @@ public class DashboardFragment extends Fragment {
         if (usuarioActual != null) {
             // Configurar bienvenida personalizada
             String bienvenida = "Bienvenido, " + usuarioActual.getNombre();
-            textViewBienvenida.setText(bienvenida);
+            if (textViewBienvenida != null) {
+                textViewBienvenida.setText(bienvenida);
+            }
             
             // Cargar eventos próximos
             cargarEventosProximos();
@@ -134,24 +159,32 @@ public class DashboardFragment extends Fragment {
                 }
             }
             
-            textViewEventosProximos.setText(String.valueOf(eventosProximos));
+            if (textViewEventosProximos != null) {
+                textViewEventosProximos.setText(String.valueOf(eventosProximos));
+            }
             
         } catch (Exception e) {
-            textViewEventosProximos.setText("0");
+            if (textViewEventosProximos != null) {
+                textViewEventosProximos.setText("0");
+            }
         }
     }
 
     private void cargarNotificacionesNoLeidas() {
         try {
             int notificacionesNoLeidas = dataManager.getNotificacionesNoLeidas();
-            textViewNotificaciones.setText(String.valueOf(notificacionesNoLeidas));
+            if (textViewNotificaciones != null) {
+                textViewNotificaciones.setText(String.valueOf(notificacionesNoLeidas));
+            }
         } catch (Exception e) {
-            textViewNotificaciones.setText("0");
+            if (textViewNotificaciones != null) {
+                textViewNotificaciones.setText("0");
+            }
         }
     }
 
     private void cargarInformacionUsuario() {
-        if (usuarioActual != null) {
+        if (usuarioActual != null && textViewUsuarioInfo != null) {
             StringBuilder info = new StringBuilder();
             info.append("• Nombre: ").append(usuarioActual.getNombre()).append("\n");
             info.append("• Rol: ").append(usuarioActual.isEsAdmin() ? "Administrador" : "Usuario").append("\n");
@@ -171,9 +204,9 @@ public class DashboardFragment extends Fragment {
     }
 
     private void configurarVisibilidadAdmin() {
-        if (usuarioActual != null && usuarioActual.isEsAdmin()) {
+        if (usuarioActual != null && usuarioActual.isEsAdmin() && layoutAdminAccesos != null) {
             layoutAdminAccesos.setVisibility(View.VISIBLE);
-        } else {
+        } else if (layoutAdminAccesos != null) {
             layoutAdminAccesos.setVisibility(View.GONE);
         }
     }

@@ -21,6 +21,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.tabs.TabLayout;
 import com.gestionclub.padres.R;
 import com.gestionclub.padres.adapter.EventoAdapter;
 import com.gestionclub.padres.data.DataManager;
@@ -35,15 +36,25 @@ import java.util.List;
 import java.util.Locale;
 
 public class CalendarioFragment extends Fragment implements EventoAdapter.OnEventoClickListener {
+    // Vistas del nuevo diseño
+    private TabLayout tabLayout;
     private CalendarView calendarView;
     private RecyclerView recyclerViewEventos;
     private TextView textViewEventosDia;
     private Button buttonAgregarEvento;
+    private LinearLayout layoutCalendario;
+    private LinearLayout layoutLista;
+    private LinearLayout layoutDia;
+    private LinearLayout layoutSemana;
+    private LinearLayout layoutMes;
+    private LinearLayout layoutAno;
+    
     private EventoAdapter eventoAdapter;
     private DataManager dataManager;
     private Usuario usuarioActual;
     private Date fechaSeleccionada;
     private SimpleDateFormat dateFormat;
+    private String vistaActual = "lista"; // lista, dia, semana, mes, ano
 
     @Nullable
     @Override
@@ -55,42 +66,278 @@ public class CalendarioFragment extends Fragment implements EventoAdapter.OnEven
             fechaSeleccionada = new Date();
             dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
             inicializarVistas(view);
+            configurarTabs();
             configurarCalendario();
             configurarRecyclerView();
             cargarEventosDelDia();
             configurarListeners();
         } catch (Exception e) {
             Toast.makeText(requireContext(), "Error al cargar el calendario: " + e.getMessage(), Toast.LENGTH_LONG).show();
-            TextView tvSinEventos = view.findViewById(R.id.tv_sin_eventos);
-            if (tvSinEventos != null) {
-                tvSinEventos.setText("No se pudo cargar el calendario. Intenta más tarde.");
-                tvSinEventos.setVisibility(View.VISIBLE);
-            }
         }
         return view;
     }
 
     private void inicializarVistas(View view) {
+        // Tabs y layouts
+        tabLayout = view.findViewById(R.id.tabLayout);
+        layoutCalendario = view.findViewById(R.id.layoutCalendario);
+        layoutLista = view.findViewById(R.id.layoutLista);
+        layoutDia = view.findViewById(R.id.layoutDia);
+        layoutSemana = view.findViewById(R.id.layoutSemana);
+        layoutMes = view.findViewById(R.id.layoutMes);
+        layoutAno = view.findViewById(R.id.layoutAno);
+        
+        // Vistas del calendario
         calendarView = view.findViewById(R.id.calendarView);
         recyclerViewEventos = view.findViewById(R.id.recyclerViewEventos);
         textViewEventosDia = view.findViewById(R.id.textViewEventosDia);
         buttonAgregarEvento = view.findViewById(R.id.buttonAgregarEvento);
     }
 
+    private void configurarTabs() {
+        if (tabLayout != null) {
+            tabLayout.addTab(tabLayout.newTab().setText("Lista"));
+            tabLayout.addTab(tabLayout.newTab().setText("Día"));
+            tabLayout.addTab(tabLayout.newTab().setText("Semana"));
+            tabLayout.addTab(tabLayout.newTab().setText("Mes"));
+            tabLayout.addTab(tabLayout.newTab().setText("Año"));
+            
+            tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    cambiarVista(tab.getPosition());
+                }
+
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {}
+
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {}
+            });
+        }
+    }
+
+    private void cambiarVista(int posicion) {
+        // Ocultar todos los layouts
+        if (layoutLista != null) layoutLista.setVisibility(View.GONE);
+        if (layoutDia != null) layoutDia.setVisibility(View.GONE);
+        if (layoutSemana != null) layoutSemana.setVisibility(View.GONE);
+        if (layoutMes != null) layoutMes.setVisibility(View.GONE);
+        if (layoutAno != null) layoutAno.setVisibility(View.GONE);
+        
+        // Mostrar el layout correspondiente
+        switch (posicion) {
+            case 0: // Lista
+                vistaActual = "lista";
+                if (layoutLista != null) layoutLista.setVisibility(View.VISIBLE);
+                break;
+            case 1: // Día
+                vistaActual = "dia";
+                if (layoutDia != null) layoutDia.setVisibility(View.VISIBLE);
+                break;
+            case 2: // Semana
+                vistaActual = "semana";
+                if (layoutSemana != null) layoutSemana.setVisibility(View.VISIBLE);
+                break;
+            case 3: // Mes
+                vistaActual = "mes";
+                if (layoutMes != null) layoutMes.setVisibility(View.VISIBLE);
+                break;
+            case 4: // Año
+                vistaActual = "ano";
+                if (layoutAno != null) layoutAno.setVisibility(View.VISIBLE);
+                break;
+        }
+        
+        // Actualizar eventos según la vista
+        cargarEventosSegunVista();
+    }
+
+    private void cargarEventosSegunVista() {
+        switch (vistaActual) {
+            case "lista":
+                cargarTodosLosEventos();
+                break;
+            case "dia":
+                cargarEventosDelDia();
+                break;
+            case "semana":
+                cargarEventosDeLaSemana();
+                break;
+            case "mes":
+                cargarEventosDelMes();
+                break;
+            case "ano":
+                cargarEventosDelAno();
+                break;
+        }
+    }
+
+    private void cargarTodosLosEventos() {
+        List<Evento> todosEventos = new ArrayList<>();
+        try {
+            if (dataManager != null) {
+                List<Evento> eventos = dataManager.getEventos();
+                if (eventos != null) todosEventos = eventos;
+            }
+        } catch (Exception e) {
+            // Si hay error, la lista queda vacía
+        }
+        
+        // Filtrar por equipo si no es admin
+        List<Evento> eventosFiltrados = filtrarEventosPorUsuario(todosEventos);
+        
+        if (eventoAdapter != null) {
+            eventoAdapter.actualizarEventos(eventosFiltrados);
+        }
+        if (textViewEventosDia != null) {
+            textViewEventosDia.setText("Todos los eventos (" + eventosFiltrados.size() + ")");
+        }
+    }
+
+    private void cargarEventosDeLaSemana() {
+        List<Evento> todosEventos = new ArrayList<>();
+        try {
+            if (dataManager != null) {
+                List<Evento> eventos = dataManager.getEventos();
+                if (eventos != null) todosEventos = eventos;
+            }
+        } catch (Exception e) {
+            // Si hay error, la lista queda vacía
+        }
+        
+        List<Evento> eventosDeLaSemana = new ArrayList<>();
+        Calendar calInicio = Calendar.getInstance();
+        calInicio.setTime(fechaSeleccionada);
+        calInicio.set(Calendar.DAY_OF_WEEK, calInicio.getFirstDayOfWeek());
+        
+        Calendar calFin = Calendar.getInstance();
+        calFin.setTime(calInicio.getTime());
+        calFin.add(Calendar.DAY_OF_WEEK, 6);
+        
+        List<Evento> eventosFiltrados = filtrarEventosPorUsuario(todosEventos);
+        
+        for (Evento evento : eventosFiltrados) {
+            Calendar calEvento = Calendar.getInstance();
+            calEvento.setTime(evento.getFechaInicio());
+            
+            if (!calEvento.before(calInicio) && !calEvento.after(calFin)) {
+                eventosDeLaSemana.add(evento);
+            }
+        }
+        
+        if (eventoAdapter != null) {
+            eventoAdapter.actualizarEventos(eventosDeLaSemana);
+        }
+        if (textViewEventosDia != null) {
+            textViewEventosDia.setText("Eventos de la semana (" + eventosDeLaSemana.size() + ")");
+        }
+    }
+
+    private void cargarEventosDelMes() {
+        List<Evento> todosEventos = new ArrayList<>();
+        try {
+            if (dataManager != null) {
+                List<Evento> eventos = dataManager.getEventos();
+                if (eventos != null) todosEventos = eventos;
+            }
+        } catch (Exception e) {
+            // Si hay error, la lista queda vacía
+        }
+        
+        List<Evento> eventosDelMes = new ArrayList<>();
+        Calendar calSeleccionada = Calendar.getInstance();
+        calSeleccionada.setTime(fechaSeleccionada);
+        
+        List<Evento> eventosFiltrados = filtrarEventosPorUsuario(todosEventos);
+        
+        for (Evento evento : eventosFiltrados) {
+            Calendar calEvento = Calendar.getInstance();
+            calEvento.setTime(evento.getFechaInicio());
+            
+            if (calSeleccionada.get(Calendar.YEAR) == calEvento.get(Calendar.YEAR) &&
+                calSeleccionada.get(Calendar.MONTH) == calEvento.get(Calendar.MONTH)) {
+                eventosDelMes.add(evento);
+            }
+        }
+        
+        if (eventoAdapter != null) {
+            eventoAdapter.actualizarEventos(eventosDelMes);
+        }
+        if (textViewEventosDia != null) {
+            textViewEventosDia.setText("Eventos del mes (" + eventosDelMes.size() + ")");
+        }
+    }
+
+    private void cargarEventosDelAno() {
+        List<Evento> todosEventos = new ArrayList<>();
+        try {
+            if (dataManager != null) {
+                List<Evento> eventos = dataManager.getEventos();
+                if (eventos != null) todosEventos = eventos;
+            }
+        } catch (Exception e) {
+            // Si hay error, la lista queda vacía
+        }
+        
+        List<Evento> eventosDelAno = new ArrayList<>();
+        Calendar calSeleccionada = Calendar.getInstance();
+        calSeleccionada.setTime(fechaSeleccionada);
+        
+        List<Evento> eventosFiltrados = filtrarEventosPorUsuario(todosEventos);
+        
+        for (Evento evento : eventosFiltrados) {
+            Calendar calEvento = Calendar.getInstance();
+            calEvento.setTime(evento.getFechaInicio());
+            
+            if (calSeleccionada.get(Calendar.YEAR) == calEvento.get(Calendar.YEAR)) {
+                eventosDelAno.add(evento);
+            }
+        }
+        
+        if (eventoAdapter != null) {
+            eventoAdapter.actualizarEventos(eventosDelAno);
+        }
+        if (textViewEventosDia != null) {
+            textViewEventosDia.setText("Eventos del año (" + eventosDelAno.size() + ")");
+        }
+    }
+
+    private List<Evento> filtrarEventosPorUsuario(List<Evento> eventos) {
+        List<Evento> eventosFiltrados = new ArrayList<>();
+        String equipoUsuario = usuarioActual != null ? usuarioActual.getEquipo() : null;
+        
+        for (Evento evento : eventos) {
+            // Filtrar por equipo/categoría si el usuario no es administrador
+            if (usuarioActual != null && !usuarioActual.isEsAdmin() && equipoUsuario != null) {
+                if (evento.getEquipo() != null && !evento.getEquipo().equals(equipoUsuario)) {
+                    continue;
+                }
+            }
+            eventosFiltrados.add(evento);
+        }
+        
+        return eventosFiltrados;
+    }
+
     private void configurarCalendario() {
-        calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
-            Calendar cal = Calendar.getInstance();
-            cal.set(year, month, dayOfMonth);
-            fechaSeleccionada = cal.getTime();
-            cargarEventosDelDia();
-        });
+        if (calendarView != null) {
+            calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
+                Calendar cal = Calendar.getInstance();
+                cal.set(year, month, dayOfMonth);
+                fechaSeleccionada = cal.getTime();
+                cargarEventosSegunVista();
+            });
+        }
     }
 
     private void configurarRecyclerView() {
         boolean mostrarAcciones = usuarioActual != null && usuarioActual.isEsAdmin();
         eventoAdapter = new EventoAdapter(new ArrayList<>(), this, mostrarAcciones);
-        recyclerViewEventos.setLayoutManager(new LinearLayoutManager(requireContext()));
-        recyclerViewEventos.setAdapter(eventoAdapter);
+        if (recyclerViewEventos != null) {
+            recyclerViewEventos.setLayoutManager(new LinearLayoutManager(requireContext()));
+            recyclerViewEventos.setAdapter(eventoAdapter);
+        }
         
         // Mostrar botón agregar solo para administradores
         if (buttonAgregarEvento != null) {
@@ -171,12 +418,6 @@ public class CalendarioFragment extends Fragment implements EventoAdapter.OnEven
             textViewEventosDia.setText("Eventos del " + dateFormat.format(fechaSeleccionada) +
                                  " (" + eventosDelDia.size() + ")");
         }
-        // Mostrar mensaje si no hay eventos
-        View root = getView() != null ? getView() : getActivity().findViewById(android.R.id.content);
-        TextView tvSinEventos = root != null ? root.findViewById(R.id.tv_sin_eventos) : null;
-        if (tvSinEventos != null) {
-            tvSinEventos.setVisibility(eventosDelDia.isEmpty() ? View.VISIBLE : View.GONE);
-        }
     }
     
     private boolean esEventoRecurrenteEnFecha(Evento evento, Calendar fechaSeleccionada) {
@@ -204,13 +445,20 @@ public class CalendarioFragment extends Fragment implements EventoAdapter.OnEven
                 // Mismo día del mes
                 return calEvento.get(Calendar.DAY_OF_MONTH) == fechaSeleccionada.get(Calendar.DAY_OF_MONTH);
                 
+            case "ANUAL":
+                // Mismo día y mes
+                return calEvento.get(Calendar.DAY_OF_MONTH) == fechaSeleccionada.get(Calendar.DAY_OF_MONTH) &&
+                       calEvento.get(Calendar.MONTH) == fechaSeleccionada.get(Calendar.MONTH);
+                
             default:
                 return false;
         }
     }
 
     private void configurarListeners() {
-        buttonAgregarEvento.setOnClickListener(v -> mostrarDialogoEvento(null));
+        if (buttonAgregarEvento != null) {
+            buttonAgregarEvento.setOnClickListener(v -> mostrarDialogoEvento(null));
+        }
     }
 
     private void mostrarDialogoEvento(Evento eventoExistente) {
@@ -495,4 +743,5 @@ public class CalendarioFragment extends Fragment implements EventoAdapter.OnEven
         super.onResume();
         cargarEventosDelDia();
     }
+} 
 } 

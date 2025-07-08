@@ -133,16 +133,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         try {
             Log.d(TAG, "actualizarHeaderUsuario: Actualizando");
             View headerView = navigationView.getHeaderView(0);
+            
+            // Buscar las vistas del nuevo header
             TextView textViewUserName = headerView.findViewById(R.id.textViewUserName);
             TextView textViewUserRole = headerView.findViewById(R.id.textViewUserRole);
             TextView textViewUserEquipo = headerView.findViewById(R.id.textViewUserEquipo);
+            TextView textViewUserEmail = headerView.findViewById(R.id.textViewUserEmail);
 
             if (usuarioActual != null) {
-                textViewUserName.setText(usuarioActual.getNombre());
-                textViewUserRole.setText(usuarioActual.isEsAdmin() ? "Administrador" : "Usuario");
-                // Mostrar equipo/categoría si existe
-                String equipo = usuarioActual.getJugador() != null ? usuarioActual.getJugador() : "Sin equipo";
-                textViewUserEquipo.setText(equipo);
+                if (textViewUserName != null) {
+                    textViewUserName.setText(usuarioActual.getNombre());
+                }
+                if (textViewUserRole != null) {
+                    textViewUserRole.setText(usuarioActual.isEsAdmin() ? "Administrador" : "Usuario");
+                }
+                if (textViewUserEquipo != null) {
+                    // Mostrar equipo/categoría si existe
+                    String equipo = usuarioActual.getEquipo() != null ? usuarioActual.getEquipo() : 
+                                  (usuarioActual.getJugador() != null ? usuarioActual.getJugador() : "Sin equipo");
+                    textViewUserEquipo.setText(equipo);
+                }
+                if (textViewUserEmail != null) {
+                    textViewUserEmail.setText(usuarioActual.getEmail() != null ? usuarioActual.getEmail() : "");
+                }
                 Log.d(TAG, "actualizarHeaderUsuario: Header actualizado para " + usuarioActual.getNombre());
             }
         } catch (Exception e) {
@@ -198,41 +211,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             } else if (id == R.id.nav_mensajes) {
                 fragment = new MensajesFragment();
                 titulo = "Mensajes";
-            } else if (id == R.id.nav_muro_destacados) {
-                fragment = new MuroDestacadosFragment();
-                titulo = "Muro de Destacados";
+            } else if (id == R.id.nav_asistencia) {
+                fragment = new AsistenciaFragment();
+                titulo = "Asistencia";
             } else if (id == R.id.nav_objetos_perdidos) {
                 fragment = new ObjetosPerdidosFragment();
                 titulo = "Objetos Perdidos";
             } else if (id == R.id.nav_notificaciones) {
                 fragment = new NotificacionesFragment();
                 titulo = "Notificaciones";
-            } else if (id == R.id.nav_asistencia) {
-                // Si tienes un fragmento para asistencia, ponlo aquí
-                // fragment = new AsistenciaFragment();
-                // titulo = "Asistencias";
             } else if (id == R.id.nav_estadisticas) {
-                // Si tienes un fragmento para estadísticas, ponlo aquí
-                // fragment = new EstadisticasFragment();
-                // titulo = "Estadísticas";
-            } else if (id == R.id.nav_gestion_usuarios) {
-                fragment = new GestionUsuariosFragment();
-                titulo = "Gestión de Usuarios";
+                fragment = new EstadisticasFragment();
+                titulo = "Estadísticas";
+            } else if (id == R.id.nav_muro_destacados) {
+                fragment = new MuroDestacadosFragment();
+                titulo = "Muro de Destacados";
             } else if (id == R.id.nav_gestion_equipos) {
                 fragment = new GestionEquiposFragment();
                 titulo = "Gestión de Equipos";
             } else if (id == R.id.nav_gestion_eventos) {
                 fragment = new GestionEventosFragment();
                 titulo = "Gestión de Eventos";
+            } else if (id == R.id.nav_gestion_usuarios) {
+                fragment = new GestionUsuariosFragment();
+                titulo = "Gestión de Usuarios";
             } else if (id == R.id.nav_configuracion) {
                 fragment = new ConfiguracionFragment();
                 titulo = "Configuración";
-            } else if (id == R.id.nav_logout) {
-                Log.d(TAG, "onNavigationItemSelected: Cerrando sesión");
-                dataManager.cerrarSesion();
-                new SessionManager(this).clearSession();
-                startActivity(new Intent(this, LoginActivity.class));
-                finish();
+            } else if (id == R.id.nav_cerrar_sesion) {
+                cerrarSesion();
                 return true;
             }
 
@@ -241,9 +248,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (getSupportActionBar() != null) {
                     getSupportActionBar().setTitle(titulo);
                 }
+                drawerLayout.closeDrawer(GravityCompat.START);
             }
 
-            drawerLayout.closeDrawer(GravityCompat.START);
             return true;
         } catch (Exception e) {
             Log.e(TAG, "onNavigationItemSelected: Error", e);
@@ -251,11 +258,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    private void cerrarSesion() {
+        try {
+            Log.d(TAG, "cerrarSesion: Cerrando sesión");
+            SessionManager sessionManager = new SessionManager(this);
+            sessionManager.logout();
+            
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        } catch (Exception e) {
+            Log.e(TAG, "cerrarSesion: Error", e);
+        }
+    }
+
     public void mostrarFragmento(Fragment fragment) {
         try {
-            Log.d(TAG, "mostrarFragmento: Mostrando fragmento " + fragment.getClass().getSimpleName());
-            getSupportFragmentManager()
-                .beginTransaction()
+            Log.d(TAG, "mostrarFragmento: Mostrando fragmento: " + fragment.getClass().getSimpleName());
+            getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, fragment)
                 .commit();
         } catch (Exception e) {
@@ -265,9 +286,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
+        try {
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START);
+            } else {
+                super.onBackPressed();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "onBackPressed: Error", e);
             super.onBackPressed();
         }
     }
@@ -275,13 +301,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume: MainActivity resumida");
-        actualizarContadorNotificaciones();
+        try {
+            actualizarContadorNotificaciones();
+        } catch (Exception e) {
+            Log.e(TAG, "onResume: Error", e);
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(TAG, "onPause: MainActivity pausada");
+        try {
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "onPause: Error", e);
+        }
     }
 } 
