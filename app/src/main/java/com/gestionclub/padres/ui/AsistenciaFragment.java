@@ -1,21 +1,24 @@
 package com.gestionclub.padres.ui;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,9 +27,19 @@ import com.gestionclub.padres.adapter.AsistenciaAdapter;
 import com.gestionclub.padres.data.DataManager;
 import com.gestionclub.padres.model.Asistencia;
 import com.gestionclub.padres.model.Evento;
-import com.gestionclub.padres.model.Notificacion;
 import com.gestionclub.padres.model.Usuario;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.utils.ColorTemplate;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -35,109 +48,113 @@ import java.util.List;
 import java.util.Locale;
 
 public class AsistenciaFragment extends Fragment {
-    private static final String TAG = "AsistenciaFragment";
-    
     private DataManager dataManager;
     private RecyclerView recyclerViewAsistencias;
     private AsistenciaAdapter asistenciaAdapter;
-    private TextView textViewEstadisticas;
-    private TextView textViewConfirmados;
-    private TextView textViewEnEspera;
-    private TextView textViewNoAsisten;
-    private Spinner spinnerEquipo;
-    private Button buttonFiltroTodos;
-    private Button buttonFiltroConfirmados;
-    private Button buttonFiltroEnEspera;
-    private Button buttonFiltroNoAsisten;
+    private TextView textViewConfirmados, textViewNoAsisten, textViewPorcentaje, textViewResumenFiltros;
+    private Button btnFechaDesde, btnFechaHasta, btnAplicarFiltros;
+    private ImageButton btnExportarPdf;
+    private Spinner spinnerTipoFiltro, spinnerEquipo, spinnerCategoria, spinnerJugador;
+    private LinearLayout layoutFiltroEquipo, layoutFiltroCategoria, layoutFiltroJugador;
+    private PieChart chartAsistencias;
     private FloatingActionButton fabRegistrarAsistencia;
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
     private Usuario usuarioActual;
     
     // Filtros
-    private String filtroEquipo = "TODOS";
-    private String filtroEstado = "TODOS";
+    private Date fechaDesde = null;
+    private Date fechaHasta = null;
+    private String tipoFiltro = "GLOBAL";
+    private String filtroEquipo = "";
+    private String filtroCategoria = "";
+    private String filtroJugador = "";
+    private List<Asistencia> asistenciasFiltradas = new ArrayList<>();
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.d(TAG, "onCreateView: Creando vista de asistencia");
         View view = inflater.inflate(R.layout.fragment_asistencia, container, false);
         
         dataManager = new DataManager(requireContext());
         usuarioActual = dataManager.getUsuarioActual();
         inicializarVistas(view);
         configurarRecyclerView();
+        configurarFiltros();
+        configurarGrafico();
+        configurarListeners();
         cargarAsistencias();
         
         return view;
     }
 
     private void inicializarVistas(View view) {
-        Log.d(TAG, "inicializarVistas: Inicializando vistas");
         recyclerViewAsistencias = view.findViewById(R.id.recyclerViewAsistencias);
-        textViewEstadisticas = view.findViewById(R.id.textViewEstadisticas);
         textViewConfirmados = view.findViewById(R.id.textViewConfirmados);
-        textViewEnEspera = view.findViewById(R.id.textViewEnEspera);
         textViewNoAsisten = view.findViewById(R.id.textViewNoAsisten);
+        textViewPorcentaje = view.findViewById(R.id.textViewPorcentaje);
+        textViewResumenFiltros = view.findViewById(R.id.textViewResumenFiltros);
+        btnFechaDesde = view.findViewById(R.id.btnFechaDesde);
+        btnFechaHasta = view.findViewById(R.id.btnFechaHasta);
+        btnAplicarFiltros = view.findViewById(R.id.btnAplicarFiltros);
+        btnExportarPdf = view.findViewById(R.id.btnExportarPdf);
+        spinnerTipoFiltro = view.findViewById(R.id.spinnerTipoFiltro);
         spinnerEquipo = view.findViewById(R.id.spinnerEquipo);
-        buttonFiltroTodos = view.findViewById(R.id.buttonFiltroTodos);
-        buttonFiltroConfirmados = view.findViewById(R.id.buttonFiltroConfirmados);
-        buttonFiltroEnEspera = view.findViewById(R.id.buttonFiltroEnEspera);
-        buttonFiltroNoAsisten = view.findViewById(R.id.buttonFiltroNoAsisten);
+        spinnerCategoria = view.findViewById(R.id.spinnerCategoria);
+        spinnerJugador = view.findViewById(R.id.spinnerJugador);
+        layoutFiltroEquipo = view.findViewById(R.id.layoutFiltroEquipo);
+        layoutFiltroCategoria = view.findViewById(R.id.layoutFiltroCategoria);
+        layoutFiltroJugador = view.findViewById(R.id.layoutFiltroJugador);
+        chartAsistencias = view.findViewById(R.id.chartAsistencias);
         fabRegistrarAsistencia = view.findViewById(R.id.fabRegistrarAsistencia);
-        
-        fabRegistrarAsistencia.setOnClickListener(v -> mostrarDialogoRegistrarAsistencia());
-        
-        // Configurar filtros
-        configurarFiltros();
+    }
+
+    private void configurarRecyclerView() {
+        recyclerViewAsistencias.setLayoutManager(new LinearLayoutManager(requireContext()));
+        asistenciaAdapter = new AsistenciaAdapter(requireContext(), new ArrayList<>(), this::manejarClicEnAsistencia);
+        recyclerViewAsistencias.setAdapter(asistenciaAdapter);
     }
 
     private void configurarFiltros() {
+        // Configurar spinner de tipo de filtro
+        String[] tiposFiltro = {"GLOBAL", "POR EQUIPO", "POR CATEGORÍA", "POR JUGADOR"};
+        ArrayAdapter<String> tipoAdapter = new ArrayAdapter<>(requireContext(), 
+                android.R.layout.simple_spinner_item, tiposFiltro);
+        tipoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerTipoFiltro.setAdapter(tipoAdapter);
+
         // Configurar spinner de equipos
         List<String> equipos = new ArrayList<>();
-        equipos.add("TODOS");
+        equipos.add("Todos los equipos");
         equipos.addAll(dataManager.getNombresEquipos());
-        
         ArrayAdapter<String> equipoAdapter = new ArrayAdapter<>(requireContext(), 
                 android.R.layout.simple_spinner_item, equipos);
         equipoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerEquipo.setAdapter(equipoAdapter);
-        
-        // Configurar listeners de filtros
-        spinnerEquipo.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
-                filtroEquipo = parent.getItemAtPosition(position).toString();
-                cargarAsistencias();
+
+        // Configurar spinner de categorías
+        String[] categorias = {"Todas las categorías", "Entrenamiento", "Partido", "Torneo", "Evento especial"};
+        ArrayAdapter<String> categoriaAdapter = new ArrayAdapter<>(requireContext(), 
+                android.R.layout.simple_spinner_item, categorias);
+        categoriaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerCategoria.setAdapter(categoriaAdapter);
+
+        // Configurar spinner de jugadores
+        List<String> jugadores = new ArrayList<>();
+        jugadores.add("Todos los jugadores");
+        List<Usuario> usuarios = dataManager.getUsuarios();
+        for (Usuario usuario : usuarios) {
+            if (usuario.getJugador() != null && !usuario.getJugador().isEmpty()) {
+                jugadores.add(usuario.getJugador());
             }
-            
-            @Override
-            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
-        });
-        
-        // Configurar botones de filtro de estado
-        buttonFiltroTodos.setOnClickListener(v -> {
-            filtroEstado = "TODOS";
-            cargarAsistencias();
-        });
-        
-        buttonFiltroConfirmados.setOnClickListener(v -> {
-            filtroEstado = "CONFIRMADOS";
-            cargarAsistencias();
-        });
-        
-        buttonFiltroEnEspera.setOnClickListener(v -> {
-            filtroEstado = "EN_ESPERA";
-            cargarAsistencias();
-        });
-        
-        buttonFiltroNoAsisten.setOnClickListener(v -> {
-            filtroEstado = "NO_ASISTEN";
-            cargarAsistencias();
-        });
-        
+        }
+        ArrayAdapter<String> jugadorAdapter = new ArrayAdapter<>(requireContext(), 
+                android.R.layout.simple_spinner_item, jugadores);
+        jugadorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerJugador.setAdapter(jugadorAdapter);
+
         // Configurar filtro inicial para usuarios no admin
         if (usuarioActual != null && !usuarioActual.isEsAdmin() && usuarioActual.getEquipo() != null) {
+            tipoFiltro = "POR EQUIPO";
             filtroEquipo = usuarioActual.getEquipo();
             int posicionEquipo = equipos.indexOf(filtroEquipo);
             if (posicionEquipo >= 0) {
@@ -146,52 +163,114 @@ public class AsistenciaFragment extends Fragment {
         }
     }
 
-    private void configurarRecyclerView() {
-        Log.d(TAG, "configurarRecyclerView: Configurando RecyclerView");
-        recyclerViewAsistencias.setLayoutManager(new LinearLayoutManager(requireContext()));
-        asistenciaAdapter = new AsistenciaAdapter(requireContext(), new ArrayList<>(), this::manejarClicEnAsistencia);
-        recyclerViewAsistencias.setAdapter(asistenciaAdapter);
+    private void configurarGrafico() {
+        chartAsistencias.setUsePercentValues(true);
+        chartAsistencias.getDescription().setEnabled(false);
+        chartAsistencias.setExtraOffsets(5, 10, 5, 5);
+        chartAsistencias.setDragDecelerationFrictionCoef(0.95f);
+        chartAsistencias.setDrawHoleEnabled(true);
+        chartAsistencias.setHoleColor(android.graphics.Color.WHITE);
+        chartAsistencias.setTransparentCircleColor(android.graphics.Color.WHITE);
+        chartAsistencias.setTransparentCircleAlpha(110);
+        chartAsistencias.setHoleRadius(58f);
+        chartAsistencias.setTransparentCircleRadius(61f);
+        chartAsistencias.setDrawCenterText(true);
+        chartAsistencias.setCenterText("Asistencias");
+        chartAsistencias.setRotationAngle(0);
+        chartAsistencias.setRotationEnabled(true);
+        chartAsistencias.setHighlightPerTapEnabled(true);
+        chartAsistencias.animateY(1400);
+        chartAsistencias.getLegend().setEnabled(false);
+    }
+
+    private void configurarListeners() {
+        btnFechaDesde.setOnClickListener(v -> mostrarDatePicker(true));
+        btnFechaHasta.setOnClickListener(v -> mostrarDatePicker(false));
+        btnAplicarFiltros.setOnClickListener(v -> aplicarFiltros());
+        btnExportarPdf.setOnClickListener(v -> exportarPdf());
+        fabRegistrarAsistencia.setOnClickListener(v -> mostrarDialogoRegistrarAsistencia());
+
+        spinnerTipoFiltro.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                tipoFiltro = parent.getItemAtPosition(position).toString();
+                mostrarFiltrosCondicionales();
+            }
+            
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+        });
+    }
+
+    private void mostrarDatePicker(boolean esDesde) {
+        Calendar calendar = Calendar.getInstance();
+        if (esDesde && fechaDesde != null) {
+            calendar.setTime(fechaDesde);
+        } else if (!esDesde && fechaHasta != null) {
+            calendar.setTime(fechaHasta);
+        }
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+            requireContext(),
+            (view, year, month, dayOfMonth) -> {
+                calendar.set(year, month, dayOfMonth);
+                Date fechaSeleccionada = calendar.getTime();
+                
+                if (esDesde) {
+                    fechaDesde = fechaSeleccionada;
+                    btnFechaDesde.setText(dateFormat.format(fechaSeleccionada));
+                } else {
+                    fechaHasta = fechaSeleccionada;
+                    btnFechaHasta.setText(dateFormat.format(fechaSeleccionada));
+                }
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        );
+        datePickerDialog.show();
+    }
+
+    private void mostrarFiltrosCondicionales() {
+        layoutFiltroEquipo.setVisibility(View.GONE);
+        layoutFiltroCategoria.setVisibility(View.GONE);
+        layoutFiltroJugador.setVisibility(View.GONE);
+
+        switch (tipoFiltro) {
+            case "POR EQUIPO":
+                layoutFiltroEquipo.setVisibility(View.VISIBLE);
+                break;
+            case "POR CATEGORÍA":
+                layoutFiltroCategoria.setVisibility(View.VISIBLE);
+                break;
+            case "POR JUGADOR":
+                layoutFiltroJugador.setVisibility(View.VISIBLE);
+                break;
+        }
+    }
+
+    private void aplicarFiltros() {
+        // Obtener valores de los filtros
+        if (spinnerEquipo.getVisibility() == View.VISIBLE) {
+            filtroEquipo = spinnerEquipo.getSelectedItem().toString();
+        }
+        if (spinnerCategoria.getVisibility() == View.VISIBLE) {
+            filtroCategoria = spinnerCategoria.getSelectedItem().toString();
+        }
+        if (spinnerJugador.getVisibility() == View.VISIBLE) {
+            filtroJugador = spinnerJugador.getSelectedItem().toString();
+        }
+
+        cargarAsistencias();
+        actualizarResumenFiltros();
     }
 
     private void cargarAsistencias() {
-        Log.d(TAG, "cargarAsistencias: Cargando asistencias");
-        
         List<Asistencia> todasAsistencias = dataManager.getAsistencias();
-        List<Asistencia> asistenciasFiltradas = new ArrayList<>();
+        asistenciasFiltradas = new ArrayList<>();
         
-        // Aplicar filtros
         for (Asistencia asistencia : todasAsistencias) {
-            boolean cumpleFiltroEquipo = true;
-            boolean cumpleFiltroEstado = true;
-            
-            // Filtro por equipo
-            if (!filtroEquipo.equals("TODOS")) {
-                Evento evento = dataManager.getEventoById(asistencia.getEventoId());
-                if (evento != null && evento.getEquipo() != null) {
-                    cumpleFiltroEquipo = evento.getEquipo().equals(filtroEquipo);
-                } else {
-                    cumpleFiltroEquipo = false;
-                }
-            }
-            
-            // Filtro por estado
-            if (!filtroEstado.equals("TODOS")) {
-                switch (filtroEstado) {
-                    case "CONFIRMADOS":
-                        cumpleFiltroEstado = asistencia.isAsistio();
-                        break;
-                    case "NO_ASISTEN":
-                        cumpleFiltroEstado = !asistencia.isAsistio();
-                        break;
-                    case "EN_ESPERA":
-                        // Para este ejemplo, consideramos "en espera" las asistencias sin confirmar
-                        // En una implementación real, necesitarías un campo adicional en el modelo
-                        cumpleFiltroEstado = asistencia.getObservaciones() == null || asistencia.getObservaciones().isEmpty();
-                        break;
-                }
-            }
-            
-            if (cumpleFiltroEquipo && cumpleFiltroEstado) {
+            if (cumpleFiltros(asistencia)) {
                 asistenciasFiltradas.add(asistencia);
             }
         }
@@ -200,343 +279,248 @@ public class AsistenciaFragment extends Fragment {
         asistenciasFiltradas.sort((a1, a2) -> a2.getFecha().compareTo(a1.getFecha()));
         
         asistenciaAdapter.actualizarAsistencias(asistenciasFiltradas);
-        
-        // Actualizar estadísticas
-        actualizarEstadisticas(asistenciasFiltradas);
-        
-        // Verificar eventos pendientes de confirmación
-        verificarEventosPendientesConfirmacion();
+        actualizarEstadisticas();
+        actualizarGrafico();
     }
 
-    private void actualizarEstadisticas(List<Asistencia> asistencias) {
-        Log.d(TAG, "actualizarEstadisticas: Actualizando estadísticas");
+    private boolean cumpleFiltros(Asistencia asistencia) {
+        // Filtro por fechas
+        if (fechaDesde != null && asistencia.getFecha().before(fechaDesde)) {
+            return false;
+        }
+        if (fechaHasta != null && asistencia.getFecha().after(fechaHasta)) {
+            return false;
+        }
+
+        // Obtener evento asociado
+        Evento evento = dataManager.getEventoById(asistencia.getEventoId());
+        if (evento == null) return false;
+
+        // Filtro por tipo
+        switch (tipoFiltro) {
+            case "POR EQUIPO":
+                if (!filtroEquipo.equals("Todos los equipos") && 
+                    !filtroEquipo.equals(evento.getEquipo())) {
+                    return false;
+                }
+                break;
+            case "POR CATEGORÍA":
+                if (!filtroCategoria.equals("Todas las categorías") && 
+                    !filtroCategoria.equals(evento.getTipo())) {
+                    return false;
+                }
+                break;
+            case "POR JUGADOR":
+                if (!filtroJugador.equals("Todos los jugadores") && 
+                    !filtroJugador.equals(asistencia.getJugadorNombre())) {
+                    return false;
+                }
+                break;
+        }
+
+        return true;
+    }
+
+    private void actualizarEstadisticas() {
+        int totalAsistencias = asistenciasFiltradas.size();
+        int asistenciasPositivas = 0, asistenciasNegativas = 0;
         
-        int totalAsistencias = asistencias.size();
-        int asistenciasPositivas = 0, asistenciasNegativas = 0, enEspera = 0;
-        
-        for (Asistencia asistencia : asistencias) {
+        for (Asistencia asistencia : asistenciasFiltradas) {
             if (asistencia.isAsistio()) {
                 asistenciasPositivas++;
             } else {
                 asistenciasNegativas++;
-            }
-            
-            // Contar en espera (sin observaciones)
-            if (asistencia.getObservaciones() == null || asistencia.getObservaciones().isEmpty()) {
-                enEspera++;
             }
         }
         
         double porcentajeAsistencia = totalAsistencias > 0 ? 
             (double) asistenciasPositivas / totalAsistencias * 100 : 0;
         
-        // Actualizar tarjetas de estadísticas
-        if (textViewConfirmados != null) {
-            textViewConfirmados.setText(String.valueOf(asistenciasPositivas));
+        textViewConfirmados.setText(String.valueOf(asistenciasPositivas));
+        textViewNoAsisten.setText(String.valueOf(asistenciasNegativas));
+        textViewPorcentaje.setText(String.format(Locale.getDefault(), "%.1f%%", porcentajeAsistencia));
+    }
+
+    private void actualizarGrafico() {
+        int asistenciasPositivas = 0, asistenciasNegativas = 0;
+        
+        for (Asistencia asistencia : asistenciasFiltradas) {
+            if (asistencia.isAsistio()) {
+                asistenciasPositivas++;
+            } else {
+                asistenciasNegativas++;
+            }
+        }
+
+        List<PieEntry> entries = new ArrayList<>();
+        if (asistenciasPositivas > 0) {
+            entries.add(new PieEntry(asistenciasPositivas, "Asistencias"));
+        }
+        if (asistenciasNegativas > 0) {
+            entries.add(new PieEntry(asistenciasNegativas, "Ausencias"));
+        }
+
+        PieDataSet dataSet = new PieDataSet(entries, "Asistencias");
+        dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+        dataSet.setValueTextSize(14f);
+        dataSet.setValueTextColor(android.graphics.Color.WHITE);
+
+        PieData data = new PieData(dataSet);
+        chartAsistencias.setData(data);
+        chartAsistencias.invalidate();
+    }
+
+    private void actualizarResumenFiltros() {
+        StringBuilder resumen = new StringBuilder("Filtros aplicados: ");
+        
+        if (fechaDesde != null || fechaHasta != null) {
+            resumen.append("Fechas ");
+            if (fechaDesde != null) resumen.append("desde ").append(dateFormat.format(fechaDesde));
+            if (fechaHasta != null) resumen.append(" hasta ").append(dateFormat.format(fechaHasta));
+            resumen.append(" | ");
         }
         
-        if (textViewEnEspera != null) {
-            textViewEnEspera.setText(String.valueOf(enEspera));
+        switch (tipoFiltro) {
+            case "GLOBAL":
+                resumen.append("Todos los equipos");
+                break;
+            case "POR EQUIPO":
+                resumen.append("Equipo: ").append(filtroEquipo);
+                break;
+            case "POR CATEGORÍA":
+                resumen.append("Categoría: ").append(filtroCategoria);
+                break;
+            case "POR JUGADOR":
+                resumen.append("Jugador: ").append(filtroJugador);
+                break;
         }
         
-        if (textViewNoAsisten != null) {
-            textViewNoAsisten.setText(String.valueOf(asistenciasNegativas));
+        textViewResumenFiltros.setText(resumen.toString());
+    }
+
+    private void exportarPdf() {
+        if (asistenciasFiltradas.isEmpty()) {
+            Toast.makeText(requireContext(), "No hay datos para exportar", Toast.LENGTH_SHORT).show();
+            return;
         }
-        
-        // Actualizar estadísticas generales
-        String estadisticas = String.format("Total: %d | Asistencias: %d | Ausencias: %d | Porcentaje: %.1f%%", 
-                totalAsistencias, asistenciasPositivas, asistenciasNegativas, porcentajeAsistencia);
-        
-        if (textViewEstadisticas != null) {
-            textViewEstadisticas.setText(estadisticas);
+
+        try {
+            // Crear archivo PDF
+            File pdfFile = new File(requireContext().getExternalFilesDir(null), "reporte_asistencias.pdf");
+            Document document = new Document();
+            PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
+            document.open();
+
+            // Configurar colores corporativos
+            BaseColor colorAzul = new BaseColor(33, 150, 243); // #2196F3
+            BaseColor colorGris = new BaseColor(128, 128, 128);
+
+            // Título principal
+            Font titleFont = new Font(Font.FontFamily.HELVETICA, 20, Font.BOLD, colorAzul);
+            Paragraph title = new Paragraph("📊 Reporte de Asistencias", titleFont);
+            title.setAlignment(Element.ALIGN_CENTER);
+            title.setSpacingAfter(20f);
+            document.add(title);
+
+            // Subtítulo
+            Font subtitleFont = new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD, colorGris);
+            Paragraph subtitle = new Paragraph("CD Santiaguiño de Guizán", subtitleFont);
+            subtitle.setAlignment(Element.ALIGN_CENTER);
+            subtitle.setSpacingAfter(30f);
+            document.add(subtitle);
+
+            // Información de filtros
+            Font infoFont = new Font(Font.FontFamily.HELVETICA, 12, Font.NORMAL);
+            Paragraph info = new Paragraph("🔍 Filtros aplicados: " + textViewResumenFiltros.getText(), infoFont);
+            info.setSpacingAfter(15f);
+            document.add(info);
+
+            // Estadísticas resumidas
+            Paragraph stats = new Paragraph(String.format("📈 Estadísticas: Total: %d | Asistencias: %s | Ausencias: %s | Porcentaje: %s", 
+                asistenciasFiltradas.size(), textViewConfirmados.getText(), 
+                textViewNoAsisten.getText(), textViewPorcentaje.getText()), infoFont);
+            stats.setSpacingAfter(20f);
+            document.add(stats);
+
+            // Fecha de generación
+            SimpleDateFormat dateFormatPdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+            Paragraph fechaGeneracion = new Paragraph("📅 Generado el: " + dateFormatPdf.format(new Date()), infoFont);
+            fechaGeneracion.setSpacingAfter(25f);
+            document.add(fechaGeneracion);
+
+            // Tabla de asistencias
+            PdfPTable table = new PdfPTable(5);
+            table.setWidthPercentage(100);
+            table.setSpacingBefore(20f);
+
+            // Encabezados de tabla
+            String[] headers = {"Jugador", "Evento", "Fecha", "Estado", "Observaciones"};
+            Font headerFont = new Font(Font.FontFamily.HELVETICA, 11, Font.BOLD, BaseColor.WHITE);
+            
+            for (String header : headers) {
+                PdfPCell cell = new PdfPCell(new Phrase(header, headerFont));
+                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                cell.setBackgroundColor(colorAzul);
+                cell.setPadding(8f);
+                table.addCell(cell);
+            }
+
+            // Datos de la tabla
+            SimpleDateFormat dateFormatTable = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+            Font dataFont = new Font(Font.FontFamily.HELVETICA, 10, Font.NORMAL);
+            
+            for (Asistencia asistencia : asistenciasFiltradas) {
+                Evento evento = dataManager.getEventoById(asistencia.getEventoId());
+                String nombreEvento = evento != null ? evento.getTitulo() : "Evento no encontrado";
+                String fechaEvento = evento != null ? dateFormatTable.format(evento.getFechaInicio()) : "";
+                String estado = asistencia.isAsistio() ? "✅ ASISTIÓ" : "❌ NO ASISTIÓ";
+                String observaciones = asistencia.getObservaciones() != null ? asistencia.getObservaciones() : "";
+
+                table.addCell(new PdfPCell(new Phrase(asistencia.getJugadorNombre(), dataFont)));
+                table.addCell(new PdfPCell(new Phrase(nombreEvento, dataFont)));
+                table.addCell(new PdfPCell(new Phrase(fechaEvento, dataFont)));
+                table.addCell(new PdfPCell(new Phrase(estado, dataFont)));
+                table.addCell(new PdfPCell(new Phrase(observaciones, dataFont)));
+            }
+
+            document.add(table);
+
+            // Pie de página
+            document.add(new Paragraph(" "));
+            Paragraph footer = new Paragraph("Este reporte fue generado automáticamente por el sistema de gestión del club.", 
+                new Font(Font.FontFamily.HELVETICA, 10, Font.ITALIC, colorGris));
+            footer.setAlignment(Element.ALIGN_CENTER);
+            document.add(footer);
+
+            document.close();
+
+            // Mostrar mensaje de éxito y abrir el PDF
+            Toast.makeText(requireContext(), "PDF exportado exitosamente", Toast.LENGTH_LONG).show();
+            
+            // Abrir el PDF
+            Uri uri = FileProvider.getUriForFile(requireContext(), 
+                requireContext().getPackageName() + ".provider", pdfFile);
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(uri, "application/pdf");
+            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(intent);
+
+        } catch (Exception e) {
+            Toast.makeText(requireContext(), "Error al exportar PDF: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
     private void mostrarDialogoRegistrarAsistencia() {
-        Log.d(TAG, "mostrarDialogoRegistrarAsistencia: Mostrando diálogo");
-        
-        // Obtener eventos próximos y jugadores disponibles
-        List<Evento> eventos = dataManager.getEventos();
-        List<Usuario> usuarios = dataManager.getUsuarios();
-        List<Evento> eventosProximos = new ArrayList<>();
-        List<String> jugadores = new ArrayList<>();
-        
-        // Filtrar eventos próximos (hoy o futuros)
-        Calendar hoy = Calendar.getInstance();
-        for (Evento evento : eventos) {
-            if (evento.getFechaInicio().after(hoy.getTime()) || esHoy(evento.getFechaInicio())) {
-                eventosProximos.add(evento);
-            }
-        }
-        
-        // Obtener jugadores del usuario actual
-        if (usuarioActual != null && usuarioActual.getJugador() != null) {
-            jugadores.add(usuarioActual.getJugador());
-        }
-        
-        // También agregar jugadores de otros usuarios si es admin
-        if (usuarioActual != null && usuarioActual.isEsAdmin()) {
-            for (Usuario usuario : usuarios) {
-                if (usuario.getJugador() != null && !usuario.getJugador().isEmpty() && 
-                    !jugadores.contains(usuario.getJugador())) {
-                    jugadores.add(usuario.getJugador());
-                }
-            }
-        }
-        
-        if (eventosProximos.isEmpty()) {
-            Toast.makeText(requireContext(), "No hay eventos próximos para registrar asistencia", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        
-        if (jugadores.isEmpty()) {
-            Toast.makeText(requireContext(), "No hay jugadores disponibles", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        
-        // Crear diálogo para seleccionar evento y jugador
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_seleccionar_asistencia, null);
-        
-        Spinner spinnerEvento = dialogView.findViewById(R.id.spinnerEvento);
-        Spinner spinnerJugador = dialogView.findViewById(R.id.spinnerJugador);
-        TextView textViewInfoEvento = dialogView.findViewById(R.id.textViewInfoEvento);
-        
-        // Configurar spinner de eventos
-        List<String> nombresEventos = new ArrayList<>();
-        for (Evento evento : eventosProximos) {
-            String nombreEvento = evento.getTitulo() + " - " + dateFormat.format(evento.getFechaInicio());
-            nombresEventos.add(nombreEvento);
-        }
-        
-        ArrayAdapter<String> eventoAdapter = new ArrayAdapter<>(requireContext(), 
-                android.R.layout.simple_spinner_item, nombresEventos);
-        eventoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerEvento.setAdapter(eventoAdapter);
-        
-        // Configurar spinner de jugadores
-        ArrayAdapter<String> jugadorAdapter = new ArrayAdapter<>(requireContext(), 
-                android.R.layout.simple_spinner_item, jugadores);
-        jugadorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerJugador.setAdapter(jugadorAdapter);
-        
-        // Mostrar información del evento seleccionado
-        spinnerEvento.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
-                if (position >= 0 && position < eventosProximos.size()) {
-                    Evento evento = eventosProximos.get(position);
-                    String info = String.format("Tipo: %s\nLugar: %s\nEquipo: %s", 
-                            evento.getTipo(), evento.getUbicacion(), 
-                            evento.getEquipo() != null ? evento.getEquipo() : "Todos");
-                    textViewInfoEvento.setText(info);
-                }
-            }
-            
-            @Override
-            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
-        });
-        
-        builder.setView(dialogView)
-                .setTitle("Seleccionar Evento y Jugador")
-                .setPositiveButton("Continuar", (dialog, which) -> {
-                    int posEvento = spinnerEvento.getSelectedItemPosition();
-                    int posJugador = spinnerJugador.getSelectedItemPosition();
-                    
-                    if (posEvento >= 0 && posJugador >= 0) {
-                        Evento eventoSeleccionado = eventosProximos.get(posEvento);
-                        String jugadorSeleccionado = jugadores.get(posJugador);
-                        mostrarDialogoConfirmarAsistencia(eventoSeleccionado, jugadorSeleccionado);
-                    }
-                })
-                .setNegativeButton("Cancelar", null)
-                .show();
+        Toast.makeText(requireContext(), "Funcionalidad de registro en desarrollo", Toast.LENGTH_SHORT).show();
     }
 
-    private void mostrarDialogoConfirmarAsistencia(Evento evento, String jugador) {
-        Log.d(TAG, "mostrarDialogoConfirmarAsistencia: Mostrando diálogo para " + jugador);
-        
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_confirmar_asistencia, null);
-        
-        Button buttonAsisto = dialogView.findViewById(R.id.buttonAsisto);
-        Button buttonNoAsisto = dialogView.findViewById(R.id.buttonNoAsisto);
-        EditText editTextMotivo = dialogView.findViewById(R.id.editTextMotivo);
-        View layoutMotivo = dialogView.findViewById(R.id.layoutMotivo);
-        
-        // Actualizar información del evento
-        TextView textViewInfoEvento = dialogView.findViewById(R.id.textViewInfoEvento);
-        if (textViewInfoEvento != null) {
-            String info = String.format("Evento: %s\nJugador: %s\nFecha: %s", 
-                    evento.getTitulo(), jugador, dateFormat.format(evento.getFechaInicio()));
-            textViewInfoEvento.setText(info);
-        }
-        
-        // Configurar botones
-        buttonAsisto.setOnClickListener(v -> {
-            String motivo = editTextMotivo.getText().toString().trim();
-            registrarAsistencia(evento, jugador, true, motivo);
-            ((AlertDialog) v.getTag()).dismiss();
-        });
-        
-        buttonNoAsisto.setOnClickListener(v -> {
-            // Mostrar campo de motivo cuando se selecciona "NO ASISTO"
-            layoutMotivo.setVisibility(View.VISIBLE);
-            editTextMotivo.requestFocus();
-            
-            // Cambiar el texto del botón para confirmar
-            buttonNoAsisto.setText("CONFIRMAR AUSENCIA");
-            buttonNoAsisto.setOnClickListener(confirmV -> {
-                String motivo = editTextMotivo.getText().toString().trim();
-                if (motivo.isEmpty()) {
-                    Toast.makeText(requireContext(), "Por favor, indica el motivo de la ausencia", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                registrarAsistencia(evento, jugador, false, motivo);
-                ((AlertDialog) confirmV.getTag()).dismiss();
-            });
-        });
-        
-        AlertDialog dialog = builder.setView(dialogView)
-                .setTitle("Confirmar Asistencia")
-                .setCancelable(true)
-                .create();
-        
-        buttonAsisto.setTag(dialog);
-        buttonNoAsisto.setTag(dialog);
-        dialog.show();
-    }
-
-    private void registrarAsistencia(Evento evento, String jugador, boolean asistio, String motivo) {
-        Log.d(TAG, "registrarAsistencia: Registrando asistencia para " + jugador + " - " + (asistio ? "Asistió" : "No asistió"));
-        
-        // Verificar si ya existe una asistencia para este evento y jugador
-        List<Asistencia> asistencias = dataManager.getAsistencias();
-        for (Asistencia asistencia : asistencias) {
-            if (asistencia.getEventoId().equals(evento.getId()) && 
-                asistencia.getJugadorNombre().equalsIgnoreCase(jugador)) {
-                Toast.makeText(requireContext(), "Ya existe un registro de asistencia para este evento y jugador", Toast.LENGTH_SHORT).show();
-                return;
-            }
-        }
-        
-        // Crear nueva asistencia
-        Asistencia nuevaAsistencia = new Asistencia();
-        nuevaAsistencia.setAsistio(asistio);
-        nuevaAsistencia.setObservaciones(motivo);
-        nuevaAsistencia.setFecha(new Date());
-        nuevaAsistencia.setJugadorNombre(jugador);
-        nuevaAsistencia.setEventoId(evento.getId());
-        
-        dataManager.agregarAsistencia(nuevaAsistencia);
-        cargarAsistencias();
-        
-        String mensaje = asistio ? "Asistencia registrada exitosamente" : "Ausencia registrada exitosamente";
-        Toast.makeText(requireContext(), mensaje, Toast.LENGTH_SHORT).show();
-        Log.d(TAG, "registrarAsistencia: " + mensaje);
-    }
-
-    private boolean esHoy(Date fecha) {
-        Calendar fechaEvento = Calendar.getInstance();
-        fechaEvento.setTime(fecha);
-        Calendar hoy = Calendar.getInstance();
-        
-        return fechaEvento.get(Calendar.YEAR) == hoy.get(Calendar.YEAR) &&
-               fechaEvento.get(Calendar.DAY_OF_YEAR) == hoy.get(Calendar.DAY_OF_YEAR);
+    private void manejarClicEnAsistencia(Asistencia asistencia) {
+        Toast.makeText(requireContext(), "Clic en asistencia: " + asistencia.getJugadorNombre(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume: Fragmento resumido");
         cargarAsistencias();
-    }
-
-    private void manejarClicEnAsistencia(Asistencia asistencia) {
-        Log.d(TAG, "manejarClicEnAsistencia: Manejando clic para la asistencia ID: " + asistencia.getId());
-        Evento evento = dataManager.getEventoById(asistencia.getEventoId());
-        String jugadorNombre = asistencia.getJugadorNombre();
-        if (evento != null && jugadorNombre != null && !jugadorNombre.isEmpty()) {
-            mostrarDialogoConfirmarAsistencia(evento, jugadorNombre);
-        } else {
-            Log.e(TAG, "manejarClicEnAsistencia: Evento o JugadorNombre no encontrado para la asistencia ID: " + asistencia.getId());
-            Toast.makeText(requireContext(), "Error al cargar los detalles de la asistencia.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    /**
-     * Verifica si hay eventos próximos que requieren confirmación de asistencia
-     */
-    private void verificarEventosPendientesConfirmacion() {
-        if (usuarioActual == null) return;
-        
-        List<Evento> eventos = dataManager.getEventos();
-        List<Asistencia> asistencias = dataManager.getAsistencias();
-        Calendar ahora = Calendar.getInstance();
-        Calendar proximas72h = Calendar.getInstance();
-        proximas72h.add(Calendar.HOUR, 72); // Próximas 72 horas
-        
-        for (Evento evento : eventos) {
-            // Verificar si el evento está en las próximas 72 horas
-            if (evento.getFechaInicio().after(ahora.getTime()) && 
-                evento.getFechaInicio().before(proximas72h.getTime())) {
-                
-                // Verificar si el usuario debe recibir notificación de este evento
-                boolean debeNotificar = false;
-                
-                if (evento.getEquipo() != null && !evento.getEquipo().isEmpty()) {
-                    // Evento específico para un equipo
-                    if (evento.getEquipo().equals(usuarioActual.getEquipo())) {
-                        debeNotificar = true;
-                    }
-                } else {
-                    // Evento global
-                    debeNotificar = true;
-                }
-                
-                if (debeNotificar) {
-                    // Verificar si ya existe una asistencia para este evento y jugador
-                    boolean existeAsistencia = false;
-                    for (Asistencia asistencia : asistencias) {
-                        if (asistencia.getEventoId().equals(evento.getId()) && 
-                            asistencia.getJugadorNombre() != null &&
-                            asistencia.getJugadorNombre().equals(usuarioActual.getJugador())) {
-                            existeAsistencia = true;
-                            break;
-                        }
-                    }
-                    
-                    // Si no existe asistencia, crear solicitud de confirmación
-                    if (!existeAsistencia) {
-                        crearSolicitudConfirmacionAsistencia(evento);
-                    }
-                }
-            }
-        }
-    }
-    
-    /**
-     * Crea una solicitud de confirmación de asistencia para un evento
-     */
-    private void crearSolicitudConfirmacionAsistencia(Evento evento) {
-        try {
-            // Crear notificación de solicitud de confirmación
-            Notificacion solicitud = new Notificacion(
-                "Confirmar asistencia: " + evento.getTitulo(),
-                "Por favor confirma tu asistencia al evento:\n" + evento.getDescripcion() + 
-                "\nFecha: " + dateFormat.format(evento.getFechaInicio()) + 
-                "\nUbicación: " + evento.getUbicacion() +
-                "\n\nVe a la sección Asistencia para confirmar.",
-                "SOLICITUD_ASISTENCIA",
-                usuarioActual.getId(), // Notificación específica para este usuario
-                "sistema",
-                "Sistema Automático",
-                true
-            );
-            
-            dataManager.agregarNotificacion(solicitud);
-        } catch (Exception e) {
-            Log.e(TAG, "Error creando solicitud de confirmación: " + e.getMessage());
-        }
     }
 } 
