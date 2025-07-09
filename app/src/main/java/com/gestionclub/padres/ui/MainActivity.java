@@ -17,6 +17,7 @@ import com.gestionclub.padres.R;
 import com.gestionclub.padres.model.Usuario;
 import com.gestionclub.padres.util.SessionManager;
 import com.gestionclub.padres.data.DataManager;
+import com.gestionclub.padres.utils.LocaleHelper;
 import com.google.gson.Gson;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -28,6 +29,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // Aplicar configuración de idioma y tema
+        LocaleHelper.setLocale(this);
+        LocaleHelper.setTheme(this);
         
         SessionManager sessionManager = new SessionManager(this);
         if (sessionManager.getUser() == null) {
@@ -103,7 +108,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void configurarVisibilidadMenu() {
         boolean esAdmin = usuarioActual != null && usuarioActual.isEsAdmin();
+        boolean esEntrenador = usuarioActual != null && "entrenador".equals(usuarioActual.getRol());
+        
+        // Mostrar menús de administración solo para administradores
         navigationView.getMenu().setGroupVisible(R.id.nav_admin, esAdmin);
+        
+        // Mostrar Estadísticas y Asistencia solo para administradores y entrenadores
+        MenuItem menuEstadisticas = navigationView.getMenu().findItem(R.id.nav_estadisticas);
+        MenuItem menuAsistencia = navigationView.getMenu().findItem(R.id.nav_asistencia);
+        
+        if (menuEstadisticas != null) {
+            menuEstadisticas.setVisible(esAdmin || esEntrenador);
+        }
+        if (menuAsistencia != null) {
+            menuAsistencia.setVisible(esAdmin || esEntrenador);
+        }
     }
 
     private void actualizarContadorNotificaciones() {

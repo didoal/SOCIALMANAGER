@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Socialmanager</string>
     <string name="navigation_drawer_open">Abrir menú de navegación</string>
-    <string name="navigation_drawer_close">Cerrar menú de navegación</string>
+    <string name="navigation_drawer_close">Pechar menú de navegación</string>
     
     <!-- Configuración -->
     <string name="configuracion">Configuración</string>
@@ -10,41 +10,41 @@
     <string name="espanol">Español</string>
     <string name="galego">Galego</string>
     <string name="tema_claro">Tema Claro</string>
-    <string name="tema_oscuro">Tema Oscuro</string>
+    <string name="tema_oscuro">Tema Escuro</string>
     <string name="tema_por_defecto">Tema por Defecto</string>
     <string name="cambiar_idioma">Cambiar Idioma</string>
     <string name="cambiar_tema">Cambiar Tema</string>
-    <string name="idioma_actual">Idioma actual: Español</string>
+    <string name="idioma_actual">Idioma actual: Galego</string>
     <string name="tema_actual">Tema actual: Claro</string>
     
     <!-- Menú principal -->
     <string name="inicio">Inicio</string>
-    <string name="mi_equipo">Mi Equipo</string>
+    <string name="mi_equipo">O Meu Equipo</string>
     <string name="calendario">Calendario</string>
     <string name="asistencia">Asistencia</string>
-    <string name="notificaciones">Notificaciones</string>
-    <string name="estadisticas">Estadísticas</string>
+    <string name="notificaciones">Notificacións</string>
+    <string name="estadisticas">Estatísticas</string>
     <string name="muro_destacados">Muro de Destacados</string>
-    <string name="gestion_equipos">Gestión de Equipos</string>
-    <string name="gestion_eventos">Gestión de Eventos</string>
-    <string name="gestion_usuarios">Gestión de Usuarios</string>
-    <string name="cerrar_sesion">Cerrar Sesión</string>
+    <string name="gestion_equipos">Xestión de Equipos</string>
+    <string name="gestion_eventos">Xestión de Eventos</string>
+    <string name="gestion_usuarios">Xestión de Usuarios</string>
+    <string name="cerrar_sesion">Pechar Sesión</string>
     
     <!-- Login -->
     <string name="iniciar_sesion">Iniciar Sesión</string>
-    <string name="usuario_o_email">Usuario o Email</string>
-    <string name="contraseña">Contraseña</string>
-    <string name="verificando_credenciales">Verificando credenciales...</string>
-    <string name="error_credenciales">Usuario o contraseña incorrectos</string>
-    <string name="bienvenido">¡Bienvenido!</string>
+    <string name="usuario_o_email">Usuario ou Email</string>
+    <string name="contraseña">Contrasinal</string>
+    <string name="verificando_credenciales">Verificando credenciais...</string>
+    <string name="error_credenciales">Usuario ou contrasinal incorrectos</string>
+    <string name="bienvenido">¡Benvido!</string>
     
     <!-- Mensajes generales -->
     <string name="aceptar">Aceptar</string>
     <string name="cancelar">Cancelar</string>
-    <string name="guardar">Guardar</string>
+    <string name="guardar">Gardar</string>
     <string name="eliminar">Eliminar</string>
     <string name="editar">Editar</string>
     <string name="crear">Crear</string>
     <string name="exportar">Exportar</string>
     <string name="filtrar">Filtrar</string>
-</resources>
+</resources> 

@@ -1,108 +1,162 @@
 package com.gestionclub.padres.ui;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
-import android.widget.Spinner;
-import android.widget.ArrayAdapter;
-import android.widget.Switch;
-import android.widget.Toast;
 import android.widget.Button;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import com.gestionclub.padres.R;
+import java.util.Locale;
 
 public class ConfiguracionFragment extends Fragment {
-    private Switch switchNotificaciones;
-    private Switch switchSonido;
-    private Spinner spinnerIdioma;
-    private Spinner spinnerTema;
-    private Switch switchPrivacidad;
-    private Button buttonVerTutorial;
-    private SharedPreferences prefs;
-
+    
+    private TextView textViewIdiomaActual;
+    private TextView textViewTemaActual;
+    private Button buttonCambiarIdioma;
+    private Button buttonCambiarTema;
+    private SharedPreferences sharedPreferences;
+    
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_configuracion, container, false);
-        prefs = requireContext().getSharedPreferences("config", 0);
+        
+        sharedPreferences = requireContext().getSharedPreferences("config", Context.MODE_PRIVATE);
+        
         inicializarVistas(view);
-        cargarPreferencias();
         configurarListeners();
+        actualizarInformacion();
+        
         return view;
     }
-
+    
     private void inicializarVistas(View view) {
-        switchNotificaciones = view.findViewById(R.id.switchNotificaciones);
-        switchSonido = view.findViewById(R.id.switchSonido);
-        spinnerIdioma = view.findViewById(R.id.spinnerIdioma);
-        spinnerTema = view.findViewById(R.id.spinnerTema);
-        switchPrivacidad = view.findViewById(R.id.switchPrivacidad);
-        buttonVerTutorial = view.findViewById(R.id.buttonVerTutorial);
-
-        // Idiomas disponibles
-        String[] idiomas = {"Español", "Inglés", "Gallego"};
-        ArrayAdapter<String> adapterIdioma = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, idiomas);
-        adapterIdioma.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerIdioma.setAdapter(adapterIdioma);
-
-        // Temas disponibles
-        String[] temas = {"Claro", "Oscuro", "Azul Profesional"};
-        ArrayAdapter<String> adapterTema = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, temas);
-        adapterTema.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerTema.setAdapter(adapterTema);
+        textViewIdiomaActual = view.findViewById(R.id.textViewIdiomaActual);
+        textViewTemaActual = view.findViewById(R.id.textViewTemaActual);
+        buttonCambiarIdioma = view.findViewById(R.id.buttonCambiarIdioma);
+        buttonCambiarTema = view.findViewById(R.id.buttonCambiarTema);
     }
-
-    private void cargarPreferencias() {
-        switchNotificaciones.setChecked(prefs.getBoolean("notificaciones", true));
-        switchSonido.setChecked(prefs.getBoolean("sonido", true));
-        switchPrivacidad.setChecked(prefs.getBoolean("privacidad", false));
-        spinnerIdioma.setSelection(prefs.getInt("idioma", 0));
-        spinnerTema.setSelection(prefs.getInt("tema", 2));
-    }
-
+    
     private void configurarListeners() {
-        switchNotificaciones.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            prefs.edit().putBoolean("notificaciones", isChecked).apply();
-            Toast.makeText(requireContext(), isChecked ? "Notificaciones activadas" : "Notificaciones desactivadas", Toast.LENGTH_SHORT).show();
-        });
-        switchSonido.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            prefs.edit().putBoolean("sonido", isChecked).apply();
-        });
-        switchPrivacidad.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            prefs.edit().putBoolean("privacidad", isChecked).apply();
-        });
-        spinnerIdioma.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
-                prefs.edit().putInt("idioma", position).apply();
-                // Aquí podrías recargar la app con el idioma seleccionado
+        buttonCambiarIdioma.setOnClickListener(v -> mostrarDialogoIdioma());
+        buttonCambiarTema.setOnClickListener(v -> mostrarDialogoTema());
+    }
+    
+    private void actualizarInformacion() {
+        // Actualizar información del idioma actual
+        String idiomaActual = sharedPreferences.getString("idioma", "es");
+        String textoIdioma = idiomaActual.equals("gl") ? "Idioma actual: Galego" : "Idioma actual: Español";
+        textViewIdiomaActual.setText(textoIdioma);
+        
+        // Actualizar información del tema actual
+        int temaActual = sharedPreferences.getInt("tema", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+        String textoTema;
+        switch (temaActual) {
+            case AppCompatDelegate.MODE_NIGHT_YES:
+                textoTema = "Tema actual: Oscuro";
+                break;
+            case AppCompatDelegate.MODE_NIGHT_NO:
+                textoTema = "Tema actual: Claro";
+                break;
+            default:
+                textoTema = "Tema actual: Por Defecto";
+                break;
+        }
+        textViewTemaActual.setText(textoTema);
+    }
+    
+    private void mostrarDialogoIdioma() {
+        String[] idiomas = {"Español", "Galego"};
+        String[] codigos = {"es", "gl"};
+        
+        String idiomaActual = sharedPreferences.getString("idioma", "es");
+        int seleccionActual = idiomaActual.equals("gl") ? 1 : 0;
+        
+        new AlertDialog.Builder(requireContext())
+            .setTitle("Seleccionar Idioma")
+            .setSingleChoiceItems(idiomas, seleccionActual, (dialog, which) -> {
+                String codigoIdioma = codigos[which];
+                cambiarIdioma(codigoIdioma);
+                dialog.dismiss();
+            })
+            .setNegativeButton("Cancelar", null)
+            .show();
+    }
+    
+    private void mostrarDialogoTema() {
+        String[] temas = {"Tema Claro", "Tema Oscuro", "Tema por Defecto"};
+        int[] codigos = {AppCompatDelegate.MODE_NIGHT_NO, AppCompatDelegate.MODE_NIGHT_YES, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM};
+        
+        int temaActual = sharedPreferences.getInt("tema", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+        int seleccionActual = 2; // Por defecto
+        for (int i = 0; i < codigos.length; i++) {
+            if (codigos[i] == temaActual) {
+                seleccionActual = i;
+                break;
             }
-            @Override
-            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
-        });
-        spinnerTema.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
-                prefs.edit().putInt("tema", position).apply();
-                // Aquí podrías aplicar el tema en tiempo real
-            }
-            @Override
-            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
-        });
-        buttonVerTutorial.setOnClickListener(v -> {
-            // Mostrar el tutorial
-            if (getActivity() instanceof MainActivity) {
-                getActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, new TutorialFragment())
-                    .addToBackStack(null)
-                    .commit();
-            }
-        });
+        }
+        
+        new AlertDialog.Builder(requireContext())
+            .setTitle("Seleccionar Tema")
+            .setSingleChoiceItems(temas, seleccionActual, (dialog, which) -> {
+                int codigoTema = codigos[which];
+                cambiarTema(codigoTema);
+                dialog.dismiss();
+            })
+            .setNegativeButton("Cancelar", null)
+            .show();
+    }
+    
+    private void cambiarIdioma(String codigoIdioma) {
+        // Guardar preferencia
+        sharedPreferences.edit().putString("idioma", codigoIdioma).apply();
+        
+        // Aplicar idioma
+        Locale locale = new Locale(codigoIdioma);
+        Locale.setDefault(locale);
+        
+        Resources resources = getResources();
+        Configuration config = resources.getConfiguration();
+        config.setLocale(locale);
+        resources.updateConfiguration(config, resources.getDisplayMetrics());
+        
+        // Reiniciar la aplicación para aplicar cambios
+        reiniciarAplicacion();
+    }
+    
+    private void cambiarTema(int codigoTema) {
+        // Guardar preferencia
+        sharedPreferences.edit().putInt("tema", codigoTema).apply();
+        
+        // Aplicar tema
+        AppCompatDelegate.setDefaultNightMode(codigoTema);
+        
+        // Reiniciar la aplicación para aplicar cambios
+        reiniciarAplicacion();
+    }
+    
+    private void reiniciarAplicacion() {
+        Intent intent = requireContext().getPackageManager().getLaunchIntentForPackage(requireContext().getPackageName());
+        if (intent != null) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        }
+    }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+        actualizarInformacion();
     }
 } 

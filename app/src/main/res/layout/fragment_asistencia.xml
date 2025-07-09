@@ -38,7 +38,7 @@
                         android:layout_height="wrap_content"
                         android:text="📊 Control de Asistencia"
                         android:textColor="@color/white"
-                        android:textSize="24sp"
+                        android:textSize="20sp"
                         android:textStyle="bold"
                         android:layout_marginBottom="8dp" />
 
@@ -48,7 +48,7 @@
                         android:layout_height="wrap_content"
                         android:text="Filtros aplicados: Todos los equipos"
                         android:textColor="@color/white"
-                        android:textSize="14sp"
+                        android:textSize="12sp"
                         android:alpha="0.9" />
 
                 </LinearLayout>
@@ -86,7 +86,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="🔍 Filtros Avanzados"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textStyle="bold"
                     android:textColor="@color/text_primary"
                     android:layout_marginBottom="16dp" />
@@ -110,9 +110,10 @@
                     <Button
                         android:id="@+id/btnFechaDesde"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="40dp"
                         android:layout_weight="1"
                         android:text="Seleccionar fecha"
+                        android:textSize="12sp"
                         android:background="@drawable/button_outline_background"
                         android:textColor="@color/blue_profesional"
                         android:layout_marginEnd="8dp" />
@@ -121,16 +122,17 @@
                         android:layout_width="60dp"
                         android:layout_height="wrap_content"
                         android:text="Hasta:"
-                        android:textSize="14sp"
+                        android:textSize="12sp"
                         android:textStyle="bold"
                         android:textColor="@color/text_secondary" />
 
                     <Button
                         android:id="@+id/btnFechaHasta"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="40dp"
                         android:layout_weight="1"
                         android:text="Seleccionar fecha"
+                        android:textSize="12sp"
                         android:background="@drawable/button_outline_background"
                         android:textColor="@color/blue_profesional" />
 
@@ -155,7 +157,7 @@
                     <Spinner
                         android:id="@+id/spinnerTipoFiltro"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="40dp"
                         android:layout_weight="1"
                         android:background="@drawable/spinner_background"
                         android:padding="12dp" />

@@ -109,9 +109,12 @@ public class AsistenciaFragment extends Fragment {
     }
 
     private void configurarRecyclerView() {
-        recyclerViewAsistencias.setLayoutManager(new LinearLayoutManager(requireContext()));
-        asistenciaAdapter = new AsistenciaAdapter(requireContext(), new ArrayList<>(), this::manejarClicEnAsistencia);
-        recyclerViewAsistencias.setAdapter(asistenciaAdapter);
+        Context context = getContext();
+        if (context != null) {
+            recyclerViewAsistencias.setLayoutManager(new LinearLayoutManager(context));
+            asistenciaAdapter = new AsistenciaAdapter(context, new ArrayList<>(), this::manejarClicEnAsistencia);
+            recyclerViewAsistencias.setAdapter(asistenciaAdapter);
+        }
     }
 
     private void configurarFiltros() {

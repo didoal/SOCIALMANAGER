@@ -2,56 +2,68 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_dashboard"
+            android:id="@+id/nav_inicio"
             android:icon="@drawable/ic_home"
-            android:title="Dashboard" />
+            android:title="@string/inicio" />
         
         <item
-            android:id="@+id/nav_perfil"
+            android:id="@+id/nav_mi_equipo"
             android:icon="@drawable/ic_profile"
-            android:title="Perfil" />
+            android:title="@string/mi_equipo" />
         
         <item
             android:id="@+id/nav_calendario"
             android:icon="@drawable/ic_calendar"
-            android:title="Calendario" />
-        
-        <item
-            android:id="@+id/nav_chat"
-            android:icon="@drawable/ic_message"
-            android:title="Mensajes" />
-        
-        <item
-            android:id="@+id/nav_objetos_perdidos"
-            android:icon="@drawable/ic_message"
-            android:title="Chat" />
+            android:title="@string/calendario" />
         
         <item
             android:id="@+id/nav_notificaciones"
             android:icon="@drawable/ic_notification"
-            android:title="Notificaciones" />
+            android:title="@string/notificaciones" />
         
         <item
             android:id="@+id/nav_asistencia"
             android:icon="@drawable/ic_attendance"
-            android:title="Asistencia" />
+            android:title="@string/asistencia" />
         
         <item
             android:id="@+id/nav_estadisticas"
             android:icon="@drawable/ic_stats"
-            android:title="Estadísticas" />
+            android:title="@string/estadisticas" />
+        
+        <item
+            android:id="@+id/nav_muro_destacados"
+            android:icon="@drawable/ic_message"
+            android:title="@string/muro_destacados" />
     </group>
     
     <!-- Sección de Administración -->
+    <group android:id="@+id/nav_admin" android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_gestion_equipos"
+            android:icon="@drawable/ic_admin"
+            android:title="@string/gestion_equipos" />
+        
+        <item
+            android:id="@+id/nav_gestion_eventos"
+            android:icon="@drawable/ic_calendar"
+            android:title="@string/gestion_eventos" />
+        
+        <item
+            android:id="@+id/nav_gestion_usuarios"
+            android:icon="@drawable/ic_profile"
+            android:title="@string/gestion_usuarios" />
+    </group>
+    
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_logins_admin"
-            android:icon="@drawable/ic_admin"
-            android:title="Logins (Admin)" />
+            android:id="@+id/nav_configuracion"
+            android:icon="@drawable/ic_settings"
+            android:title="@string/configuracion" />
     </group>
     
     <item
         android:id="@+id/nav_logout"
         android:icon="@drawable/ic_logout"
-        android:title="Cerrar Sesión" />
+        android:title="@string/cerrar_sesion" />
 </menu> 

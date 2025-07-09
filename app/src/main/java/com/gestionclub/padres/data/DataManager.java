@@ -31,9 +31,11 @@ public class DataManager {
     private Gson gson;
 
     public DataManager(Context context) {
-        sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        gson = new Gson();
-        inicializarDatosEjemplo();
+        if (context != null) {
+            sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+            gson = new Gson();
+            inicializarDatosEjemplo();
+        }
     }
 
     private void inicializarDatosEjemplo() {

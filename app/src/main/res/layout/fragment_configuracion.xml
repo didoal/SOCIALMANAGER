@@ -1,136 +1,196 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:background="@color/white"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp"
-        android:gravity="center_horizontal">
+        android:padding="16dp">
 
-        <TextView
+        <!-- Header de Configuración -->
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Configuración"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_primary"
-            android:gravity="center"
-            android:layout_marginBottom="24dp" />
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="12dp"
+            app:cardBackgroundColor="@color/blue_profesional">
 
-        <!-- Notificaciones -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="16dp">
-            <TextView
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Notificaciones"
-                android:textSize="16sp"
-                android:textColor="@color/text_primary" />
-            <Switch
-                android:id="@+id/switchNotificaciones"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
+                android:orientation="vertical"
+                android:padding="28dp">
 
-        <!-- Sonido -->
-        <LinearLayout
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="⚙️ Configuración"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Personaliza tu experiencia en la aplicación"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:gravity="center"
+                    android:alpha="0.9" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Configuración de Idioma -->
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="16dp">
-            <TextView
-                android:layout_width="0dp"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp"
+            app:cardBackgroundColor="@color/white">
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Sonido de notificaciones"
-                android:textSize="16sp"
-                android:textColor="@color/text_primary" />
-            <Switch
-                android:id="@+id/switchSonido"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
+                android:orientation="vertical"
+                android:padding="20dp">
 
-        <!-- Idioma -->
-        <LinearLayout
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="🌍 Idioma"
+                    android:textColor="@color/blue_profesional"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="16dp" />
+
+                <TextView
+                    android:id="@+id/textViewIdiomaActual"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/idioma_actual"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="16dp" />
+
+                <Button
+                    android:id="@+id/buttonCambiarIdioma"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:text="@string/cambiar_idioma"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_blue_background"
+                    android:textColor="@color/white" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Configuración de Tema -->
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="16dp">
-            <TextView
-                android:layout_width="0dp"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp"
+            app:cardBackgroundColor="@color/white">
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Idioma"
-                android:textSize="16sp"
-                android:textColor="@color/text_primary" />
-            <Spinner
-                android:id="@+id/spinnerIdioma"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
+                android:orientation="vertical"
+                android:padding="20dp">
 
-        <!-- Tema -->
-        <LinearLayout
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="🎨 Tema"
+                    android:textColor="@color/blue_profesional"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="16dp" />
+
+                <TextView
+                    android:id="@+id/textViewTemaActual"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tema_actual"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="16dp" />
+
+                <Button
+                    android:id="@+id/buttonCambiarTema"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:text="@string/cambiar_tema"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_blue_background"
+                    android:textColor="@color/white" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Información de la Aplicación -->
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="16dp">
-            <TextView
-                android:layout_width="0dp"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp"
+            app:cardBackgroundColor="@color/white">
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Tema"
-                android:textSize="16sp"
-                android:textColor="@color/text_primary" />
-            <Spinner
-                android:id="@+id/spinnerTema"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
+                android:orientation="vertical"
+                android:padding="20dp">
 
-        <!-- Privacidad -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="16dp">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Privacidad (ocultar datos)"
-                android:textSize="16sp"
-                android:textColor="@color/text_primary" />
-            <Switch
-                android:id="@+id/switchPrivacidad"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="ℹ️ Información"
+                    android:textColor="@color/blue_profesional"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="16dp" />
 
-        <Button
-            android:id="@+id/buttonVerTutorial"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Ver tutorial de ayuda"
-            android:background="@drawable/button_blue_background"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            android:layout_marginTop="32dp"
-            android:padding="16dp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="CD Santiaguiño Guizán"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Versión 1.0"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Sistema de gestión para club deportivo"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
     </LinearLayout>
 </ScrollView> 

@@ -17,6 +17,7 @@ import com.gestionclub.padres.model.Usuario;
 import com.gestionclub.padres.model.Equipo;
 import com.gestionclub.padres.util.SessionManager;
 import com.gestionclub.padres.data.DataManager;
+import com.gestionclub.padres.utils.LocaleHelper;
 import com.google.gson.Gson;
 import java.util.List;
 import java.util.ArrayList;
@@ -33,6 +34,11 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // Aplicar configuración de idioma y tema
+        LocaleHelper.setLocale(this);
+        LocaleHelper.setTheme(this);
+        
         setContentView(R.layout.activity_login);
 
         try {
@@ -84,7 +90,10 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(android.text.Editable s) {}
         });
-        ivClearUsuario.setOnClickListener(v -> etUsuario.setText(""));
+        ivClearUsuario.setOnClickListener(v -> {
+            etUsuario.setText("");
+            etUsuario.requestFocus();
+        });
         
         etPassword.addTextChangedListener(new android.text.TextWatcher() {
             @Override
@@ -96,7 +105,10 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(android.text.Editable s) {}
         });
-        ivClearPassword.setOnClickListener(v -> etPassword.setText(""));
+        ivClearPassword.setOnClickListener(v -> {
+            etPassword.setText("");
+            etPassword.requestFocus();
+        });
     }
 
     private void ocultarTeclado() {
@@ -137,10 +149,34 @@ public class LoginActivity extends AppCompatActivity {
             return false;
         });
         
+        // Permitir borrado con teclado
+        etPassword.setOnKeyListener((v, keyCode, event) -> {
+            if (event.getAction() == android.view.KeyEvent.ACTION_DOWN && 
+                keyCode == android.view.KeyEvent.KEYCODE_DEL) {
+                if (etPassword.getText().length() > 0) {
+                    etPassword.setText(etPassword.getText().subSequence(0, etPassword.getText().length() - 1));
+                    return true;
+                }
+            }
+            return false;
+        });
+        
         etUsuario.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_NEXT) {
                 etPassword.requestFocus();
                 return true;
+            }
+            return false;
+        });
+        
+        // Permitir borrado con teclado
+        etUsuario.setOnKeyListener((v, keyCode, event) -> {
+            if (event.getAction() == android.view.KeyEvent.ACTION_DOWN && 
+                keyCode == android.view.KeyEvent.KEYCODE_DEL) {
+                if (etUsuario.getText().length() > 0) {
+                    etUsuario.setText(etUsuario.getText().subSequence(0, etUsuario.getText().length() - 1));
+                    return true;
+                }
             }
             return false;
         });
@@ -179,6 +215,25 @@ public class LoginActivity extends AppCompatActivity {
         adminAlt.setId("admin_002");
         usuarios.add(adminAlt);
         
+        // Crear entrenadores de ejemplo
+        Usuario entrenador1 = new Usuario("Carlos López", "carlos@club.com", "entrenador123", "entrenador");
+        entrenador1.setId("entrenador_001");
+        entrenador1.setEquipo("Alevín A");
+        entrenador1.setEquipoId("equipo_alevin_a");
+        usuarios.add(entrenador1);
+        
+        Usuario entrenador2 = new Usuario("María Rodríguez", "maria@club.com", "entrenador123", "entrenador");
+        entrenador2.setId("entrenador_002");
+        entrenador2.setEquipo("Infantil B");
+        entrenador2.setEquipoId("equipo_infantil_b");
+        usuarios.add(entrenador2);
+        
+        Usuario entrenador3 = new Usuario("Juan García", "juan@club.com", "entrenador123", "entrenador");
+        entrenador3.setId("entrenador_003");
+        entrenador3.setEquipo("Cadete A");
+        entrenador3.setEquipoId("equipo_cadete_a");
+        usuarios.add(entrenador3);
+        
         Usuario padre1 = new Usuario("Juan Pérez", "juan@club.com", "padre123", "padre");
         padre1.setId("padre_001");
         padre1.setJugador("Carlos Pérez");
@@ -214,6 +269,10 @@ public class LoginActivity extends AppCompatActivity {
                        "👨‍💼 Administradores:\n" +
                        "• admin@club.com / admin123\n" +
                        "• diego@club.com / admin123\n\n" +
+                       "🏃‍♂️ Entrenadores (todos con contraseña: entrenador123):\n" +
+                       "• carlos@club.com (Equipo: Alevín A)\n" +
+                       "• maria@club.com (Equipo: Infantil B)\n" +
+                       "• juan@club.com (Equipo: Cadete A)\n\n" +
                        "👨‍👩‍👧‍👦 Padres (todos con contraseña: padre123):\n" +
                        "• juan@club.com (Equipo: Alevín A)\n" +
                        "• maria@club.com (Equipo: Infantil B)\n" +

@@ -1,18 +1,20 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.Socialmanager" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.Socialmanager" parent="Theme.Material3.DayNight">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/blue_profesional</item>
-        <item name="colorPrimaryVariant">@color/blue_profesional_light</item>
+        <item name="colorPrimaryVariant">@color/blue_profesional</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/blue_profesional_accent</item>
-        <item name="colorSecondaryVariant">@color/blue_profesional_accent</item>
+        <item name="colorSecondary">@color/colorAccent</item>
+        <item name="colorSecondaryVariant">@color/colorAccent</item>
         <item name="colorOnSecondary">@color/white</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">@color/blue_profesional</item>
-        <!-- Fondo y superficie -->
-        <item name="android:windowBackground">@color/background</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <!-- Background colors -->
+        <item name="android:windowBackground">@color/white</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/text_primary</item>
         <!-- Text colors -->
         <item name="android:textColorPrimary">@color/text_primary</item>
         <item name="android:textColorSecondary">@color/text_secondary</item>

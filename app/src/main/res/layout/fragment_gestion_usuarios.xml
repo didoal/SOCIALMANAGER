@@ -31,7 +31,7 @@
                     android:layout_height="wrap_content"
                     android:text="Gestión de Usuarios"
                     android:textColor="@color/white"
-                    android:textSize="24sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
                     android:gravity="center"
                     android:layout_marginBottom="12dp" />
@@ -42,7 +42,7 @@
                     android:layout_height="wrap_content"
                     android:text="Total: 0 | Admins: 0 | Padres: 0 | Madres: 0 | Tutores: 0 | Jugadores: 0"
                     android:textColor="@color/white"
-                    android:textSize="14sp"
+                    android:textSize="12sp"
                     android:gravity="center"
                     android:background="@drawable/rounded_background_white_transparent"
                     android:padding="8dp" />
