@@ -23,6 +23,7 @@ import com.gestionclub.padres.R;
 import com.gestionclub.padres.adapter.UsuarioAdapter;
 import com.gestionclub.padres.data.DataManager;
 import com.gestionclub.padres.model.Usuario;
+import com.gestionclub.padres.model.Equipo;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -109,16 +110,20 @@ public class GestionUsuariosFragment extends Fragment {
         Spinner spinnerRol = dialogView.findViewById(R.id.spinnerRol);
         Spinner spinnerEquipo = dialogView.findViewById(R.id.spinnerEquipo);
         
-        // Configurar spinner de roles (sin opción administrador para usuarios normales)
+        // Configurar spinner de roles
         String[] roles = {"Padre", "Madre", "Tutor", "Jugador"};
         ArrayAdapter<String> rolAdapter = new ArrayAdapter<>(requireContext(), 
                 android.R.layout.simple_spinner_item, roles);
         rolAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerRol.setAdapter(rolAdapter);
         
-        // Configurar spinner de equipos
-        String[] equipos = {"Biberones", "Prebenjamín A", "Prebenjamín B", "Benjamín A", "Benjamín B", 
-                           "Alevín A", "Alevín B", "Infantil", "Cadete", "Juvenil", "Todo el Club"};
+        // Configurar spinner de equipos con equipos reales del sistema
+        List<String> equipos = new ArrayList<>();
+        equipos.add("Sin equipo asignado");
+        List<Equipo> equiposReales = dataManager.getEquipos();
+        for (Equipo equipo : equiposReales) {
+            equipos.add(equipo.getNombre());
+        }
         ArrayAdapter<String> equipoAdapter = new ArrayAdapter<>(requireContext(), 
                 android.R.layout.simple_spinner_item, equipos);
         equipoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -135,7 +140,7 @@ public class GestionUsuariosFragment extends Fragment {
                     String rol = spinnerRol.getSelectedItem().toString().toLowerCase();
                     String equipo = spinnerEquipo.getSelectedItem().toString();
                     
-                    if (validarDatosCreacion(nombre, email, password, confirmPassword, rol)) {
+                    if (validarDatosCreacion(nombre, email, password, confirmPassword, rol, jugador)) {
                         crearUsuario(nombre, email, password, jugador, rol, equipo);
                     }
                 })
@@ -143,7 +148,7 @@ public class GestionUsuariosFragment extends Fragment {
                 .show();
     }
 
-    private boolean validarDatosCreacion(String nombre, String email, String password, String confirmPassword, String rol) {
+    private boolean validarDatosCreacion(String nombre, String email, String password, String confirmPassword, String rol, String jugador) {
         if (nombre.isEmpty()) {
             Toast.makeText(requireContext(), "El nombre es obligatorio", Toast.LENGTH_SHORT).show();
             return false;
@@ -168,6 +173,10 @@ public class GestionUsuariosFragment extends Fragment {
             Toast.makeText(requireContext(), "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
             return false;
         }
+        if (jugador.isEmpty() && !"jugador".equals(rol)) {
+            Toast.makeText(requireContext(), "Debe especificar el jugador al que representa", Toast.LENGTH_SHORT).show();
+            return false;
+        }
         return true;
     }
 
@@ -182,13 +191,35 @@ public class GestionUsuariosFragment extends Fragment {
         
         Usuario nuevoUsuario = new Usuario(nombre, jugador, password, rol);
         nuevoUsuario.setEmail(email);
-        nuevoUsuario.setEquipo(equipo);
+        
+        // Asignar equipo solo si no es "Sin equipo asignado"
+        if (!"Sin equipo asignado".equals(equipo)) {
+            nuevoUsuario.setEquipo(equipo);
+            
+            // Buscar el equipo real y asignar el equipoId
+            List<Equipo> equipos = dataManager.getEquipos();
+            for (Equipo equipoReal : equipos) {
+                if (equipoReal.getNombre().equals(equipo)) {
+                    nuevoUsuario.setEquipoId(equipoReal.getId());
+                    break;
+                }
+            }
+        }
+        
+        // Si es jugador, usar el nombre como jugador
+        if ("jugador".equals(rol)) {
+            nuevoUsuario.setJugador(nombre);
+        }
         
         dataManager.agregarUsuario(nuevoUsuario);
         cargarUsuarios();
         actualizarEstadisticas();
         
-        Toast.makeText(requireContext(), "Usuario creado exitosamente", Toast.LENGTH_SHORT).show();
+        String mensaje = "Usuario creado exitosamente";
+        if (!jugador.isEmpty()) {
+            mensaje += " - Representa a: " + jugador;
+        }
+        Toast.makeText(requireContext(), mensaje, Toast.LENGTH_LONG).show();
         Log.d(TAG, "crearUsuario: Usuario " + nombre + " creado correctamente");
     }
 
@@ -204,7 +235,7 @@ public class GestionUsuariosFragment extends Fragment {
         Spinner spinnerRol = dialogView.findViewById(R.id.spinnerRol);
         Spinner spinnerEquipo = dialogView.findViewById(R.id.spinnerEquipo);
         
-        // Pre-llenar campos
+        // Llenar datos existentes
         editTextNombre.setText(usuario.getNombre());
         editTextEmail.setText(usuario.getEmail());
         editTextJugador.setText(usuario.getJugador());
@@ -218,28 +249,35 @@ public class GestionUsuariosFragment extends Fragment {
         
         // Seleccionar rol actual
         for (int i = 0; i < roles.length; i++) {
-            if (roles[i].equalsIgnoreCase(usuario.getRol())) {
+            if (roles[i].toLowerCase().equals(usuario.getRol())) {
                 spinnerRol.setSelection(i);
                 break;
             }
         }
         
         // Configurar spinner de equipos
-        String[] equipos = {"Biberones", "Prebenjamín A", "Prebenjamín B", "Benjamín A", "Benjamín B", 
-                           "Alevín A", "Alevín B", "Infantil", "Cadete", "Juvenil", "Todo el Club"};
+        List<String> equipos = new ArrayList<>();
+        equipos.add("Sin equipo asignado");
+        List<Equipo> equiposReales = dataManager.getEquipos();
+        for (Equipo equipo : equiposReales) {
+            equipos.add(equipo.getNombre());
+        }
         ArrayAdapter<String> equipoAdapter = new ArrayAdapter<>(requireContext(), 
                 android.R.layout.simple_spinner_item, equipos);
         equipoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerEquipo.setAdapter(equipoAdapter);
         
         // Seleccionar equipo actual
-        if (usuario.getEquipo() != null) {
-            for (int i = 0; i < equipos.length; i++) {
-                if (equipos[i].equals(usuario.getEquipo())) {
+        String equipoActual = usuario.getEquipo();
+        if (equipoActual != null && !equipoActual.isEmpty()) {
+            for (int i = 0; i < equipos.size(); i++) {
+                if (equipos.get(i).equals(equipoActual)) {
                     spinnerEquipo.setSelection(i);
                     break;
                 }
             }
+        } else {
+            spinnerEquipo.setSelection(0); // "Sin equipo asignado"
         }
         
         builder.setView(dialogView)
@@ -251,7 +289,7 @@ public class GestionUsuariosFragment extends Fragment {
                     String rol = spinnerRol.getSelectedItem().toString().toLowerCase();
                     String equipo = spinnerEquipo.getSelectedItem().toString();
                     
-                    if (validarDatosEdicion(nombre, email, usuario.getEmail())) {
+                    if (validarDatosEdicion(nombre, email, usuario.getEmail(), jugador, rol)) {
                         editarUsuario(usuario, nombre, email, jugador, rol, equipo);
                     }
                 })
@@ -259,7 +297,7 @@ public class GestionUsuariosFragment extends Fragment {
                 .show();
     }
 
-    private boolean validarDatosEdicion(String nombre, String email, String emailOriginal) {
+    private boolean validarDatosEdicion(String nombre, String email, String emailOriginal, String jugador, String rol) {
         if (nombre.isEmpty()) {
             Toast.makeText(requireContext(), "El nombre es obligatorio", Toast.LENGTH_SHORT).show();
             return false;
@@ -272,9 +310,12 @@ public class GestionUsuariosFragment extends Fragment {
             Toast.makeText(requireContext(), "El formato del email no es válido", Toast.LENGTH_SHORT).show();
             return false;
         }
-        // Verificar si el email ya existe (excepto para el usuario actual)
-        if (!email.equalsIgnoreCase(emailOriginal) && dataManager.existeUsuario(email)) {
+        if (!email.equals(emailOriginal) && dataManager.existeUsuario(email)) {
             Toast.makeText(requireContext(), "Ya existe un usuario con ese email", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (jugador.isEmpty() && !"jugador".equals(rol)) {
+            Toast.makeText(requireContext(), "Debe especificar el jugador al que representa", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
@@ -294,14 +335,38 @@ public class GestionUsuariosFragment extends Fragment {
         usuarioOriginal.setEmail(email);
         usuarioOriginal.setJugador(jugador);
         usuarioOriginal.setRol(rol);
-        usuarioOriginal.setEquipo(equipo);
+        
+        if (!"Sin equipo asignado".equals(equipo)) {
+            usuarioOriginal.setEquipo(equipo);
+            
+            // Buscar el equipo real y asignar el equipoId
+            List<Equipo> equipos = dataManager.getEquipos();
+            for (Equipo equipoReal : equipos) {
+                if (equipoReal.getNombre().equals(equipo)) {
+                    usuarioOriginal.setEquipoId(equipoReal.getId());
+                    break;
+                }
+            }
+        } else {
+            usuarioOriginal.setEquipo(null);
+            usuarioOriginal.setEquipoId(null);
+        }
+        
+        // Si es jugador, usar el nombre como jugador
+        if ("jugador".equals(rol)) {
+            usuarioOriginal.setJugador(nombre);
+        }
         
         // Guardar cambios
         dataManager.actualizarUsuario(usuarioOriginal);
         cargarUsuarios();
         actualizarEstadisticas();
         
-        Toast.makeText(requireContext(), "Usuario actualizado exitosamente", Toast.LENGTH_SHORT).show();
+        String mensaje = "Usuario actualizado exitosamente";
+        if (!jugador.isEmpty()) {
+            mensaje += " - Representa a: " + jugador;
+        }
+        Toast.makeText(requireContext(), mensaje, Toast.LENGTH_LONG).show();
         Log.d(TAG, "editarUsuario: Usuario " + nombre + " actualizado correctamente");
     }
 

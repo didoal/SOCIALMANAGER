@@ -12,7 +12,8 @@ public class Usuario {
     private String jugador;
     private Date fechaRegistro;
     private boolean activo;
-    private String equipo;
+    private String equipo; // Nombre del equipo
+    private String equipoId; // ID del equipo
 
     public Usuario(String nombre, String jugador, String password, String rol) {
         this.id = UUID.randomUUID().toString();
@@ -74,12 +75,11 @@ public class Usuario {
         this.equipo = equipo;
     }
 
-    // Métodos para compatibilidad con equipoId
     public String getEquipoId() {
-        return equipo;
+        return equipoId;
     }
     
     public void setEquipoId(String equipoId) {
-        this.equipo = equipoId;
+        this.equipoId = equipoId;
     }
 }

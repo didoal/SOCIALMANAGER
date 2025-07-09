@@ -4,12 +4,12 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class GestionEventosFragment extends Fragment {
-    private static final String TAG = "GestionEventosFragment";
     
     private RecyclerView recyclerViewEventos;
     private EventoAdapter eventoAdapter;
@@ -44,7 +43,6 @@ public class GestionEventosFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.d(TAG, "onCreateView: Creando vista de gestión de eventos");
         View view = inflater.inflate(R.layout.fragment_gestion_eventos, container, false);
         
         dataManager = new DataManager(requireContext());
@@ -57,7 +55,6 @@ public class GestionEventosFragment extends Fragment {
     }
 
     private void inicializarVistas(View view) {
-        Log.d(TAG, "inicializarVistas: Inicializando vistas");
         recyclerViewEventos = view.findViewById(R.id.recyclerViewEventos);
         textViewEstadisticas = view.findViewById(R.id.textViewEstadisticas);
         fabAgregarEvento = view.findViewById(R.id.fabAgregarEvento);
@@ -66,7 +63,6 @@ public class GestionEventosFragment extends Fragment {
     }
 
     private void configurarRecyclerView() {
-        Log.d(TAG, "configurarRecyclerView: Configurando RecyclerView");
         recyclerViewEventos.setLayoutManager(new LinearLayoutManager(requireContext()));
         eventoAdapter = new EventoAdapter(new ArrayList<>(), new EventoAdapter.OnEventoClickListener() {
             @Override
@@ -78,19 +74,16 @@ public class GestionEventosFragment extends Fragment {
             public void onEliminarClick(Evento evento) {
                 mostrarDialogoEliminarEvento(evento);
             }
-        }, true); // mostrarAcciones = true
+        }, true);
         recyclerViewEventos.setAdapter(eventoAdapter);
     }
 
     private void cargarEventos() {
-        Log.d(TAG, "cargarEventos: Cargando lista de eventos");
         List<Evento> eventos = dataManager.getEventos();
         eventoAdapter.actualizarEventos(eventos);
-        Log.d(TAG, "cargarEventos: " + eventos.size() + " eventos cargados");
     }
 
     private void actualizarEstadisticas() {
-        Log.d(TAG, "actualizarEstadisticas: Actualizando estadísticas");
         List<Evento> eventos = dataManager.getEventos();
         int totalEventos = eventos.size();
         int eventosHoy = 0, eventosSemana = 0, eventosMes = 0;
@@ -125,7 +118,6 @@ public class GestionEventosFragment extends Fragment {
     }
 
     private void mostrarDialogoCrearEvento() {
-        Log.d(TAG, "mostrarDialogoCrearEvento: Mostrando diálogo");
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_crear_evento, null);
         
@@ -136,6 +128,9 @@ public class GestionEventosFragment extends Fragment {
         TextView textViewHora = dialogView.findViewById(R.id.textViewHora);
         Spinner spinnerTipo = dialogView.findViewById(R.id.spinnerTipo);
         Spinner spinnerEquipo = dialogView.findViewById(R.id.spinnerEquipo);
+        Spinner spinnerRecurrencia = dialogView.findViewById(R.id.spinnerRecurrencia);
+        Spinner spinnerRepeticiones = dialogView.findViewById(R.id.spinnerRepeticiones);
+        LinearLayout layoutRepeticiones = dialogView.findViewById(R.id.layoutRepeticiones);
         
         // Configurar spinner de tipos
         String[] tipos = {"Entrenamiento", "Partido", "Torneo", "Reunión", "Otro"};
@@ -154,6 +149,35 @@ public class GestionEventosFragment extends Fragment {
                 android.R.layout.simple_spinner_item, equipos);
         equipoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerEquipo.setAdapter(equipoAdapter);
+        
+        // Configurar spinner de recurrencia
+        String[] recurrencias = {"Sin recurrencia", "Diario", "Semanal", "Mensual"};
+        ArrayAdapter<String> recurrenciaAdapter = new ArrayAdapter<>(requireContext(), 
+                android.R.layout.simple_spinner_item, recurrencias);
+        recurrenciaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerRecurrencia.setAdapter(recurrenciaAdapter);
+        
+        // Configurar spinner de repeticiones
+        String[] repeticiones = {"2 veces", "3 veces", "4 veces", "5 veces", "6 veces", "8 veces", "10 veces", "12 veces"};
+        ArrayAdapter<String> repeticionesAdapter = new ArrayAdapter<>(requireContext(), 
+                android.R.layout.simple_spinner_item, repeticiones);
+        repeticionesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerRepeticiones.setAdapter(repeticionesAdapter);
+        
+        // Mostrar/ocultar repeticiones según recurrencia
+        spinnerRecurrencia.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                if (position > 0) { // Si hay recurrencia
+                    layoutRepeticiones.setVisibility(View.VISIBLE);
+                } else {
+                    layoutRepeticiones.setVisibility(View.GONE);
+                }
+            }
+            
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+        });
         
         // Configurar selección de fecha
         Calendar calendar = Calendar.getInstance();
@@ -202,9 +226,11 @@ public class GestionEventosFragment extends Fragment {
                     String lugar = editTextLugar.getText().toString().trim();
                     String tipo = spinnerTipo.getSelectedItem().toString();
                     String equipo = spinnerEquipo.getSelectedItem().toString();
+                    String recurrencia = spinnerRecurrencia.getSelectedItem().toString();
+                    String repeticionesStr = spinnerRepeticiones.getSelectedItem().toString();
                     
                     if (validarDatos(titulo, descripcion, lugar)) {
-                        crearEvento(titulo, descripcion, lugar, tipo, equipo, calendar.getTime());
+                        crearEventoRecurrente(titulo, descripcion, lugar, tipo, equipo, calendar.getTime(), recurrencia, repeticionesStr);
                     }
                 })
                 .setNegativeButton("Cancelar", null)
@@ -227,33 +253,53 @@ public class GestionEventosFragment extends Fragment {
         return true;
     }
 
-    private void crearEvento(String titulo, String descripcion, String lugar, String tipo, String equipo, java.util.Date fecha) {
-        Log.d(TAG, "crearEvento: Creando evento " + titulo);
+    private void crearEventoRecurrente(String titulo, String descripcion, String lugar, String tipo, String equipo, java.util.Date fecha, String recurrencia, String repeticionesStr) {
+        int numRepeticiones = 1;
+        if (!"Sin recurrencia".equals(recurrencia)) {
+            numRepeticiones = Integer.parseInt(repeticionesStr.split(" ")[0]);
+        }
         
-        Evento nuevoEvento = new Evento(titulo, descripcion, fecha, fecha, lugar, tipo, 
-                "admin1", "Administrador", true);
-        nuevoEvento.setEquipo(equipo);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(fecha);
         
-        dataManager.agregarEvento(nuevoEvento);
-        
-        // Crear notificación automática para el evento
-        dataManager.crearNotificacionEvento(nuevoEvento);
-        
-        // Crear solicitudes de confirmación de asistencia para padres del equipo
-        dataManager.crearSolicitudesConfirmacionAsistencia(nuevoEvento);
+        for (int i = 0; i < numRepeticiones; i++) {
+            Evento evento = new Evento(titulo, descripcion, calendar.getTime(), calendar.getTime(), lugar, tipo, "admin", "Administrador", true);
+            
+            if (!"Todos los equipos".equals(equipo)) {
+                evento.setEquipo(equipo);
+            }
+            
+            dataManager.agregarEvento(evento);
+            
+            // Calcular siguiente fecha según recurrencia
+            if (i < numRepeticiones - 1) { // No incrementar en la última iteración
+                switch (recurrencia) {
+                    case "Diario":
+                        calendar.add(Calendar.DAY_OF_YEAR, 1);
+                        break;
+                    case "Semanal":
+                        calendar.add(Calendar.WEEK_OF_YEAR, 1);
+                        break;
+                    case "Mensual":
+                        calendar.add(Calendar.MONTH, 1);
+                        break;
+                }
+            }
+        }
         
         cargarEventos();
         actualizarEstadisticas();
         
-        Toast.makeText(requireContext(), "Evento creado exitosamente. Se han enviado notificaciones a los padres.", Toast.LENGTH_LONG).show();
-        Log.d(TAG, "crearEvento: Evento " + titulo + " creado correctamente con notificaciones");
+        String mensaje = "Evento creado exitosamente";
+        if (numRepeticiones > 1) {
+            mensaje += " (" + numRepeticiones + " repeticiones)";
+        }
+        Toast.makeText(requireContext(), mensaje, Toast.LENGTH_SHORT).show();
     }
 
     private void mostrarDialogoEditarEvento(Evento evento) {
-        Log.d(TAG, "mostrarDialogoEditarEvento: Mostrando diálogo para " + evento.getTitulo());
-        
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_editar_evento, null);
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_crear_evento, null);
         
         EditText editTextTitulo = dialogView.findViewById(R.id.editTextTitulo);
         EditText editTextDescripcion = dialogView.findViewById(R.id.editTextDescripcion);
@@ -263,27 +309,23 @@ public class GestionEventosFragment extends Fragment {
         Spinner spinnerTipo = dialogView.findViewById(R.id.spinnerTipo);
         Spinner spinnerEquipo = dialogView.findViewById(R.id.spinnerEquipo);
         
-        // Pre-llenar campos con datos actuales
+        // Llenar datos existentes
         editTextTitulo.setText(evento.getTitulo());
         editTextDescripcion.setText(evento.getDescripcion());
         editTextLugar.setText(evento.getUbicacion());
         
-        // Configurar spinner de tipos
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        textViewFecha.setText(dateFormat.format(evento.getFechaInicio()));
+        textViewHora.setText(timeFormat.format(evento.getFechaInicio()));
+        
+        // Configurar spinners
         String[] tipos = {"Entrenamiento", "Partido", "Torneo", "Reunión", "Otro"};
         ArrayAdapter<String> tipoAdapter = new ArrayAdapter<>(requireContext(), 
                 android.R.layout.simple_spinner_item, tipos);
         tipoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerTipo.setAdapter(tipoAdapter);
         
-        // Seleccionar tipo actual
-        for (int i = 0; i < tipos.length; i++) {
-            if (tipos[i].equals(evento.getTipo())) {
-                spinnerTipo.setSelection(i);
-                break;
-            }
-        }
-        
-        // Configurar spinner de equipos
         List<String> equipos = new ArrayList<>();
         equipos.add("Todos los equipos");
         for (String equipo : dataManager.getNombresEquipos()) {
@@ -294,27 +336,24 @@ public class GestionEventosFragment extends Fragment {
         equipoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerEquipo.setAdapter(equipoAdapter);
         
-        // Seleccionar equipo actual
-        String equipoActual = evento.getEquipo();
-        if (equipoActual != null && !equipoActual.isEmpty()) {
-            for (int i = 0; i < equipos.size(); i++) {
-                if (equipos.get(i).equals(equipoActual)) {
-                    spinnerEquipo.setSelection(i);
-                    break;
-                }
+        // Seleccionar valores actuales
+        for (int i = 0; i < tipos.length; i++) {
+            if (tipos[i].equals(evento.getTipo())) {
+                spinnerTipo.setSelection(i);
+                break;
             }
-        } else {
-            spinnerEquipo.setSelection(0); // "Todos los equipos"
         }
         
-        // Configurar fecha y hora actuales
+        for (int i = 0; i < equipos.size(); i++) {
+            if (equipos.get(i).equals(evento.getEquipo()) || 
+                (evento.getEquipo() == null && equipos.get(i).equals("Todos los equipos"))) {
+                spinnerEquipo.setSelection(i);
+                break;
+            }
+        }
+        
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(evento.getFechaInicio());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
-        
-        textViewFecha.setText(dateFormat.format(calendar.getTime()));
-        textViewHora.setText(timeFormat.format(calendar.getTime()));
         
         textViewFecha.setOnClickListener(v -> {
             DatePickerDialog datePickerDialog = new DatePickerDialog(
@@ -365,53 +404,44 @@ public class GestionEventosFragment extends Fragment {
     }
 
     private void editarEvento(Evento eventoOriginal, String titulo, String descripcion, String lugar, String tipo, String equipo, java.util.Date fecha) {
-        Log.d(TAG, "editarEvento: Editando evento " + eventoOriginal.getTitulo());
-        
-        // Actualizar datos del evento
         eventoOriginal.setTitulo(titulo);
         eventoOriginal.setDescripcion(descripcion);
         eventoOriginal.setUbicacion(lugar);
         eventoOriginal.setTipo(tipo);
-        eventoOriginal.setEquipo(equipo.equals("Todos los equipos") ? null : equipo);
         eventoOriginal.setFechaInicio(fecha);
+        eventoOriginal.setFechaFin(fecha);
         
-        // Guardar cambios
+        if (!"Todos los equipos".equals(equipo)) {
+            eventoOriginal.setEquipo(equipo);
+        } else {
+            eventoOriginal.setEquipo(null);
+        }
+        
         dataManager.actualizarEvento(eventoOriginal);
         cargarEventos();
         actualizarEstadisticas();
-        
         Toast.makeText(requireContext(), "Evento actualizado exitosamente", Toast.LENGTH_SHORT).show();
-        Log.d(TAG, "editarEvento: Evento " + titulo + " actualizado correctamente");
     }
 
     private void mostrarDialogoEliminarEvento(Evento evento) {
-        Log.d(TAG, "mostrarDialogoEliminarEvento: Mostrando diálogo para " + evento.getTitulo());
-        
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Eliminar Evento")
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Eliminar Evento")
                 .setMessage("¿Estás seguro de que quieres eliminar el evento '" + evento.getTitulo() + "'?")
-                .setPositiveButton("Eliminar", (dialog, which) -> {
-                    eliminarEvento(evento);
-                })
+                .setPositiveButton("Eliminar", (dialog, which) -> eliminarEvento(evento))
                 .setNegativeButton("Cancelar", null)
                 .show();
     }
 
     private void eliminarEvento(Evento evento) {
-        Log.d(TAG, "eliminarEvento: Eliminando evento " + evento.getTitulo());
-        
         dataManager.eliminarEvento(evento.getId());
         cargarEventos();
         actualizarEstadisticas();
-        
         Toast.makeText(requireContext(), "Evento eliminado exitosamente", Toast.LENGTH_SHORT).show();
-        Log.d(TAG, "eliminarEvento: Evento " + evento.getTitulo() + " eliminado correctamente");
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume: Fragmento resumido");
         cargarEventos();
         actualizarEstadisticas();
     }
