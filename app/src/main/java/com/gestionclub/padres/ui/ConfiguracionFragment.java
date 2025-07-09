@@ -125,14 +125,15 @@ public class ConfiguracionFragment extends Fragment {
         // Aplicar idioma
         Locale locale = new Locale(codigoIdioma);
         Locale.setDefault(locale);
-        
         Resources resources = getResources();
         Configuration config = resources.getConfiguration();
         config.setLocale(locale);
         resources.updateConfiguration(config, resources.getDisplayMetrics());
         
-        // Reiniciar la aplicación para aplicar cambios
-        reiniciarAplicacion();
+        // Recrear solo la actividad actual para aplicar cambios instantáneamente
+        if (getActivity() != null) {
+            getActivity().recreate();
+        }
     }
     
     private void cambiarTema(int codigoTema) {
@@ -141,9 +142,10 @@ public class ConfiguracionFragment extends Fragment {
         
         // Aplicar tema
         AppCompatDelegate.setDefaultNightMode(codigoTema);
-        
-        // Reiniciar la aplicación para aplicar cambios
-        reiniciarAplicacion();
+        // Recrear solo la actividad actual para aplicar cambios instantáneamente
+        if (getActivity() != null) {
+            getActivity().recreate();
+        }
     }
     
     private void reiniciarAplicacion() {

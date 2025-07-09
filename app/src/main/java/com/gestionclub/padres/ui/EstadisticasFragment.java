@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,10 +73,24 @@ public class EstadisticasFragment extends Fragment {
             configurarFiltroEquipo();
             cargarEstadisticas();
         } catch (Exception e) {
-            // Manejar errores
+            Log.e("Estadisticas", "Error al cargar estadísticas", e);
+            mostrarErrorCarga(view);
         }
         
         return view;
+    }
+    
+    private void mostrarErrorCarga(View view) {
+        // Ocultar vistas principales
+        if (layoutGraficoBarras != null) {
+            layoutGraficoBarras.setVisibility(View.GONE);
+        }
+        if (recyclerViewEstadisticasEquipos != null) {
+            recyclerViewEstadisticasEquipos.setVisibility(View.GONE);
+        }
+        
+        // Mostrar solo el Toast de error
+        Toast.makeText(requireContext(), R.string.error_cargar_estadisticas, Toast.LENGTH_LONG).show();
     }
 
     private void inicializarVistas(View view) {
@@ -421,7 +436,8 @@ public class EstadisticasFragment extends Fragment {
             startActivity(intent);
             
         } catch (Exception e) {
-            Toast.makeText(requireContext(), "Error al exportar PDF: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Log.e("Estadisticas", "Error al exportar PDF", e);
+            Toast.makeText(requireContext(), R.string.error_exportar_pdf, Toast.LENGTH_LONG).show();
         }
     }
 

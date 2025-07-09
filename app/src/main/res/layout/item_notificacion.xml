@@ -12,98 +12,154 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:gravity="center_vertical">
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <!-- Indicador de no leída -->
-        <View
-            android:id="@+id/viewIndicador"
-            android:layout_width="4dp"
-            android:layout_height="match_parent"
-            android:background="@color/danger"
-            android:layout_marginEnd="12dp"
-            android:visibility="gone" />
-
-        <!-- Icono de notificación -->
-        <ImageView
-            android:id="@+id/imageViewIcon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_notification"
-            android:tint="@color/gold"
-            android:layout_marginEnd="12dp"
-            android:layout_gravity="top" />
-
-        <!-- Información de la notificación -->
+        <!-- Fila principal con información -->
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_marginEnd="12dp">
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="12dp">
 
+            <!-- Indicador de no leída -->
+            <View
+                android:id="@+id/viewIndicador"
+                android:layout_width="4dp"
+                android:layout_height="match_parent"
+                android:background="@color/danger"
+                android:layout_marginEnd="12dp"
+                android:visibility="gone" />
+
+            <!-- Icono de notificación -->
+            <ImageView
+                android:id="@+id/imageViewIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_notification"
+                android:tint="@color/gold"
+                android:layout_marginEnd="12dp"
+                android:layout_gravity="top" />
+
+            <!-- Información de la notificación -->
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="4dp">
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginEnd="12dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="4dp">
+
+                    <TextView
+                        android:id="@+id/textViewTitulo"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Título de la Notificación"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/textViewTipo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Mensaje"
+                        android:textColor="@color/white"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:background="@drawable/badge_mensaje_background"
+                        android:padding="4dp"
+                        android:layout_marginStart="8dp" />
+
+                </LinearLayout>
 
                 <TextView
-                    android:id="@+id/textViewTitulo"
-                    android:layout_width="0dp"
+                    android:id="@+id/textViewMensaje"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Título de la Notificación"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:text="Mensaje de la notificación que puede ser largo y contener información importante sobre eventos, recordatorios o actualizaciones del club."
+                    android:textColor="@color/colorTextSecondary"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="4dp"
+                    android:maxLines="3"
+                    android:ellipsize="end" />
 
                 <TextView
-                    android:id="@+id/textViewTipo"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/textViewFecha"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Mensaje"
-                    android:textColor="@color/white"
-                    android:textSize="10sp"
-                    android:textStyle="bold"
-                    android:background="@drawable/badge_mensaje_background"
-                    android:padding="4dp"
-                    android:layout_marginStart="8dp" />
+                    android:text="Fecha: 01/01/2024 12:00"
+                    android:textColor="@color/colorTextSecondary"
+                    android:textSize="12sp" />
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/textViewMensaje"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Mensaje de la notificación que puede ser largo y contener información importante sobre eventos, recordatorios o actualizaciones del club."
-                android:textColor="@color/colorTextSecondary"
-                android:textSize="14sp"
-                android:layout_marginBottom="4dp"
-                android:maxLines="3"
-                android:ellipsize="end" />
-
-            <TextView
-                android:id="@+id/textViewFecha"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Fecha: 01/01/2024 12:00"
-                android:textColor="@color/colorTextSecondary"
-                android:textSize="12sp" />
-
         </LinearLayout>
 
-        <!-- Botón marcar como leída -->
-        <ImageButton
-            android:id="@+id/buttonMarcarLeida"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_check"
-            android:background="@drawable/circle_button_green"
-            android:contentDescription="Marcar como leída"
-            android:scaleType="centerInside"
-            android:padding="8dp" />
+        <!-- Fila de botones de acción -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <!-- Botón marcar como leída -->
+            <ImageButton
+                android:id="@+id/buttonMarcarLeida"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_check"
+                android:background="@drawable/circle_button_green"
+                android:contentDescription="Marcar como leída"
+                android:scaleType="centerInside"
+                android:padding="8dp"
+                android:layout_marginEnd="8dp" />
+
+            <!-- Botón aprobar (solo para solicitudes) -->
+            <ImageButton
+                android:id="@+id/buttonAprobar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_check"
+                android:background="@drawable/circle_button_blue"
+                android:contentDescription="Aprobar"
+                android:scaleType="centerInside"
+                android:padding="8dp"
+                android:layout_marginEnd="8dp"
+                android:visibility="gone" />
+
+            <!-- Botón rechazar (solo para solicitudes) -->
+            <ImageButton
+                android:id="@+id/buttonRechazar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_close"
+                android:background="@drawable/circle_button_red"
+                android:contentDescription="Rechazar"
+                android:scaleType="centerInside"
+                android:padding="8dp"
+                android:layout_marginEnd="8dp"
+                android:visibility="gone" />
+
+            <!-- Botón borrar -->
+            <ImageButton
+                android:id="@+id/buttonBorrar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_delete"
+                android:background="@drawable/circle_button_red"
+                android:contentDescription="Borrar notificación"
+                android:scaleType="centerInside"
+                android:padding="8dp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

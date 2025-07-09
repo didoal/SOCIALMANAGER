@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -509,7 +510,8 @@ public class AsistenciaFragment extends Fragment {
             startActivity(intent);
 
         } catch (Exception e) {
-            Toast.makeText(requireContext(), "Error al exportar PDF: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Log.e("Asistencia", "Error al exportar PDF", e);
+            Toast.makeText(requireContext(), R.string.error_exportar_pdf, Toast.LENGTH_LONG).show();
         }
     }
 

@@ -2,6 +2,7 @@ package com.gestionclub.padres.ui;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,10 +49,24 @@ public class PerfilFragment extends Fragment {
             configurarListeners();
             
         } catch (Exception e) {
-            Toast.makeText(requireContext(), "Error al cargar el perfil", Toast.LENGTH_LONG).show();
+            Log.e("Perfil", "Error al cargar perfil", e);
+            mostrarErrorCarga(view);
         }
         
         return view;
+    }
+    
+    private void mostrarErrorCarga(View view) {
+        // Ocultar vistas principales
+        if (textViewNombre != null) textViewNombre.setVisibility(View.GONE);
+        if (textViewEmail != null) textViewEmail.setVisibility(View.GONE);
+        if (textViewRol != null) textViewRol.setVisibility(View.GONE);
+        if (textViewEquipo != null) textViewEquipo.setVisibility(View.GONE);
+        if (textViewJugador != null) textViewJugador.setVisibility(View.GONE);
+        if (textViewFechaRegistro != null) textViewFechaRegistro.setVisibility(View.GONE);
+        
+        // Mostrar solo el Toast de error
+        Toast.makeText(requireContext(), R.string.error_cargar_perfil, Toast.LENGTH_LONG).show();
     }
 
     private void inicializarVistas(View view) {

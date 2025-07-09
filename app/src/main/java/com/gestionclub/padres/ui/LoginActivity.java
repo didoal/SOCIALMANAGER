@@ -287,7 +287,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void realizarLogin() {
         if (dataManager == null) {
-            mostrarError("Error interno de la aplicación. Reinicia la app.");
+            mostrarError(getString(R.string.error_interno));
             return;
         }
         

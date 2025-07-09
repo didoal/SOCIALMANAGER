@@ -47,4 +47,13 @@
     <string name="crear">Crear</string>
     <string name="exportar">Exportar</string>
     <string name="filtrar">Filtrar</string>
+    
+    <!-- Mensajes de error -->
+    <string name="error_cargar_notificaciones">No se pudieron cargar las notificaciones. Intenta más tarde.</string>
+    <string name="error_cargar_muro">No se pudo cargar el muro de destacados. Intenta más tarde.</string>
+    <string name="error_cargar_estadisticas">No se pudieron cargar las estadísticas. Intenta más tarde.</string>
+    <string name="error_cargar_mensajes">No se pudieron cargar los mensajes. Intenta más tarde.</string>
+    <string name="error_cargar_perfil">No se pudo cargar el perfil. Intenta más tarde.</string>
+    <string name="error_exportar_pdf">Error al exportar PDF. Intenta más tarde.</string>
+    <string name="error_interno">Error interno de la aplicación. Reinicia la app.</string>
 </resources>

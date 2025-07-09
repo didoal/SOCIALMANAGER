@@ -36,6 +36,7 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
     private TextView textViewNoLeidas;
     private TextView textViewTotal;
     private Button buttonMarcarLeidas;
+    private Button buttonBorrarNotificaciones;
     private Button buttonFiltroTodas;
     private Button buttonFiltroNoLeidas;
     private Button buttonFiltroLeidas;
@@ -72,9 +73,23 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
             actualizarEstadisticas();
             configurarListeners();
         } catch (Exception e) {
-            Toast.makeText(requireContext(), "No se pudo cargar las notificaciones. Intenta más tarde.", Toast.LENGTH_LONG).show();
+            Log.e(TAG, "Error al cargar notificaciones", e);
+            mostrarErrorCarga(view);
         }
         return view;
+    }
+    
+    private void mostrarErrorCarga(View view) {
+        // Ocultar vistas principales
+        if (recyclerViewNotificaciones != null) {
+            recyclerViewNotificaciones.setVisibility(View.GONE);
+        }
+        if (layoutNoNotificaciones != null) {
+            layoutNoNotificaciones.setVisibility(View.GONE);
+        }
+        
+        // Mostrar solo el Toast de error
+        Toast.makeText(requireContext(), R.string.error_cargar_notificaciones, Toast.LENGTH_LONG).show();
     }
 
     private void inicializarVistas(View view) {
@@ -83,6 +98,7 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
         textViewNoLeidas = view.findViewById(R.id.textViewNoLeidas);
         textViewTotal = view.findViewById(R.id.textViewTotal);
         buttonMarcarLeidas = view.findViewById(R.id.buttonMarcarLeidas);
+        buttonBorrarNotificaciones = view.findViewById(R.id.buttonBorrarNotificaciones);
         buttonFiltroTodas = view.findViewById(R.id.buttonFiltroTodas);
         buttonFiltroNoLeidas = view.findViewById(R.id.buttonFiltroNoLeidas);
         buttonFiltroLeidas = view.findViewById(R.id.buttonFiltroLeidas);
@@ -190,7 +206,6 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
         
         notificacionAdapter.actualizarNotificaciones(notificacionesFiltradas);
         
-        // Mostrar/ocultar mensaje de sin notificaciones
         if (notificacionesFiltradas.isEmpty()) {
             layoutNoNotificaciones.setVisibility(View.VISIBLE);
             recyclerViewNotificaciones.setVisibility(View.GONE);
@@ -201,72 +216,75 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
     }
 
     private void generarRecordatoriosEventos() {
-        Log.d(TAG, "generarRecordatoriosEventos: Generando recordatorios automáticos");
+        // Generar recordatorios automáticos para eventos próximos
+        List<Evento> eventos = dataManager.getEventos();
+        Calendar ahora = Calendar.getInstance();
+        Calendar proximaSemana = Calendar.getInstance();
+        proximaSemana.add(Calendar.DAY_OF_YEAR, 7);
         
-        // Usar el nuevo método automático del DataManager
-        dataManager.verificarRecordatoriosAutomaticos();
+        for (Evento evento : eventos) {
+            if (evento.getFecha().after(ahora.getTime()) && evento.getFecha().before(proximaSemana.getTime())) {
+                // Verificar si ya existe un recordatorio para este evento
+                boolean recordatorioExiste = false;
+                for (Notificacion notif : dataManager.getNotificaciones()) {
+                    if (notif.getTitulo().contains("Recordatorio: " + evento.getTitulo())) {
+                        recordatorioExiste = true;
+                        break;
+                    }
+                }
+                
+                if (!recordatorioExiste) {
+                    Notificacion recordatorio = new Notificacion();
+                    recordatorio.setTitulo("Recordatorio: " + evento.getTitulo());
+                    recordatorio.setMensaje("El evento '" + evento.getTitulo() + "' será el " + 
+                        new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(evento.getFecha()) + 
+                        " a las " + evento.getHora() + ".");
+                    recordatorio.setTipo("RECORDATORIO");
+                    recordatorio.setFechaCreacion(new Date());
+                    recordatorio.setLeida(false);
+                    dataManager.agregarNotificacion(recordatorio);
+                }
+            }
+        }
     }
 
     private void actualizarEstadisticas() {
-        Log.d(TAG, "actualizarEstadisticas: Actualizando estadísticas");
-        List<Notificacion> notificaciones = dataManager.getNotificaciones();
-        int totalNotificaciones = notificaciones.size();
-        int noLeidas = 0, recordatorios = 0, mensajes = 0, eventos = 0, objetos = 0, solicitudes = 0;
+        List<Notificacion> todasNotificaciones = dataManager.getNotificaciones();
+        int total = todasNotificaciones.size();
+        int noLeidas = 0;
+        int recordatorios = 0;
+        int mensajes = 0;
         
-        for (Notificacion notificacion : notificaciones) {
-            if (!notificacion.isLeida()) noLeidas++;
-            
-            switch (notificacion.getTipo()) {
-                case "RECORDATORIO":
-                case "RECORDATORIO_OBJETOS":
-                    recordatorios++;
-                    break;
-                case "MENSAJE":
-                    mensajes++;
-                    break;
-                case "EVENTO":
-                case "EVENTO_EQUIPO":
-                    eventos++;
-                    break;
-                case "OBJETO":
-                case "OBJETO_EQUIPO":
-                    objetos++;
-                    break;
-                case "SOLICITUD":
-                    solicitudes++;
-                    break;
-            }
+        for (Notificacion notif : todasNotificaciones) {
+            if (!notif.isLeida()) noLeidas++;
+            if (notif.getTipo().contains("RECORDATORIO")) recordatorios++;
+            if (notif.getTipo().contains("MENSAJE")) mensajes++;
         }
         
-        String estadisticas = String.format("Total: %d | No leídas: %d | Eventos: %d | Objetos: %d | Recordatorios: %d", 
-                totalNotificaciones, noLeidas, eventos, objetos, recordatorios);
-        
-        textViewEstadisticas.setText(estadisticas);
+        textViewTotal.setText(String.valueOf(total));
         textViewNoLeidas.setText(String.valueOf(noLeidas));
-        textViewTotal.setText(String.valueOf(totalNotificaciones));
+        textViewEstadisticas.setText("Total: " + total + " | No leídas: " + noLeidas + 
+                                   " | Recordatorios: " + recordatorios + " | Mensajes: " + mensajes);
     }
 
     private void configurarListeners() {
-        Log.d(TAG, "configurarListeners: Configurando listeners");
-        
+        buttonMarcarLeidas.setOnClickListener(v -> marcarTodasComoLeidas());
+        buttonBorrarNotificaciones.setOnClickListener(v -> mostrarDialogoBorrarNotificaciones());
         buttonFiltroTodas.setOnClickListener(v -> {
             filtroActual = "TODAS";
             actualizarEstadosFiltros();
             cargarNotificaciones();
         });
-        
         buttonFiltroNoLeidas.setOnClickListener(v -> {
             filtroActual = "NO_LEIDAS";
             actualizarEstadosFiltros();
             cargarNotificaciones();
         });
-        
         buttonFiltroLeidas.setOnClickListener(v -> {
             filtroActual = "LEIDAS";
             actualizarEstadosFiltros();
             cargarNotificaciones();
         });
-        
         buttonFiltrosAvanzados.setOnClickListener(v -> {
             if (layoutFiltrosAvanzados.getVisibility() == View.VISIBLE) {
                 layoutFiltrosAvanzados.setVisibility(View.GONE);
@@ -276,114 +294,149 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
                 buttonFiltrosAvanzados.setText("🔍 Ocultar Filtros");
             }
         });
-        
-        buttonMarcarLeidas.setOnClickListener(v -> marcarTodasComoLeidas());
-        
-        // Listeners para spinners
+
         spinnerTipoNotificacion.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
                 filtroTipo = parent.getItemAtPosition(position).toString();
                 cargarNotificaciones();
             }
+
             @Override
             public void onNothingSelected(android.widget.AdapterView<?> parent) {}
         });
-        
+
         spinnerEquipo.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
                 filtroEquipo = parent.getItemAtPosition(position).toString();
                 cargarNotificaciones();
             }
+
             @Override
             public void onNothingSelected(android.widget.AdapterView<?> parent) {}
         });
     }
 
     private void marcarTodasComoLeidas() {
-        Log.d(TAG, "marcarTodasComoLeidas: Marcando todas como leídas");
         List<Notificacion> notificaciones = dataManager.getNotificaciones();
-        for (Notificacion notificacion : notificaciones) {
-            if (!notificacion.isLeida()) {
-                dataManager.marcarNotificacionComoLeida(notificacion.getId());
+        for (Notificacion notif : notificaciones) {
+            if (!notif.isLeida()) {
+                notif.setLeida(true);
+                dataManager.actualizarNotificacion(notif);
             }
         }
         cargarNotificaciones();
         actualizarEstadisticas();
-        Toast.makeText(requireContext(), "Todas las notificaciones marcadas como leídas", Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(), "Todas las notificaciones han sido marcadas como leídas", Toast.LENGTH_SHORT).show();
+    }
+
+    private void mostrarDialogoBorrarNotificaciones() {
+        new AlertDialog.Builder(requireContext())
+            .setTitle("🗑️ Borrar Notificaciones")
+            .setMessage("¿Estás seguro de que quieres borrar todas las notificaciones? Esta acción no se puede deshacer.")
+            .setPositiveButton("Borrar", (dialog, which) -> {
+                dataManager.borrarTodasNotificaciones();
+                cargarNotificaciones();
+                actualizarEstadisticas();
+                Toast.makeText(requireContext(), "Todas las notificaciones han sido borradas", Toast.LENGTH_SHORT).show();
+            })
+            .setNegativeButton("Cancelar", null)
+            .show();
     }
 
     @Override
     public void onMarcarLeidaClick(Notificacion notificacion) {
-        Log.d(TAG, "onMarcarLeidaClick: Marcando notificación como leída");
-        dataManager.marcarNotificacionComoLeida(notificacion.getId());
+        notificacion.setLeida(true);
+        dataManager.actualizarNotificacion(notificacion);
         cargarNotificaciones();
         actualizarEstadisticas();
-        mostrarDetallesNotificacion(notificacion);
+        Toast.makeText(requireContext(), "Notificación marcada como leída", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onBorrarClick(Notificacion notificacion) {
+        new AlertDialog.Builder(requireContext())
+            .setTitle("🗑️ Borrar Notificación")
+            .setMessage("¿Estás seguro de que quieres borrar esta notificación?")
+            .setPositiveButton("Borrar", (dialog, which) -> {
+                dataManager.borrarNotificacion(notificacion.getId());
+                cargarNotificaciones();
+                actualizarEstadisticas();
+                Toast.makeText(requireContext(), "Notificación borrada", Toast.LENGTH_SHORT).show();
+            })
+            .setNegativeButton("Cancelar", null)
+            .show();
+    }
+
+    @Override
+    public void onAprobarClick(Notificacion notificacion) {
+        new AlertDialog.Builder(requireContext())
+            .setTitle("✅ Aprobar Solicitud")
+            .setMessage("¿Estás seguro de que quieres aprobar esta solicitud?")
+            .setPositiveButton("Aprobar", (dialog, which) -> {
+                notificacion.setLeida(true);
+                dataManager.actualizarNotificacion(notificacion);
+                cargarNotificaciones();
+                actualizarEstadisticas();
+                Toast.makeText(requireContext(), "Solicitud aprobada", Toast.LENGTH_SHORT).show();
+            })
+            .setNegativeButton("Cancelar", null)
+            .show();
+    }
+
+    @Override
+    public void onRechazarClick(Notificacion notificacion) {
+        new AlertDialog.Builder(requireContext())
+            .setTitle("❌ Rechazar Solicitud")
+            .setMessage("¿Estás seguro de que quieres rechazar esta solicitud?")
+            .setPositiveButton("Rechazar", (dialog, which) -> {
+                notificacion.setLeida(true);
+                dataManager.actualizarNotificacion(notificacion);
+                cargarNotificaciones();
+                actualizarEstadisticas();
+                Toast.makeText(requireContext(), "Solicitud rechazada", Toast.LENGTH_SHORT).show();
+            })
+            .setNegativeButton("Cancelar", null)
+            .show();
     }
 
     private void mostrarDetallesNotificacion(Notificacion notificacion) {
-        Log.d(TAG, "mostrarDetallesNotificacion: Mostrando detalles de notificación");
-        String fecha = dateFormat.format(notificacion.getFechaCreacion());
-        String detalles = "Título: " + notificacion.getTitulo() + "\n\n" +
-                         "Mensaje: " + notificacion.getMensaje() + "\n\n" +
-                         "Tipo: " + notificacion.getTipo() + "\n" +
-                         "Fecha: " + fecha + "\n" +
-                         "Remitente: " + notificacion.getRemitenteNombre();
-        
         new AlertDialog.Builder(requireContext())
-                .setTitle("Detalles de la Notificación")
-                .setMessage(detalles)
-                .setPositiveButton("Cerrar", null)
-                .show();
+            .setTitle(notificacion.getTitulo())
+            .setMessage(notificacion.getMensaje() + "\n\nFecha: " + 
+                dateFormat.format(notificacion.getFechaCreacion()) + 
+                "\nTipo: " + notificacion.getTipo())
+            .setPositiveButton("OK", null)
+            .show();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume: Fragmento resumido");
         cargarNotificaciones();
         actualizarEstadisticas();
     }
 
     private void mostrarDialogoCrearNotificacion() {
-        Log.d(TAG, "mostrarDialogoCrearNotificacion: Mostrando diálogo");
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_crear_notificacion, null);
-        
-        android.widget.EditText editTextTitulo = dialogView.findViewById(R.id.editTextTitulo);
-        android.widget.EditText editTextMensaje = dialogView.findViewById(R.id.editTextMensaje);
-        
-        builder.setView(dialogView)
-                .setTitle("Crear Notificación")
-                .setPositiveButton("Crear", (dialog, which) -> {
-                    String titulo = editTextTitulo.getText().toString().trim();
-                    String mensaje = editTextMensaje.getText().toString().trim();
-                    
-                    if (validarDatos(titulo, mensaje)) {
-                        crearNotificacion(titulo, mensaje);
-                    }
-                })
-                .setNegativeButton("Cancelar", null)
-                .show();
+        // Implementar diálogo para crear notificación
+        Toast.makeText(requireContext(), "Función de crear notificación en desarrollo", Toast.LENGTH_SHORT).show();
     }
 
     private boolean validarDatos(String titulo, String mensaje) {
-        if (titulo.isEmpty()) {
-            Toast.makeText(requireContext(), "El título es obligatorio", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if (mensaje.isEmpty()) {
-            Toast.makeText(requireContext(), "El mensaje es obligatorio", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        return true;
+        return titulo != null && !titulo.trim().isEmpty() && 
+               mensaje != null && !mensaje.trim().isEmpty();
     }
 
-    private void crearNotificacion(String titulo, String mensaje) {
-        Log.d(TAG, "crearNotificacion: Creando notificación");
-        dataManager.crearNotificacionSolicitud(titulo, mensaje, "GENERAL");
+        private void crearNotificacion(String titulo, String mensaje) {
+        Notificacion nuevaNotificacion = new Notificacion();
+        nuevaNotificacion.setTitulo(titulo);
+        nuevaNotificacion.setMensaje(mensaje);
+        nuevaNotificacion.setTipo("MENSAJE");
+        nuevaNotificacion.setFechaCreacion(new Date());
+        nuevaNotificacion.setLeida(false);
+        
+        dataManager.agregarNotificacion(nuevaNotificacion);
         cargarNotificaciones();
         actualizarEstadisticas();
         Toast.makeText(requireContext(), "Notificación creada exitosamente", Toast.LENGTH_SHORT).show();

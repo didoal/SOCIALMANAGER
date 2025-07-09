@@ -2,6 +2,7 @@ package com.gestionclub.padres.ui;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,9 +52,20 @@ public class ChatFragment extends Fragment {
             cargarMensajes();
             configurarListeners();
         } catch (Exception e) {
-            Toast.makeText(requireContext(), "No se pudo cargar los mensajes. Intenta más tarde.", Toast.LENGTH_LONG).show();
+            Log.e("Chat", "Error al cargar mensajes", e);
+            mostrarErrorCarga(view);
         }
         return view;
+    }
+    
+    private void mostrarErrorCarga(View view) {
+        // Ocultar vistas principales
+        if (recyclerViewMensajes != null) {
+            recyclerViewMensajes.setVisibility(View.GONE);
+        }
+        
+        // Mostrar solo el Toast de error
+        Toast.makeText(requireContext(), R.string.error_cargar_mensajes, Toast.LENGTH_LONG).show();
     }
 
     private void inicializarVistas(View view) {

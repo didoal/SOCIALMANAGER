@@ -21,6 +21,9 @@ public class NotificacionAdapter extends RecyclerView.Adapter<NotificacionAdapte
 
     public interface OnNotificacionClickListener {
         void onMarcarLeidaClick(Notificacion notificacion);
+        void onBorrarClick(Notificacion notificacion);
+        void onAprobarClick(Notificacion notificacion);
+        void onRechazarClick(Notificacion notificacion);
     }
 
     public NotificacionAdapter(List<Notificacion> notificaciones, OnNotificacionClickListener listener) {
@@ -58,6 +61,9 @@ public class NotificacionAdapter extends RecyclerView.Adapter<NotificacionAdapte
         private TextView textViewTipo;
         private TextView textViewFecha;
         private ImageButton buttonMarcarLeida;
+        private ImageButton buttonAprobar;
+        private ImageButton buttonRechazar;
+        private ImageButton buttonBorrar;
 
         public NotificacionViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -66,6 +72,9 @@ public class NotificacionAdapter extends RecyclerView.Adapter<NotificacionAdapte
             textViewTipo = itemView.findViewById(R.id.textViewTipo);
             textViewFecha = itemView.findViewById(R.id.textViewFecha);
             buttonMarcarLeida = itemView.findViewById(R.id.buttonMarcarLeida);
+            buttonAprobar = itemView.findViewById(R.id.buttonAprobar);
+            buttonRechazar = itemView.findViewById(R.id.buttonRechazar);
+            buttonBorrar = itemView.findViewById(R.id.buttonBorrar);
         }
 
         public void bind(Notificacion notificacion) {
@@ -104,7 +113,7 @@ public class NotificacionAdapter extends RecyclerView.Adapter<NotificacionAdapte
                     break;
             }
             
-            // Configurar estado visual
+            // Configurar estado visual y botones
             if (notificacion.isLeida()) {
                 itemView.setAlpha(0.6f);
                 buttonMarcarLeida.setVisibility(View.GONE);
@@ -117,6 +126,34 @@ public class NotificacionAdapter extends RecyclerView.Adapter<NotificacionAdapte
                     }
                 });
             }
+            
+            // Configurar botones de aprobar/rechazar solo para solicitudes
+            if (notificacion.getTipo().contains("SOLICITUD") && !notificacion.isLeida()) {
+                buttonAprobar.setVisibility(View.VISIBLE);
+                buttonRechazar.setVisibility(View.VISIBLE);
+                
+                buttonAprobar.setOnClickListener(v -> {
+                    if (listener != null) {
+                        listener.onAprobarClick(notificacion);
+                    }
+                });
+                
+                buttonRechazar.setOnClickListener(v -> {
+                    if (listener != null) {
+                        listener.onRechazarClick(notificacion);
+                    }
+                });
+            } else {
+                buttonAprobar.setVisibility(View.GONE);
+                buttonRechazar.setVisibility(View.GONE);
+            }
+            
+            // Configurar botón de borrar
+            buttonBorrar.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onBorrarClick(notificacion);
+                }
+            });
         }
     }
 } 
