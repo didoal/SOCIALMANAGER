@@ -18,7 +18,7 @@
             android:id="@+id/textViewTitulo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Muro de Mensajes Destacados"
+            android:text="Muro de Destacados del Chat"
             android:textSize="22sp"
             android:textStyle="bold"
             android:textColor="@color/text_primary"

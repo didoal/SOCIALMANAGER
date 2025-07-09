@@ -24,7 +24,7 @@ import com.gestionclub.padres.model.Usuario;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MensajesFragment extends Fragment {
+public class ChatFragment extends Fragment {
     private RecyclerView recyclerViewMensajes;
     private EditText editTextMensaje;
     private Button buttonEnviar;
@@ -41,7 +41,7 @@ public class MensajesFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_mensajes, container, false);
+        View view = inflater.inflate(R.layout.fragment_chat, container, false);
         try {
             dataManager = new DataManager(requireContext());
             usuarioActual = dataManager.getUsuarioActual();

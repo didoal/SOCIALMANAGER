@@ -18,7 +18,7 @@
             android:title="Mi Equipo" />
 
         <item
-            android:id="@+id/nav_mensajes"
+            android:id="@+id/nav_chat"
             android:icon="@drawable/ic_message"
             android:title="Mensajes" />
 
