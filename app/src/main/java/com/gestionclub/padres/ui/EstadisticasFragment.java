@@ -2,6 +2,8 @@ package com.gestionclub.padres.ui;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +26,16 @@ import com.gestionclub.padres.model.Asistencia;
 import com.gestionclub.padres.model.Equipo;
 import com.gestionclub.padres.model.Evento;
 import com.gestionclub.padres.model.Usuario;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -78,6 +90,12 @@ public class EstadisticasFragment extends Fragment {
         
         if (buttonFiltroEquipo != null) {
             buttonFiltroEquipo.setOnClickListener(v -> mostrarDialogoFiltro());
+        }
+        
+        // Agregar botón de exportar PDF
+        Button buttonExportarPDF = view.findViewById(R.id.buttonExportarPDF);
+        if (buttonExportarPDF != null) {
+            buttonExportarPDF.setOnClickListener(v -> exportarEstadisticasPDF());
         }
     }
 
@@ -305,5 +323,114 @@ public class EstadisticasFragment extends Fragment {
     public void onResume() {
         super.onResume();
         cargarEstadisticas();
+    }
+
+    private void exportarEstadisticasPDF() {
+        try {
+            // Crear el archivo PDF
+            File pdfFile = new File(requireContext().getExternalFilesDir(null), "estadisticas_club.pdf");
+            FileOutputStream outputStream = new FileOutputStream(pdfFile);
+            
+            Document document = new Document();
+            PdfWriter.getInstance(document, outputStream);
+            document.open();
+            
+            // Título del documento
+            Font titleFont = new Font(Font.FontFamily.HELVETICA, 18, Font.BOLD);
+            Paragraph title = new Paragraph("Estadísticas del Club CD Santiaguiño Guizán", titleFont);
+            title.setAlignment(Element.ALIGN_CENTER);
+            document.add(title);
+            document.add(new Paragraph(" ")); // Espacio
+            
+            // Fecha del reporte
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+            Paragraph fecha = new Paragraph("Reporte generado el: " + dateFormat.format(new Date()));
+            fecha.setAlignment(Element.ALIGN_CENTER);
+            document.add(fecha);
+            document.add(new Paragraph(" ")); // Espacio
+            
+            // Estadísticas generales
+            Font subtitleFont = new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD);
+            Paragraph subtitle = new Paragraph("Estadísticas Generales", subtitleFont);
+            document.add(subtitle);
+            document.add(new Paragraph(" ")); // Espacio
+            
+            List<Evento> eventos = filtrarEventosPorEquipo(dataManager.getEventos());
+            List<Usuario> usuarios = filtrarUsuariosPorEquipo(dataManager.getUsuarios());
+            List<Equipo> equipos = dataManager.getEquipos();
+            List<Asistencia> asistencias = filtrarAsistenciasPorEquipo(dataManager.getAsistencias());
+            
+            // Tabla de estadísticas
+            PdfPTable table = new PdfPTable(2);
+            table.setWidthPercentage(100);
+            
+            // Agregar datos a la tabla
+            agregarFilaTabla(table, "Total de Eventos", String.valueOf(eventos.size()));
+            agregarFilaTabla(table, "Total de Usuarios", String.valueOf(usuarios.size()));
+            agregarFilaTabla(table, "Total de Equipos", String.valueOf(equipos.size()));
+            
+            // Calcular porcentaje de asistencia
+            double porcentajeAsistencia = calcularPorcentajeAsistencia(asistencias);
+            agregarFilaTabla(table, "Porcentaje de Asistencia", String.format("%.1f%%", porcentajeAsistencia));
+            
+            document.add(table);
+            document.add(new Paragraph(" ")); // Espacio
+            
+            // Estadísticas por equipo
+            Paragraph subtitleEquipos = new Paragraph("Estadísticas por Equipo", subtitleFont);
+            document.add(subtitleEquipos);
+            document.add(new Paragraph(" ")); // Espacio
+            
+            for (Equipo equipo : equipos) {
+                if (filtroEquipo.equals("TODOS") || equipo.getNombre().equals(filtroEquipo)) {
+                    Paragraph equipoTitle = new Paragraph("Equipo: " + equipo.getNombre(), new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD));
+                    document.add(equipoTitle);
+                    
+                    List<Usuario> jugadoresEquipo = dataManager.getJugadoresPorEquipo(equipo.getId());
+                    Paragraph jugadores = new Paragraph("Jugadores: " + jugadoresEquipo.size());
+                    document.add(jugadores);
+                    
+                    // Eventos del equipo
+                    int eventosEquipo = 0;
+                    for (Evento evento : eventos) {
+                        if (equipo.getNombre().equals(evento.getEquipo())) {
+                            eventosEquipo++;
+                        }
+                    }
+                    Paragraph eventosEquipoText = new Paragraph("Eventos: " + eventosEquipo);
+                    document.add(eventosEquipoText);
+                    document.add(new Paragraph(" ")); // Espacio
+                }
+            }
+            
+            document.close();
+            outputStream.close();
+            
+            // Mostrar mensaje de éxito y abrir el PDF
+            Toast.makeText(requireContext(), "PDF exportado exitosamente", Toast.LENGTH_LONG).show();
+            
+            // Abrir el PDF
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            Uri uri = androidx.core.content.FileProvider.getUriForFile(
+                requireContext(), 
+                requireContext().getPackageName() + ".provider", 
+                pdfFile
+            );
+            intent.setDataAndType(uri, "application/pdf");
+            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(intent);
+            
+        } catch (Exception e) {
+            Toast.makeText(requireContext(), "Error al exportar PDF: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void agregarFilaTabla(PdfPTable table, String label, String value) {
+        PdfPCell cell1 = new PdfPCell(new Phrase(label));
+        PdfPCell cell2 = new PdfPCell(new Phrase(value));
+        cell1.setBorder(PdfPCell.NO_BORDER);
+        cell2.setBorder(PdfPCell.NO_BORDER);
+        table.addCell(cell1);
+        table.addCell(cell2);
     }
 } 

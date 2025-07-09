@@ -132,15 +132,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_calendario) {
             fragment = new CalendarioFragment();
             titulo = "Calendario";
-        } else if (id == R.id.nav_chat) {
-            fragment = new ChatFragment();
-            titulo = "Chat";
         } else if (id == R.id.nav_asistencia) {
             fragment = new AsistenciaFragment();
             titulo = "Asistencia";
-        } else if (id == R.id.nav_objetos_perdidos) {
-            fragment = new ChatFragment();
-            titulo = "Mensajes";
         } else if (id == R.id.nav_notificaciones) {
             fragment = new NotificacionesFragment();
             titulo = "Notificaciones";

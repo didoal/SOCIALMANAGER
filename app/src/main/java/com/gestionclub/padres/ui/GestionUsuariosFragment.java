@@ -103,7 +103,6 @@ public class GestionUsuariosFragment extends Fragment {
         View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_crear_usuario, null);
         
         EditText editTextNombre = dialogView.findViewById(R.id.editTextNombre);
-        EditText editTextEmail = dialogView.findViewById(R.id.editTextEmail);
         EditText editTextPassword = dialogView.findViewById(R.id.editTextPassword);
         EditText editTextConfirmPassword = dialogView.findViewById(R.id.editTextConfirmPassword);
         EditText editTextJugador = dialogView.findViewById(R.id.editTextJugador);
@@ -133,32 +132,23 @@ public class GestionUsuariosFragment extends Fragment {
                 .setTitle("Crear Nuevo Usuario")
                 .setPositiveButton("Crear", (dialog, which) -> {
                     String nombre = editTextNombre.getText().toString().trim();
-                    String email = editTextEmail.getText().toString().trim();
                     String password = editTextPassword.getText().toString().trim();
                     String confirmPassword = editTextConfirmPassword.getText().toString().trim();
                     String jugador = editTextJugador.getText().toString().trim();
                     String rol = spinnerRol.getSelectedItem().toString().toLowerCase();
                     String equipo = spinnerEquipo.getSelectedItem().toString();
                     
-                    if (validarDatosCreacion(nombre, email, password, confirmPassword, rol, jugador)) {
-                        crearUsuario(nombre, email, password, jugador, rol, equipo);
+                    if (validarDatosCreacion(nombre, password, confirmPassword, rol, jugador)) {
+                        crearUsuario(nombre, password, jugador, rol, equipo);
                     }
                 })
                 .setNegativeButton("Cancelar", null)
                 .show();
     }
 
-    private boolean validarDatosCreacion(String nombre, String email, String password, String confirmPassword, String rol, String jugador) {
+    private boolean validarDatosCreacion(String nombre, String password, String confirmPassword, String rol, String jugador) {
         if (nombre.isEmpty()) {
             Toast.makeText(requireContext(), "El nombre es obligatorio", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if (email.isEmpty()) {
-            Toast.makeText(requireContext(), "El email es obligatorio", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(requireContext(), "El formato del email no es válido", Toast.LENGTH_SHORT).show();
             return false;
         }
         if (password.isEmpty()) {
@@ -173,21 +163,18 @@ public class GestionUsuariosFragment extends Fragment {
             Toast.makeText(requireContext(), "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
             return false;
         }
-        if (jugador.isEmpty() && !"jugador".equals(rol)) {
+        if (jugador.isEmpty()) {
             Toast.makeText(requireContext(), "Debe especificar el jugador al que representa", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
     }
 
-    private void crearUsuario(String nombre, String email, String password, String jugador, String rol, String equipo) {
+    private void crearUsuario(String nombre, String password, String jugador, String rol, String equipo) {
         Log.d(TAG, "crearUsuario: Creando usuario " + nombre);
         
-        // Verificar si el email ya existe
-        if (dataManager.existeUsuario(email)) {
-            Toast.makeText(requireContext(), "Ya existe un usuario con ese email", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        // Generar email único basado en el nombre
+        String email = generarEmailUnico(nombre);
         
         Usuario nuevoUsuario = new Usuario(nombre, jugador, password, rol);
         nuevoUsuario.setEmail(email);
@@ -221,6 +208,23 @@ public class GestionUsuariosFragment extends Fragment {
         }
         Toast.makeText(requireContext(), mensaje, Toast.LENGTH_LONG).show();
         Log.d(TAG, "crearUsuario: Usuario " + nombre + " creado correctamente");
+    }
+
+    private String generarEmailUnico(String nombre) {
+        String baseEmail = nombre.toLowerCase()
+                .replaceAll("[^a-zA-Z0-9]", "")
+                .replaceAll("\\s+", "") + "@club.com";
+        
+        // Verificar si ya existe y agregar número si es necesario
+        String emailFinal = baseEmail;
+        int contador = 1;
+        
+        while (dataManager.existeUsuario(emailFinal)) {
+            emailFinal = baseEmail.replace("@club.com", contador + "@club.com");
+            contador++;
+        }
+        
+        return emailFinal;
     }
 
     private void mostrarDialogoEditarUsuario(Usuario usuario) {
@@ -289,39 +293,27 @@ public class GestionUsuariosFragment extends Fragment {
                     String rol = spinnerRol.getSelectedItem().toString().toLowerCase();
                     String equipo = spinnerEquipo.getSelectedItem().toString();
                     
-                    if (validarDatosEdicion(nombre, email, usuario.getEmail(), jugador, rol)) {
-                        editarUsuario(usuario, nombre, email, jugador, rol, equipo);
+                    if (validarDatosEdicion(nombre, jugador, rol)) {
+                        editarUsuario(usuario, nombre, jugador, rol, equipo);
                     }
                 })
                 .setNegativeButton("Cancelar", null)
                 .show();
     }
 
-    private boolean validarDatosEdicion(String nombre, String email, String emailOriginal, String jugador, String rol) {
+    private boolean validarDatosEdicion(String nombre, String jugador, String rol) {
         if (nombre.isEmpty()) {
             Toast.makeText(requireContext(), "El nombre es obligatorio", Toast.LENGTH_SHORT).show();
             return false;
         }
-        if (email.isEmpty()) {
-            Toast.makeText(requireContext(), "El email es obligatorio", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(requireContext(), "El formato del email no es válido", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if (!email.equals(emailOriginal) && dataManager.existeUsuario(email)) {
-            Toast.makeText(requireContext(), "Ya existe un usuario con ese email", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if (jugador.isEmpty() && !"jugador".equals(rol)) {
+        if (jugador.isEmpty()) {
             Toast.makeText(requireContext(), "Debe especificar el jugador al que representa", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
     }
 
-    private void editarUsuario(Usuario usuarioOriginal, String nombre, String email, String jugador, String rol, String equipo) {
+    private void editarUsuario(Usuario usuarioOriginal, String nombre, String jugador, String rol, String equipo) {
         Log.d(TAG, "editarUsuario: Editando usuario " + usuarioOriginal.getNombre());
         
         // No permitir cambiar rol de administrador
@@ -332,7 +324,6 @@ public class GestionUsuariosFragment extends Fragment {
         
         // Actualizar datos del usuario
         usuarioOriginal.setNombre(nombre);
-        usuarioOriginal.setEmail(email);
         usuarioOriginal.setJugador(jugador);
         usuarioOriginal.setRol(rol);
         

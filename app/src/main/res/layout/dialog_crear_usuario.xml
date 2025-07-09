@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:text="Crear Nuevo Usuario"
         android:textColor="@color/blue_profesional"
-        android:textSize="20sp"
+        android:textSize="18sp"
         android:textStyle="bold"
         android:gravity="center"
         android:layout_marginBottom="20dp" />
@@ -36,23 +36,7 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Campo Email -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:hint="Email"
-        app:boxStrokeColor="@color/blue_profesional"
-        app:hintTextColor="@color/blue_profesional">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextEmail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
-            android:maxLines="1" />
-
-    </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Campo Contraseña -->
     <com.google.android.material.textfield.TextInputLayout
@@ -98,14 +82,14 @@
         android:layout_height="wrap_content"
         android:text="Rol:"
         android:textColor="@color/blue_profesional"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textStyle="bold"
         android:layout_marginBottom="8dp" />
 
     <Spinner
         android:id="@+id/spinnerRol"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="45dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/spinner_background"
         android:padding="12dp" />
@@ -116,24 +100,24 @@
         android:layout_height="wrap_content"
         android:text="Equipo:"
         android:textColor="@color/blue_profesional"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textStyle="bold"
         android:layout_marginBottom="8dp" />
 
     <Spinner
         android:id="@+id/spinnerEquipo"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="45dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/spinner_background"
         android:padding="12dp" />
 
-    <!-- Campo Jugador (opcional) -->
+    <!-- Campo Jugador (Obligatorio) -->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:hint="Jugador asociado (opcional)"
+        android:hint="Jugador que representa *"
         app:boxStrokeColor="@color/blue_profesional"
         app:hintTextColor="@color/blue_profesional">
 
