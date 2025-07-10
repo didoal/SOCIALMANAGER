@@ -91,8 +91,11 @@ public class ChatFragment extends Fragment {
     }
 
     private void configurarFiltroEquipo() {
-        // Mostrar botones de filtro y destacados solo para administradores
-        if (usuarioActual != null && usuarioActual.isEsAdmin()) {
+        // Mostrar botones de filtro y destacados para administradores y entrenadores
+        boolean puedeGestionar = usuarioActual != null && 
+            (usuarioActual.isEsAdmin() || "entrenador".equals(usuarioActual.getRol()));
+        
+        if (puedeGestionar) {
             buttonFiltroEquipo.setVisibility(View.VISIBLE);
             buttonDestacados.setVisibility(View.VISIBLE);
         } else {
@@ -167,6 +170,26 @@ public class ChatFragment extends Fragment {
     }
 
     private void mostrarDialogoDestacar(Mensaje mensaje) {
+        // Verificar permisos para destacar mensajes
+        boolean puedeDestacar = false;
+        
+        if (usuarioActual != null) {
+            if (usuarioActual.isEsAdmin()) {
+                // Los administradores pueden destacar cualquier mensaje
+                puedeDestacar = true;
+            } else if ("entrenador".equals(usuarioActual.getRol())) {
+                // Los entrenadores solo pueden destacar mensajes de su equipo
+                puedeDestacar = usuarioActual.getEquipo() != null && 
+                    (usuarioActual.getEquipo().equals(mensaje.getEquipo()) || 
+                     mensaje.getEquipo() == null);
+            }
+        }
+        
+        if (!puedeDestacar) {
+            Toast.makeText(requireContext(), "No tienes permisos para destacar este mensaje", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
         String accion = mensaje.isDestacado() ? "Quitar de destacados" : "Destacar mensaje";
         String mensajeDialogo = mensaje.isDestacado() ? 
             "¿Quieres quitar este mensaje de los destacados?" : 
@@ -192,8 +215,17 @@ public class ChatFragment extends Fragment {
 
         // Crear spinner con opciones
         Spinner spinner = new Spinner(requireContext());
-        String[] equipos = {"Todos", "Biberones", "Prebenjamín A", "Prebenjamín B", "Benjamín A", "Benjamín B", 
-                           "Alevín A", "Alevín B", "Infantil", "Cadete", "Juvenil"};
+        String[] equipos;
+        
+        // Si es entrenador, solo mostrar su equipo y "Todos"
+        if (usuarioActual != null && "entrenador".equals(usuarioActual.getRol()) && 
+            usuarioActual.getEquipo() != null) {
+            equipos = new String[]{"Todos", usuarioActual.getEquipo()};
+        } else {
+            // Si es admin, mostrar todos los equipos
+            equipos = new String[]{"Todos", "Biberones", "Prebenjamín A", "Prebenjamín B", "Benjamín A", "Benjamín B", 
+                               "Alevín A", "Alevín B", "Infantil", "Cadete", "Juvenil"};
+        }
         
         ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), 
             android.R.layout.simple_spinner_item, equipos);

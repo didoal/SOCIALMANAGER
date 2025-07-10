@@ -19,6 +19,9 @@ import com.gestionclub.padres.model.Mensaje;
 import com.gestionclub.padres.model.Usuario;
 import java.util.ArrayList;
 import java.util.List;
+import android.widget.EditText;
+import android.widget.Button;
+import android.view.inputmethod.InputMethodManager;
 
 public class MuroDestacadosFragment extends Fragment {
     private RecyclerView recyclerViewMensajes;
@@ -27,6 +30,9 @@ public class MuroDestacadosFragment extends Fragment {
     private MensajeAdapter mensajeAdapter;
     private DataManager dataManager;
     private Usuario usuarioActual;
+    private EditText editTextMensaje;
+    private Button buttonPublicar;
+    private View layoutPublicar;
 
     @Nullable
     @Override
@@ -59,6 +65,38 @@ public class MuroDestacadosFragment extends Fragment {
         recyclerViewMensajes = view.findViewById(R.id.recyclerViewMensajes);
         textViewTitulo = view.findViewById(R.id.textViewTitulo);
         textViewInfo = view.findViewById(R.id.textViewInfo);
+        layoutPublicar = view.findViewById(R.id.layoutPublicar);
+        editTextMensaje = view.findViewById(R.id.editTextMensaje);
+        buttonPublicar = view.findViewById(R.id.buttonPublicar);
+
+        if (usuarioActual != null && usuarioActual.isEsAdmin()) {
+            layoutPublicar.setVisibility(View.VISIBLE);
+            buttonPublicar.setOnClickListener(v -> publicarMensajeDestacado());
+        } else {
+            layoutPublicar.setVisibility(View.GONE);
+        }
+    }
+
+    private void publicarMensajeDestacado() {
+        String mensajeTexto = editTextMensaje.getText().toString().trim();
+        if (mensajeTexto.isEmpty()) {
+            Toast.makeText(requireContext(), "El mensaje no puede estar vacío", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Mensaje nuevoMensaje = new Mensaje();
+        nuevoMensaje.setContenido(mensajeTexto);
+        nuevoMensaje.setDestacado(true);
+        nuevoMensaje.setRemitenteNombre(usuarioActual != null ? usuarioActual.getNombre() : "Admin");
+        nuevoMensaje.setFechaCreacion(new java.util.Date());
+        dataManager.agregarMensajeDestacado(nuevoMensaje);
+        editTextMensaje.setText("");
+        cargarMensajesDestacados();
+        // Ocultar teclado
+        InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(editTextMensaje.getWindowToken(), 0);
+        }
+        Toast.makeText(requireContext(), "Mensaje publicado en destacados", Toast.LENGTH_SHORT).show();
     }
 
     private void configurarRecyclerView() {

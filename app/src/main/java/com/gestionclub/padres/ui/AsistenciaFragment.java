@@ -129,7 +129,16 @@ public class AsistenciaFragment extends Fragment {
         // Configurar spinner de equipos
         List<String> equipos = new ArrayList<>();
         equipos.add("Todos los equipos");
-        equipos.addAll(dataManager.getNombresEquipos());
+        
+        // Si es entrenador, solo mostrar su equipo
+        if (usuarioActual != null && "entrenador".equals(usuarioActual.getRol()) && 
+            usuarioActual.getEquipo() != null) {
+            equipos.add(usuarioActual.getEquipo());
+        } else {
+            // Si es admin, mostrar todos los equipos
+            equipos.addAll(dataManager.getNombresEquipos());
+        }
+        
         ArrayAdapter<String> equipoAdapter = new ArrayAdapter<>(requireContext(), 
                 android.R.layout.simple_spinner_item, equipos);
         equipoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -148,7 +157,15 @@ public class AsistenciaFragment extends Fragment {
         List<Usuario> usuarios = dataManager.getUsuarios();
         for (Usuario usuario : usuarios) {
             if (usuario.getJugador() != null && !usuario.getJugador().isEmpty()) {
-                jugadores.add(usuario.getJugador());
+                // Si es entrenador, solo mostrar jugadores de su equipo
+                if (usuarioActual != null && "entrenador".equals(usuarioActual.getRol()) && 
+                    usuarioActual.getEquipo() != null) {
+                    if (usuarioActual.getEquipo().equals(usuario.getEquipo())) {
+                        jugadores.add(usuario.getJugador());
+                    }
+                } else {
+                    jugadores.add(usuario.getJugador());
+                }
             }
         }
         ArrayAdapter<String> jugadorAdapter = new ArrayAdapter<>(requireContext(), 
@@ -156,7 +173,7 @@ public class AsistenciaFragment extends Fragment {
         jugadorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerJugador.setAdapter(jugadorAdapter);
 
-        // Configurar filtro inicial para usuarios no admin
+        // Configurar filtro inicial para usuarios no admin y entrenadores
         if (usuarioActual != null && !usuarioActual.isEsAdmin() && usuarioActual.getEquipo() != null) {
             tipoFiltro = "POR EQUIPO";
             filtroEquipo = usuarioActual.getEquipo();
@@ -192,7 +209,17 @@ public class AsistenciaFragment extends Fragment {
         btnFechaHasta.setOnClickListener(v -> mostrarDatePicker(false));
         btnAplicarFiltros.setOnClickListener(v -> aplicarFiltros());
         btnExportarPdf.setOnClickListener(v -> exportarPdf());
-        fabRegistrarAsistencia.setOnClickListener(v -> mostrarDialogoRegistrarAsistencia());
+        
+        // Configurar FAB según el rol del usuario
+        boolean puedeRegistrarAsistencia = usuarioActual != null && 
+            (usuarioActual.isEsAdmin() || "entrenador".equals(usuarioActual.getRol()));
+        
+        if (puedeRegistrarAsistencia) {
+            fabRegistrarAsistencia.setVisibility(View.VISIBLE);
+            fabRegistrarAsistencia.setOnClickListener(v -> mostrarDialogoRegistrarAsistencia());
+        } else {
+            fabRegistrarAsistencia.setVisibility(View.GONE);
+        }
 
         spinnerTipoFiltro.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
             @Override

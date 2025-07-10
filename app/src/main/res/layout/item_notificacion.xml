@@ -3,8 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="8dp"
-    android:layout_marginVertical="4dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="4dp"
     app:cardCornerRadius="12dp"
     app:cardElevation="3dp"
     app:cardBackgroundColor="@color/white">
@@ -117,7 +119,7 @@
                 android:layout_height="40dp"
                 android:src="@drawable/ic_check"
                 android:background="@drawable/circle_button_green"
-                android:contentDescription="Marcar como leída"
+                android:contentDescription="@string/marcar_como_leida"
                 android:scaleType="centerInside"
                 android:padding="8dp"
                 android:layout_marginEnd="8dp" />
@@ -129,7 +131,7 @@
                 android:layout_height="40dp"
                 android:src="@drawable/ic_check"
                 android:background="@drawable/circle_button_blue"
-                android:contentDescription="Aprobar"
+                android:contentDescription="@string/aprobar"
                 android:scaleType="centerInside"
                 android:padding="8dp"
                 android:layout_marginEnd="8dp"
@@ -142,7 +144,7 @@
                 android:layout_height="40dp"
                 android:src="@drawable/ic_close"
                 android:background="@drawable/circle_button_red"
-                android:contentDescription="Rechazar"
+                android:contentDescription="@string/rechazar"
                 android:scaleType="centerInside"
                 android:padding="8dp"
                 android:layout_marginEnd="8dp"
@@ -155,7 +157,7 @@
                 android:layout_height="40dp"
                 android:src="@drawable/ic_delete"
                 android:background="@drawable/circle_button_red"
-                android:contentDescription="Borrar notificación"
+                android:contentDescription="@string/borrar_notificacion"
                 android:scaleType="centerInside"
                 android:padding="8dp" />
 

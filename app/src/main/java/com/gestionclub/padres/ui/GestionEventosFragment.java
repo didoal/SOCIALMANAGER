@@ -24,6 +24,7 @@ import com.gestionclub.padres.R;
 import com.gestionclub.padres.adapter.EventoAdapter;
 import com.gestionclub.padres.data.DataManager;
 import com.gestionclub.padres.model.Evento;
+import com.gestionclub.padres.model.Usuario;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.SimpleDateFormat;
@@ -39,6 +40,7 @@ public class GestionEventosFragment extends Fragment {
     private DataManager dataManager;
     private TextView textViewEstadisticas;
     private FloatingActionButton fabAgregarEvento;
+    private Usuario usuarioActual;
 
     @Nullable
     @Override
@@ -46,6 +48,7 @@ public class GestionEventosFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_gestion_eventos, container, false);
         
         dataManager = new DataManager(requireContext());
+        usuarioActual = dataManager.getUsuarioActual();
         inicializarVistas(view);
         configurarRecyclerView();
         cargarEventos();
@@ -59,7 +62,16 @@ public class GestionEventosFragment extends Fragment {
         textViewEstadisticas = view.findViewById(R.id.textViewEstadisticas);
         fabAgregarEvento = view.findViewById(R.id.fabAgregarEvento);
         
-        fabAgregarEvento.setOnClickListener(v -> mostrarDialogoCrearEvento());
+        // Solo mostrar FAB si es admin o entrenador
+        boolean puedeCrearEventos = usuarioActual != null && 
+            (usuarioActual.isEsAdmin() || "entrenador".equals(usuarioActual.getRol()));
+        
+        if (puedeCrearEventos) {
+            fabAgregarEvento.setVisibility(View.VISIBLE);
+            fabAgregarEvento.setOnClickListener(v -> mostrarDialogoCrearEvento());
+        } else {
+            fabAgregarEvento.setVisibility(View.GONE);
+        }
     }
 
     private void configurarRecyclerView() {
@@ -80,6 +92,20 @@ public class GestionEventosFragment extends Fragment {
 
     private void cargarEventos() {
         List<Evento> eventos = dataManager.getEventos();
+        
+        // Si es entrenador, filtrar solo eventos de su equipo
+        if (usuarioActual != null && "entrenador".equals(usuarioActual.getRol()) && 
+            usuarioActual.getEquipo() != null) {
+            List<Evento> eventosFiltrados = new ArrayList<>();
+            for (Evento evento : eventos) {
+                if (usuarioActual.getEquipo().equals(evento.getEquipo()) || 
+                    "Todos los equipos".equals(evento.getEquipo())) {
+                    eventosFiltrados.add(evento);
+                }
+            }
+            eventos = eventosFiltrados;
+        }
+        
         eventoAdapter.actualizarEventos(eventos);
     }
 
@@ -142,13 +168,31 @@ public class GestionEventosFragment extends Fragment {
         // Configurar spinner de equipos
         List<String> equipos = new ArrayList<>();
         equipos.add("Todos los equipos");
-        for (String equipo : dataManager.getNombresEquipos()) {
-            equipos.add(equipo);
+        
+        // Si es entrenador, solo mostrar su equipo
+        if (usuarioActual != null && "entrenador".equals(usuarioActual.getRol()) && 
+            usuarioActual.getEquipo() != null) {
+            equipos.add(usuarioActual.getEquipo());
+        } else {
+            // Si es admin, mostrar todos los equipos
+            for (String equipo : dataManager.getNombresEquipos()) {
+                equipos.add(equipo);
+            }
         }
+        
         ArrayAdapter<String> equipoAdapter = new ArrayAdapter<>(requireContext(), 
                 android.R.layout.simple_spinner_item, equipos);
         equipoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerEquipo.setAdapter(equipoAdapter);
+        
+        // Si es entrenador, seleccionar automáticamente su equipo
+        if (usuarioActual != null && "entrenador".equals(usuarioActual.getRol()) && 
+            usuarioActual.getEquipo() != null) {
+            int posicionEquipo = equipos.indexOf(usuarioActual.getEquipo());
+            if (posicionEquipo >= 0) {
+                spinnerEquipo.setSelection(posicionEquipo);
+            }
+        }
         
         // Configurar spinner de recurrencia
         String[] recurrencias = {"Sin recurrencia", "Diario", "Semanal", "Mensual"};

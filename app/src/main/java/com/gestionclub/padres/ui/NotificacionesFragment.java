@@ -223,7 +223,7 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
         proximaSemana.add(Calendar.DAY_OF_YEAR, 7);
         
         for (Evento evento : eventos) {
-            if (evento.getFecha().after(ahora.getTime()) && evento.getFecha().before(proximaSemana.getTime())) {
+            if (evento.getFechaInicio().after(ahora.getTime()) && evento.getFechaInicio().before(proximaSemana.getTime())) {
                 // Verificar si ya existe un recordatorio para este evento
                 boolean recordatorioExiste = false;
                 for (Notificacion notif : dataManager.getNotificaciones()) {
@@ -237,8 +237,8 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
                     Notificacion recordatorio = new Notificacion();
                     recordatorio.setTitulo("Recordatorio: " + evento.getTitulo());
                     recordatorio.setMensaje("El evento '" + evento.getTitulo() + "' será el " + 
-                        new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(evento.getFecha()) + 
-                        " a las " + evento.getHora() + ".");
+                        new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(evento.getFechaInicio()) + 
+                        " a las " + new SimpleDateFormat("HH:mm", Locale.getDefault()).format(evento.getFechaInicio()) + ".");
                     recordatorio.setTipo("RECORDATORIO");
                     recordatorio.setFechaCreacion(new Date());
                     recordatorio.setLeida(false);
@@ -294,7 +294,7 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
                 buttonFiltrosAvanzados.setText("🔍 Ocultar Filtros");
             }
         });
-
+        
         spinnerTipoNotificacion.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
@@ -305,7 +305,7 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
             @Override
             public void onNothingSelected(android.widget.AdapterView<?> parent) {}
         });
-
+        
         spinnerEquipo.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
@@ -408,7 +408,7 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
                 dateFormat.format(notificacion.getFechaCreacion()) + 
                 "\nTipo: " + notificacion.getTipo())
             .setPositiveButton("OK", null)
-            .show();
+                .show();
     }
 
     @Override
@@ -428,7 +428,7 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
                mensaje != null && !mensaje.trim().isEmpty();
     }
 
-        private void crearNotificacion(String titulo, String mensaje) {
+    private void crearNotificacion(String titulo, String mensaje) {
         Notificacion nuevaNotificacion = new Notificacion();
         nuevaNotificacion.setTitulo(titulo);
         nuevaNotificacion.setMensaje(mensaje);

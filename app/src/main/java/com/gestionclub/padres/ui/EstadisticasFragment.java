@@ -60,6 +60,8 @@ public class EstadisticasFragment extends Fragment {
     private RecyclerView recyclerViewEstadisticasEquipos;
     private TextView textViewEstadisticasDetalladas;
     private Button buttonFiltroEquipo;
+    private Button buttonExportarPDF;
+    private Button buttonVerAsistenciaDetallada;
 
     @Nullable
     @Override
@@ -102,15 +104,19 @@ public class EstadisticasFragment extends Fragment {
         recyclerViewEstadisticasEquipos = view.findViewById(R.id.recyclerViewEstadisticasEquipos);
         textViewEstadisticasDetalladas = view.findViewById(R.id.textViewEstadisticasDetalladas);
         buttonFiltroEquipo = view.findViewById(R.id.buttonFiltroEquipo);
+        buttonExportarPDF = view.findViewById(R.id.buttonExportarPDF);
+        buttonVerAsistenciaDetallada = view.findViewById(R.id.buttonVerAsistenciaDetallada);
         
         if (buttonFiltroEquipo != null) {
             buttonFiltroEquipo.setOnClickListener(v -> mostrarDialogoFiltro());
         }
         
-        // Agregar botón de exportar PDF
-        Button buttonExportarPDF = view.findViewById(R.id.buttonExportarPDF);
         if (buttonExportarPDF != null) {
             buttonExportarPDF.setOnClickListener(v -> exportarEstadisticasPDF());
+        }
+        
+        if (buttonVerAsistenciaDetallada != null) {
+            buttonVerAsistenciaDetallada.setOnClickListener(v -> verAsistenciaDetallada());
         }
     }
 
@@ -331,6 +337,14 @@ public class EstadisticasFragment extends Fragment {
             }
             
             textViewEstadisticasDetalladas.setText(estadisticas.toString());
+        }
+    }
+
+    private void verAsistenciaDetallada() {
+        // Navegar a la pantalla de asistencia detallada
+        if (getActivity() instanceof MainActivity) {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            mainActivity.mostrarFragmento(new AsistenciaFragment());
         }
     }
 

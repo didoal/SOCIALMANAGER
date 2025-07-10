@@ -47,6 +47,20 @@
     <string name="crear">Crear</string>
     <string name="exportar">Exportar</string>
     <string name="filtrar">Filtrar</string>
+    <string name="exportar_pdf">Exportar PDF</string>
+    <string name="ver_asistencia_detallada">Ver asistencia detallada</string>
+    
+    <!-- Estadísticas -->
+    <string name="estadisticas_titulo">📊 Estadísticas del Club</string>
+    <string name="estadisticas_descripcion">Análisis completo de rendimiento y participación</string>
+    <string name="total_eventos">Total Eventos</string>
+    <string name="usuarios">Usuarios</string>
+    <string name="equipos">Equipos</string>
+    <string name="grafico_asistencia">📈 Gráfico de Asistencia</string>
+    <string name="ultimos_7_dias">Últimos 7 días</string>
+    <string name="estadisticas_por_equipo">🏆 Estadísticas por Equipo</string>
+    <string name="estadisticas_detalladas">📋 Estadísticas Detalladas</string>
+    <string name="cargando_estadisticas">Cargando estadísticas...</string>
     
     <!-- Mensajes de error -->
     <string name="error_cargar_notificaciones">No se pudieron cargar las notificaciones. Intenta más tarde.</string>
@@ -56,4 +70,8 @@
     <string name="error_cargar_perfil">No se pudo cargar el perfil. Intenta más tarde.</string>
     <string name="error_exportar_pdf">Error al exportar PDF. Intenta más tarde.</string>
     <string name="error_interno">Error interno de la aplicación. Reinicia la app.</string>
+    <string name="marcar_como_leida">Marcar como leída</string>
+    <string name="aprobar">Aprobar</string>
+    <string name="rechazar">Rechazar</string>
+    <string name="borrar_notificacion">Borrar notificación</string>
 </resources>

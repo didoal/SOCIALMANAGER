@@ -99,4 +99,8 @@ public class Mensaje {
     public void setEquipo(String equipo) {
         this.equipoId = equipo;
     }
+
+    public void setRemitenteNombre(String nombre) {
+        this.autorNombre = nombre;
+    }
 } 

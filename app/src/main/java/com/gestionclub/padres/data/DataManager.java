@@ -32,9 +32,9 @@ public class DataManager {
 
     public DataManager(Context context) {
         if (context != null) {
-            sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-            gson = new Gson();
-            inicializarDatosEjemplo();
+        sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        gson = new Gson();
+        inicializarDatosEjemplo();
         }
     }
 
@@ -227,6 +227,41 @@ public class DataManager {
             }
         }
         return destacados;
+    }
+
+    // Agregar mensaje destacado
+    public void agregarMensajeDestacado(Mensaje mensaje) {
+        mensaje.setDestacado(true);
+        agregarMensaje(mensaje);
+    }
+
+    // Actualizar notificación
+    public void actualizarNotificacion(Notificacion notificacionActualizada) {
+        List<Notificacion> notificaciones = getNotificaciones();
+        for (int i = 0; i < notificaciones.size(); i++) {
+            if (notificaciones.get(i).getId().equals(notificacionActualizada.getId())) {
+                notificaciones.set(i, notificacionActualizada);
+                break;
+            }
+        }
+        guardarNotificaciones(notificaciones);
+    }
+
+    // Borrar todas las notificaciones
+    public void borrarTodasNotificaciones() {
+        guardarNotificaciones(new ArrayList<>());
+    }
+
+    // Borrar notificación por ID
+    public void borrarNotificacion(String id) {
+        List<Notificacion> notificaciones = getNotificaciones();
+        List<Notificacion> nuevas = new ArrayList<>();
+        for (Notificacion n : notificaciones) {
+            if (!n.getId().equals(id)) {
+                nuevas.add(n);
+            }
+        }
+        guardarNotificaciones(nuevas);
     }
 
     // Gestión de Notificaciones

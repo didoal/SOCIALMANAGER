@@ -37,7 +37,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="📊 Estadísticas del Club"
+                        android:text="@string/estadisticas_titulo"
                         android:textColor="@color/white"
                         android:textSize="22sp"
                         android:textStyle="bold"
@@ -47,7 +47,7 @@
                         android:id="@+id/buttonFiltroEquipo"
                         android:layout_width="wrap_content"
                         android:layout_height="40dp"
-                        android:text="Filtrar"
+                        android:text="@string/filtrar"
                         android:textSize="12sp"
                         android:background="@drawable/button_gold_background"
                         android:textColor="@color/black"
@@ -59,7 +59,7 @@
                         android:id="@+id/buttonExportarPDF"
                         android:layout_width="wrap_content"
                         android:layout_height="40dp"
-                        android:text="📄 PDF"
+                        android:text="@string/exportar_pdf"
                         android:textSize="12sp"
                         android:background="@drawable/button_gold_background"
                         android:textColor="@color/black"
@@ -70,7 +70,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Análisis completo de rendimiento y participación"
+                    android:text="@string/estadisticas_descripcion"
                     android:textColor="@color/white"
                     android:textSize="16sp"
                     android:gravity="center"
@@ -131,7 +131,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Total Eventos"
+                            android:text="@string/total_eventos"
                             android:textColor="@color/text_secondary"
                             android:textSize="12sp"
                             android:textStyle="bold" />
@@ -176,7 +176,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Asistencia"
+                            android:text="@string/asistencia"
                             android:textColor="@color/text_secondary"
                             android:textSize="12sp"
                             android:textStyle="bold" />
@@ -229,7 +229,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Usuarios"
+                            android:text="@string/usuarios"
                             android:textColor="@color/text_secondary"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -274,7 +274,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Equipos"
+                            android:text="@string/equipos"
                             android:textColor="@color/text_secondary"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -290,7 +290,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="📈 Gráfico de Asistencia"
+            android:text="@string/grafico_asistencia"
             android:textColor="@color/blue_profesional"
             android:textSize="22sp"
             android:textStyle="bold"
@@ -313,7 +313,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Últimos 7 días"
+                    android:text="@string/ultimos_7_dias"
                     android:textColor="@color/text_secondary"
                     android:textSize="16sp"
                     android:textStyle="bold"
@@ -340,7 +340,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="🏆 Estadísticas por Equipo"
+            android:text="@string/estadisticas_por_equipo"
             android:textColor="@color/blue_profesional"
             android:textSize="22sp"
             android:textStyle="bold"
@@ -357,7 +357,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="📋 Estadísticas Detalladas"
+            android:text="@string/estadisticas_detalladas"
             android:textColor="@color/blue_profesional"
             android:textSize="22sp"
             android:textStyle="bold"
@@ -381,13 +381,46 @@
                     android:id="@+id/textViewEstadisticasDetalladas"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Cargando estadísticas..."
+                    android:text="@string/cargando_estadisticas"
                     android:textColor="@color/text_primary"
                     android:textSize="16sp"
                     android:lineSpacingExtra="6dp" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
+
+        <!-- Botones de acción -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp">
+
+            <Button
+                android:id="@+id/buttonExportarPDF"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="@string/exportar_pdf"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:background="@drawable/button_blue_background"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/buttonVerAsistenciaDetallada"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="@string/ver_asistencia_detallada"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:background="@drawable/button_green_background"
+                android:layout_marginStart="8dp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

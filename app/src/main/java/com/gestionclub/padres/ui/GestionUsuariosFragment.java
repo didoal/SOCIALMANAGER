@@ -82,7 +82,7 @@ public class GestionUsuariosFragment extends Fragment {
         Log.d(TAG, "actualizarEstadisticas: Actualizando estadísticas");
         List<Usuario> usuarios = dataManager.getUsuarios();
         int totalUsuarios = usuarios.size();
-        int admins = 0, padres = 0, madres = 0, tutores = 0, jugadores = 0;
+        int admins = 0, padres = 0, madres = 0, tutores = 0, jugadores = 0, entrenadores = 0;
         
         for (Usuario usuario : usuarios) {
             if (usuario.isEsAdmin()) admins++;
@@ -90,10 +90,11 @@ public class GestionUsuariosFragment extends Fragment {
             else if ("madre".equalsIgnoreCase(usuario.getRol())) madres++;
             else if ("tutor".equalsIgnoreCase(usuario.getRol())) tutores++;
             else if ("jugador".equalsIgnoreCase(usuario.getRol())) jugadores++;
+            else if ("entrenador".equalsIgnoreCase(usuario.getRol())) entrenadores++;
         }
         
-        String estadisticas = String.format("Total: %d | Admins: %d | Padres: %d | Madres: %d | Tutores: %d | Jugadores: %d",
-                totalUsuarios, admins, padres, madres, tutores, jugadores);
+        String estadisticas = String.format("Total: %d | Admins: %d | Padres: %d | Madres: %d | Tutores: %d | Jugadores: %d | Entrenadores: %d",
+                totalUsuarios, admins, padres, madres, tutores, jugadores, entrenadores);
         textViewEstadisticas.setText(estadisticas);
     }
 
@@ -110,7 +111,7 @@ public class GestionUsuariosFragment extends Fragment {
         Spinner spinnerEquipo = dialogView.findViewById(R.id.spinnerEquipo);
         
         // Configurar spinner de roles
-        String[] roles = {"Padre", "Madre", "Tutor", "Jugador"};
+        String[] roles = {"Padre", "Madre", "Tutor", "Jugador", "Entrenador"};
         ArrayAdapter<String> rolAdapter = new ArrayAdapter<>(requireContext(), 
                 android.R.layout.simple_spinner_item, roles);
         rolAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -245,7 +246,7 @@ public class GestionUsuariosFragment extends Fragment {
         editTextJugador.setText(usuario.getJugador());
         
         // Configurar spinner de roles
-        String[] roles = {"Padre", "Madre", "Tutor", "Jugador"};
+        String[] roles = {"Padre", "Madre", "Tutor", "Jugador", "Entrenador"};
         ArrayAdapter<String> rolAdapter = new ArrayAdapter<>(requireContext(), 
                 android.R.layout.simple_spinner_item, roles);
         rolAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
