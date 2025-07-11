@@ -117,6 +117,22 @@ public class GestionUsuariosFragment extends Fragment {
         rolAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerRol.setAdapter(rolAdapter);
         
+        // Listener para actualizar el hint del campo jugador según el rol
+        spinnerRol.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                String rolSeleccionado = roles[position].toLowerCase();
+                if ("entrenador".equals(rolSeleccionado)) {
+                    editTextJugador.setHint("Jugador que representa (opcional para entrenadores)");
+                } else {
+                    editTextJugador.setHint("Jugador que representa *");
+                }
+            }
+            
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+        });
+        
         // Configurar spinner de equipos con equipos reales del sistema
         List<String> equipos = new ArrayList<>();
         equipos.add("Sin equipo asignado");
@@ -164,7 +180,8 @@ public class GestionUsuariosFragment extends Fragment {
             Toast.makeText(requireContext(), "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
             return false;
         }
-        if (jugador.isEmpty()) {
+        // Solo requerir jugador para roles que representan a un jugador específico
+        if (!"entrenador".equalsIgnoreCase(rol) && !"administrador".equalsIgnoreCase(rol) && jugador.isEmpty()) {
             Toast.makeText(requireContext(), "Debe especificar el jugador al que representa", Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -204,7 +221,13 @@ public class GestionUsuariosFragment extends Fragment {
         actualizarEstadisticas();
         
         String mensaje = "Usuario creado exitosamente";
-        if (!jugador.isEmpty()) {
+        if ("entrenador".equals(rol)) {
+            if (!jugador.isEmpty()) {
+                mensaje += " - Entrenador asignado a: " + jugador;
+            } else {
+                mensaje += " - Entrenador sin jugador específico asignado";
+            }
+        } else if (!jugador.isEmpty()) {
             mensaje += " - Representa a: " + jugador;
         }
         Toast.makeText(requireContext(), mensaje, Toast.LENGTH_LONG).show();
@@ -251,6 +274,22 @@ public class GestionUsuariosFragment extends Fragment {
                 android.R.layout.simple_spinner_item, roles);
         rolAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerRol.setAdapter(rolAdapter);
+        
+        // Listener para actualizar el hint del campo jugador según el rol
+        spinnerRol.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                String rolSeleccionado = roles[position].toLowerCase();
+                if ("entrenador".equals(rolSeleccionado)) {
+                    editTextJugador.setHint("Jugador que representa (opcional para entrenadores)");
+                } else {
+                    editTextJugador.setHint("Jugador que representa *");
+                }
+            }
+            
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+        });
         
         // Seleccionar rol actual
         for (int i = 0; i < roles.length; i++) {
@@ -307,7 +346,8 @@ public class GestionUsuariosFragment extends Fragment {
             Toast.makeText(requireContext(), "El nombre es obligatorio", Toast.LENGTH_SHORT).show();
             return false;
         }
-        if (jugador.isEmpty()) {
+        // Solo requerir jugador para roles que representan a un jugador específico
+        if (!"entrenador".equalsIgnoreCase(rol) && !"administrador".equalsIgnoreCase(rol) && jugador.isEmpty()) {
             Toast.makeText(requireContext(), "Debe especificar el jugador al que representa", Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -355,7 +395,13 @@ public class GestionUsuariosFragment extends Fragment {
         actualizarEstadisticas();
         
         String mensaje = "Usuario actualizado exitosamente";
-        if (!jugador.isEmpty()) {
+        if ("entrenador".equals(rol)) {
+            if (!jugador.isEmpty()) {
+                mensaje += " - Entrenador asignado a: " + jugador;
+            } else {
+                mensaje += " - Entrenador sin jugador específico asignado";
+            }
+        } else if (!jugador.isEmpty()) {
             mensaje += " - Representa a: " + jugador;
         }
         Toast.makeText(requireContext(), mensaje, Toast.LENGTH_LONG).show();

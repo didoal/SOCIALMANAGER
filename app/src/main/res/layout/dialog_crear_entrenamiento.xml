@@ -1,0 +1,118 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- Rango de fechas -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rango de fechas"
+            android:textStyle="bold"
+            android:textColor="@color/blue_profesional"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextFechaInicio"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:hint="Fecha inicio"
+                android:focusable="false"/>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextFechaFin"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:hint="Fecha fin"
+                android:focusable="false"/>
+        </LinearLayout>
+
+        <!-- Días de la semana -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Días de la semana"
+            android:textStyle="bold"
+            android:textColor="@color/blue_profesional"/>
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupDias"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:singleSelection="false">
+            <com.google.android.material.chip.Chip android:text="Lunes"/>
+            <com.google.android.material.chip.Chip android:text="Martes"/>
+            <com.google.android.material.chip.Chip android:text="Miércoles"/>
+            <com.google.android.material.chip.Chip android:text="Jueves"/>
+            <com.google.android.material.chip.Chip android:text="Viernes"/>
+            <com.google.android.material.chip.Chip android:text="Sábado"/>
+            <com.google.android.material.chip.Chip android:text="Domingo"/>
+        </com.google.android.material.chip.ChipGroup>
+
+        <!-- Horario -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Horario"
+            android:textStyle="bold"
+            android:textColor="@color/blue_profesional"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextHoraInicio"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:hint="Hora inicio"
+                android:focusable="false"/>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextHoraFin"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:hint="Hora fin"
+                android:focusable="false"/>
+        </LinearLayout>
+
+        <!-- Equipos (selección múltiple) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Equipos"
+            android:textStyle="bold"
+            android:textColor="@color/blue_profesional"/>
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:hint="Selecciona equipos">
+            <android.widget.AutoCompleteTextView
+                android:id="@+id/autoCompleteEquipos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                android:focusable="false"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Botón para crear sesiones -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCrearEntrenamientos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Crear sesiones de entrenamiento"
+            android:textColor="@color/blue_profesional"/>
+    </LinearLayout>
+</ScrollView> 

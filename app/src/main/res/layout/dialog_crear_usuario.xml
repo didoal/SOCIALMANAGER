@@ -112,12 +112,12 @@
         android:background="@drawable/spinner_background"
         android:padding="12dp" />
 
-    <!-- Campo Jugador (Obligatorio) -->
+    <!-- Campo Jugador (Obligatorio para padres/tutores, opcional para entrenadores) -->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:hint="Jugador que representa *"
+        android:hint="Jugador que representa (opcional para entrenadores)"
         app:boxStrokeColor="@color/blue_profesional"
         app:hintTextColor="@color/blue_profesional">
 

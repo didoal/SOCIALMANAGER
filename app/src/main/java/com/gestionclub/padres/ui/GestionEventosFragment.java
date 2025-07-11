@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AutoCompleteTextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,6 +41,7 @@ public class GestionEventosFragment extends Fragment {
     private DataManager dataManager;
     private TextView textViewEstadisticas;
     private FloatingActionButton fabAgregarEvento;
+    private FloatingActionButton fabAgregarEntrenamiento;
     private Usuario usuarioActual;
 
     @Nullable
@@ -61,16 +63,20 @@ public class GestionEventosFragment extends Fragment {
         recyclerViewEventos = view.findViewById(R.id.recyclerViewEventos);
         textViewEstadisticas = view.findViewById(R.id.textViewEstadisticas);
         fabAgregarEvento = view.findViewById(R.id.fabAgregarEvento);
+        // Nuevo FAB para entrenamientos
+        fabAgregarEntrenamiento = view.findViewById(R.id.fabAgregarEntrenamiento);
         
-        // Solo mostrar FAB si es admin o entrenador
         boolean puedeCrearEventos = usuarioActual != null && 
             (usuarioActual.isEsAdmin() || "entrenador".equals(usuarioActual.getRol()));
         
         if (puedeCrearEventos) {
             fabAgregarEvento.setVisibility(View.VISIBLE);
             fabAgregarEvento.setOnClickListener(v -> mostrarDialogoCrearEvento());
+            fabAgregarEntrenamiento.setVisibility(View.VISIBLE);
+            fabAgregarEntrenamiento.setOnClickListener(v -> mostrarDialogoCrearEntrenamiento());
         } else {
             fabAgregarEvento.setVisibility(View.GONE);
+            fabAgregarEntrenamiento.setVisibility(View.GONE);
         }
     }
 
@@ -481,6 +487,141 @@ public class GestionEventosFragment extends Fragment {
         cargarEventos();
         actualizarEstadisticas();
         Toast.makeText(requireContext(), "Evento eliminado exitosamente", Toast.LENGTH_SHORT).show();
+    }
+
+    // Mostrar el diálogo de creación de entrenamientos
+    private void mostrarDialogoCrearEntrenamiento() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_crear_entrenamiento, null);
+
+        // Referencias a las vistas
+        TextView editTextFechaInicio = dialogView.findViewById(R.id.editTextFechaInicio);
+        TextView editTextFechaFin = dialogView.findViewById(R.id.editTextFechaFin);
+        TextView editTextHoraInicio = dialogView.findViewById(R.id.editTextHoraInicio);
+        TextView editTextHoraFin = dialogView.findViewById(R.id.editTextHoraFin);
+        com.google.android.material.chip.ChipGroup chipGroupDias = dialogView.findViewById(R.id.chipGroupDias);
+        AutoCompleteTextView autoCompleteEquipos = dialogView.findViewById(R.id.autoCompleteEquipos);
+        com.google.android.material.button.MaterialButton btnCrearEntrenamientos = dialogView.findViewById(R.id.btnCrearEntrenamientos);
+
+        // Configurar selección múltiple de equipos
+        List<String> nombresEquipos = dataManager.getNombresEquipos();
+        ArrayAdapter<String> equiposAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, nombresEquipos);
+        autoCompleteEquipos.setAdapter(equiposAdapter);
+        autoCompleteEquipos.setInputType(android.text.InputType.TYPE_NULL);
+        List<String> equiposSeleccionados = new ArrayList<>();
+        autoCompleteEquipos.setOnClickListener(v -> {
+            boolean[] checkedItems = new boolean[nombresEquipos.size()];
+            new AlertDialog.Builder(requireContext())
+                .setTitle("Selecciona equipos")
+                .setMultiChoiceItems(nombresEquipos.toArray(new String[0]), checkedItems, (dialog, which, isChecked) -> {
+                    if (isChecked) equiposSeleccionados.add(nombresEquipos.get(which));
+                    else equiposSeleccionados.remove(nombresEquipos.get(which));
+                })
+                .setPositiveButton("OK", (dialog, which) -> {
+                    autoCompleteEquipos.setText(android.text.TextUtils.join(", ", equiposSeleccionados));
+                    autoCompleteEquipos.setTag(new ArrayList<>(equiposSeleccionados));
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+        });
+
+        // Configurar pickers de fecha y hora
+        editTextFechaInicio.setOnClickListener(v -> mostrarDatePicker(editTextFechaInicio));
+        editTextFechaFin.setOnClickListener(v -> mostrarDatePicker(editTextFechaFin));
+        editTextHoraInicio.setOnClickListener(v -> mostrarTimePicker(editTextHoraInicio));
+        editTextHoraFin.setOnClickListener(v -> mostrarTimePicker(editTextHoraFin));
+
+        AlertDialog dialog = builder.setView(dialogView)
+                .setTitle("Crear Entrenamientos Recurrentes")
+                .setNegativeButton("Cancelar", null)
+                .create();
+
+        btnCrearEntrenamientos.setOnClickListener(v -> {
+            String fechaInicioStr = editTextFechaInicio.getText().toString();
+            String fechaFinStr = editTextFechaFin.getText().toString();
+            String horaInicioStr = editTextHoraInicio.getText().toString();
+            String horaFinStr = editTextHoraFin.getText().toString();
+            List<String> equipos = (List<String>) autoCompleteEquipos.getTag();
+
+            // Validaciones
+            if (fechaInicioStr.isEmpty() || fechaFinStr.isEmpty() || horaInicioStr.isEmpty() || horaFinStr.isEmpty() || equipos == null || equipos.isEmpty()) {
+                Toast.makeText(requireContext(), "Completa todos los campos y selecciona al menos un equipo", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            List<Integer> diasSeleccionados = new ArrayList<>();
+            for (int i = 0; i < chipGroupDias.getChildCount(); i++) {
+                com.google.android.material.chip.Chip chip = (com.google.android.material.chip.Chip) chipGroupDias.getChildAt(i);
+                if (chip.isChecked()) diasSeleccionados.add(i + 1); // Lunes=1, Domingo=7
+            }
+            if (diasSeleccionados.isEmpty()) {
+                Toast.makeText(requireContext(), "Selecciona al menos un día de la semana", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            java.text.SimpleDateFormat sdfFecha = new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault());
+            java.text.SimpleDateFormat sdfHora = new java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault());
+            java.util.Calendar fechaInicio = java.util.Calendar.getInstance();
+            java.util.Calendar fechaFin = java.util.Calendar.getInstance();
+            try {
+                fechaInicio.setTime(sdfFecha.parse(fechaInicioStr));
+                fechaFin.setTime(sdfFecha.parse(fechaFinStr));
+            } catch (java.text.ParseException e) {
+                Toast.makeText(requireContext(), "Formato de fecha incorrecto", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            int sesionNum = 1;
+            List<Evento> sesiones = new ArrayList<>();
+            for (java.util.Calendar fecha = (java.util.Calendar) fechaInicio.clone(); !fecha.after(fechaFin); fecha.add(java.util.Calendar.DATE, 1)) {
+                int diaSemana = fecha.get(java.util.Calendar.DAY_OF_WEEK);
+                int diaApp = (diaSemana == java.util.Calendar.SUNDAY) ? 7 : diaSemana - 1;
+                if (diasSeleccionados.contains(diaApp)) {
+                    for (String equipo : equipos) {
+                        Evento sesion = new Evento();
+                        String nombreSesion = equipo + " - Sesión " + sesionNum + " - " + horaInicioStr + "-" + horaFinStr;
+                        sesion.setTitulo(nombreSesion);
+                        sesion.setEquipo(equipo);
+                        sesion.setTipo("ENTRENAMIENTO");
+                        sesion.setFechaInicio(combinarFechaHora(fecha, horaInicioStr));
+                        sesion.setFechaFin(combinarFechaHora(fecha, horaFinStr));
+                        sesiones.add(sesion);
+                    }
+                    sesionNum++;
+                }
+            }
+            for (Evento sesion : sesiones) {
+                dataManager.agregarEvento(sesion);
+            }
+            Toast.makeText(requireContext(), "Sesiones creadas: " + sesiones.size(), Toast.LENGTH_LONG).show();
+            dialog.dismiss(); // Solo cerrar si todo fue bien
+        });
+
+        dialog.show();
+    }
+
+    // Métodos auxiliares para pickers y combinar fecha/hora
+    private void mostrarDatePicker(TextView editText) {
+        java.util.Calendar calendar = java.util.Calendar.getInstance();
+        new android.app.DatePickerDialog(requireContext(), (view, year, month, dayOfMonth) -> {
+            String fecha = String.format(java.util.Locale.getDefault(), "%02d/%02d/%04d", dayOfMonth, month + 1, year);
+            editText.setText(fecha);
+        }, calendar.get(java.util.Calendar.YEAR), calendar.get(java.util.Calendar.MONTH), calendar.get(java.util.Calendar.DAY_OF_MONTH)).show();
+    }
+
+    private void mostrarTimePicker(TextView editText) {
+        java.util.Calendar calendar = java.util.Calendar.getInstance();
+        new android.app.TimePickerDialog(requireContext(), (view, hourOfDay, minute) -> {
+            String hora = String.format(java.util.Locale.getDefault(), "%02d:%02d", hourOfDay, minute);
+            editText.setText(hora);
+        }, calendar.get(java.util.Calendar.HOUR_OF_DAY), calendar.get(java.util.Calendar.MINUTE), true).show();
+    }
+
+    private java.util.Date combinarFechaHora(java.util.Calendar fecha, String horaStr) {
+        try {
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault());
+            String fechaStr = String.format(java.util.Locale.getDefault(), "%02d/%02d/%04d", fecha.get(java.util.Calendar.DAY_OF_MONTH), fecha.get(java.util.Calendar.MONTH) + 1, fecha.get(java.util.Calendar.YEAR));
+            return sdf.parse(fechaStr + " " + horaStr);
+        } catch (Exception e) {
+            return fecha.getTime();
+        }
     }
 
     @Override

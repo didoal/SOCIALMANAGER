@@ -78,6 +78,7 @@
 
             <!-- Botón Crear Evento -->
             <androidx.cardview.widget.CardView
+                android:id="@+id/cardCrearEvento"
                 android:layout_width="0dp"
                 android:layout_height="120dp"
                 android:layout_weight="1"
@@ -113,6 +114,7 @@
 
             <!-- Botón Nueva Publicación -->
             <androidx.cardview.widget.CardView
+                android:id="@+id/cardNuevaPublicacion"
                 android:layout_width="0dp"
                 android:layout_height="120dp"
                 android:layout_weight="1"

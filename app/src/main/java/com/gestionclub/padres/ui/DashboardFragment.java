@@ -15,6 +15,7 @@ import com.gestionclub.padres.data.DataManager;
 import com.gestionclub.padres.model.Evento;
 import com.gestionclub.padres.model.Usuario;
 import java.util.List;
+import android.widget.LinearLayout;
 
 public class DashboardFragment extends Fragment {
     private DataManager dataManager;
@@ -39,7 +40,28 @@ public class DashboardFragment extends Fragment {
         cargarDatosUsuario();
         cargarEventosProximos();
         cargarEstadisticasRapidas();
-        // Aquí puedes agregar la lógica para cargar destacados y notificaciones si lo deseas
+
+        // Acciones rápidas con IDs
+        androidx.cardview.widget.CardView cardCrearEvento = view.findViewById(R.id.cardCrearEvento);
+        androidx.cardview.widget.CardView cardNuevaPublicacion = view.findViewById(R.id.cardNuevaPublicacion);
+
+        if (cardCrearEvento != null) {
+            cardCrearEvento.setOnClickListener(v -> {
+                requireActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, new GestionEventosFragment())
+                        .addToBackStack(null)
+                        .commit();
+            });
+        }
+        if (cardNuevaPublicacion != null) {
+            cardNuevaPublicacion.setOnClickListener(v -> {
+                requireActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, new MuroDestacadosFragment())
+                        .addToBackStack(null)
+                        .commit();
+            });
+        }
+
         return view;
     }
 
