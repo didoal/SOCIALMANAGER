@@ -34,7 +34,7 @@ public class AsistenciaAdapter extends RecyclerView.Adapter<AsistenciaAdapter.As
         this.asistencias = asistencias;
         this.listener = listener;
         if (context != null) {
-            this.dataManager = new DataManager(context);
+        this.dataManager = new DataManager(context);
         }
     }
 

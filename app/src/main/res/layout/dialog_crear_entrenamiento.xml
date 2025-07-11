@@ -15,7 +15,8 @@
             android:layout_height="wrap_content"
             android:text="Rango de fechas"
             android:textStyle="bold"
-            android:textColor="@color/blue_profesional"/>
+            android:textColor="@color/blue_profesional"
+            android:layout_marginBottom="8dp"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -27,64 +28,318 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:hint="Fecha inicio"
-                android:focusable="false"/>
+                android:focusable="false"
+                android:layout_marginEnd="8dp"/>
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/editTextFechaFin"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:hint="Fecha fin"
-                android:focusable="false"/>
+                android:focusable="false"
+                android:layout_marginStart="8dp"/>
         </LinearLayout>
 
-        <!-- Días de la semana -->
+        <!-- Modo de horario -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Días de la semana"
+            android:text="Modo de horario"
             android:textStyle="bold"
-            android:textColor="@color/blue_profesional"/>
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chipGroupDias"
+            android:textColor="@color/blue_profesional"
+            android:layout_marginBottom="8dp"/>
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/toggleGroupHorario"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:singleSelection="false">
-            <com.google.android.material.chip.Chip android:text="Lunes"/>
-            <com.google.android.material.chip.Chip android:text="Martes"/>
-            <com.google.android.material.chip.Chip android:text="Miércoles"/>
-            <com.google.android.material.chip.Chip android:text="Jueves"/>
-            <com.google.android.material.chip.Chip android:text="Viernes"/>
-            <com.google.android.material.chip.Chip android:text="Sábado"/>
-            <com.google.android.material.chip.Chip android:text="Domingo"/>
-        </com.google.android.material.chip.ChipGroup>
+            app:singleSelection="true"
+            app:selectionRequired="true">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnHorarioSimple"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Horario único"
+                style="@style/Widget.Material3.Button.OutlinedButton"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnHorarioAvanzado"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Horario por día"
+                style="@style/Widget.Material3.Button.OutlinedButton"/>
+        </com.google.android.material.button.MaterialButtonToggleGroup>
 
-        <!-- Horario -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Horario"
-            android:textStyle="bold"
-            android:textColor="@color/blue_profesional"/>
+        <!-- Horario simple -->
         <LinearLayout
+            android:id="@+id/layoutHorarioSimple"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_marginBottom="16dp">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editTextHoraInicio"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="Hora inicio"
-                android:focusable="false"/>
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editTextHoraFin"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                android:text="Horario único para todos los días"
+                android:textStyle="bold"
+                android:textColor="@color/blue_profesional"
+                android:layout_marginBottom="8dp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Hora fin"
-                android:focusable="false"/>
+                android:orientation="horizontal">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editTextHoraInicio"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:hint="Hora inicio"
+                    android:focusable="false"
+                    android:layout_marginEnd="8dp"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editTextHoraFin"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:hint="Hora fin"
+                    android:focusable="false"
+                    android:layout_marginStart="8dp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Horario avanzado -->
+        <LinearLayout
+            android:id="@+id/layoutHorarioAvanzado"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Horarios específicos por día"
+                android:textStyle="bold"
+                android:textColor="@color/blue_profesional"
+                android:layout_marginBottom="8dp"/>
+            
+            <!-- Lunes -->
+            <LinearLayout
+                android:id="@+id/layoutLunes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/checkLunes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Lunes"
+                    android:layout_marginEnd="8dp"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/horaInicioLunes"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:hint="Inicio"
+                    android:focusable="false"
+                    android:layout_marginEnd="4dp"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/horaFinLunes"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:hint="Fin"
+                    android:focusable="false"
+                    android:layout_marginStart="4dp"/>
+            </LinearLayout>
+
+            <!-- Martes -->
+            <LinearLayout
+                android:id="@+id/layoutMartes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/checkMartes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Martes"
+                    android:layout_marginEnd="8dp"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/horaInicioMartes"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:hint="Inicio"
+                    android:focusable="false"
+                    android:layout_marginEnd="4dp"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/horaFinMartes"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:hint="Fin"
+                    android:focusable="false"
+                    android:layout_marginStart="4dp"/>
+            </LinearLayout>
+
+            <!-- Miércoles -->
+            <LinearLayout
+                android:id="@+id/layoutMiercoles"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/checkMiercoles"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Miércoles"
+                    android:layout_marginEnd="8dp"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/horaInicioMiercoles"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:hint="Inicio"
+                    android:focusable="false"
+                    android:layout_marginEnd="4dp"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/horaFinMiercoles"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:hint="Fin"
+                    android:focusable="false"
+                    android:layout_marginStart="4dp"/>
+            </LinearLayout>
+
+            <!-- Jueves -->
+            <LinearLayout
+                android:id="@+id/layoutJueves"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/checkJueves"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Jueves"
+                    android:layout_marginEnd="8dp"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/horaInicioJueves"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:hint="Inicio"
+                    android:focusable="false"
+                    android:layout_marginEnd="4dp"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/horaFinJueves"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:hint="Fin"
+                    android:focusable="false"
+                    android:layout_marginStart="4dp"/>
+            </LinearLayout>
+
+            <!-- Viernes -->
+            <LinearLayout
+                android:id="@+id/layoutViernes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/checkViernes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Viernes"
+                    android:layout_marginEnd="8dp"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/horaInicioViernes"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:hint="Inicio"
+                    android:focusable="false"
+                    android:layout_marginEnd="4dp"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/horaFinViernes"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:hint="Fin"
+                    android:focusable="false"
+                    android:layout_marginStart="4dp"/>
+            </LinearLayout>
+
+            <!-- Sábado -->
+            <LinearLayout
+                android:id="@+id/layoutSabado"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/checkSabado"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sábado"
+                    android:layout_marginEnd="8dp"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/horaInicioSabado"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:hint="Inicio"
+                    android:focusable="false"
+                    android:layout_marginEnd="4dp"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/horaFinSabado"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:hint="Fin"
+                    android:focusable="false"
+                    android:layout_marginStart="4dp"/>
+            </LinearLayout>
+
+            <!-- Domingo -->
+            <LinearLayout
+                android:id="@+id/layoutDomingo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/checkDomingo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Domingo"
+                    android:layout_marginEnd="8dp"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/horaInicioDomingo"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:hint="Inicio"
+                    android:focusable="false"
+                    android:layout_marginEnd="4dp"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/horaFinDomingo"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:hint="Fin"
+                    android:focusable="false"
+                    android:layout_marginStart="4dp"/>
+            </LinearLayout>
         </LinearLayout>
 
         <!-- Equipos (selección múltiple) -->
@@ -93,7 +348,8 @@
             android:layout_height="wrap_content"
             android:text="Equipos"
             android:textStyle="bold"
-            android:textColor="@color/blue_profesional"/>
+            android:textColor="@color/blue_profesional"
+            android:layout_marginBottom="8dp"/>
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -113,6 +369,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Crear sesiones de entrenamiento"
-            android:textColor="@color/blue_profesional"/>
+            android:textColor="@color/white"
+            android:backgroundTint="@color/blue_profesional"/>
     </LinearLayout>
 </ScrollView> 

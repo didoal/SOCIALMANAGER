@@ -222,7 +222,7 @@ public class GestionUsuariosFragment extends Fragment {
         
         String mensaje = "Usuario creado exitosamente";
         if ("entrenador".equals(rol)) {
-            if (!jugador.isEmpty()) {
+        if (!jugador.isEmpty()) {
                 mensaje += " - Entrenador asignado a: " + jugador;
             } else {
                 mensaje += " - Entrenador sin jugador específico asignado";
@@ -396,7 +396,7 @@ public class GestionUsuariosFragment extends Fragment {
         
         String mensaje = "Usuario actualizado exitosamente";
         if ("entrenador".equals(rol)) {
-            if (!jugador.isEmpty()) {
+        if (!jugador.isEmpty()) {
                 mensaje += " - Entrenador asignado a: " + jugador;
             } else {
                 mensaje += " - Entrenador sin jugador específico asignado";

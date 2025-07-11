@@ -26,7 +26,7 @@ public class ConfiguracionFragment extends Fragment {
     private Button buttonCambiarIdioma;
     private Button buttonCambiarTema;
     private SharedPreferences sharedPreferences;
-    
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -40,7 +40,7 @@ public class ConfiguracionFragment extends Fragment {
         
         return view;
     }
-    
+
     private void inicializarVistas(View view) {
         textViewIdiomaActual = view.findViewById(R.id.textViewIdiomaActual);
         textViewTemaActual = view.findViewById(R.id.textViewTemaActual);
@@ -156,7 +156,7 @@ public class ConfiguracionFragment extends Fragment {
         }
     }
     
-    @Override
+            @Override
     public void onResume() {
         super.onResume();
         actualizarInformacion();

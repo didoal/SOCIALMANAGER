@@ -499,9 +499,54 @@ public class GestionEventosFragment extends Fragment {
         TextView editTextFechaFin = dialogView.findViewById(R.id.editTextFechaFin);
         TextView editTextHoraInicio = dialogView.findViewById(R.id.editTextHoraInicio);
         TextView editTextHoraFin = dialogView.findViewById(R.id.editTextHoraFin);
-        com.google.android.material.chip.ChipGroup chipGroupDias = dialogView.findViewById(R.id.chipGroupDias);
         AutoCompleteTextView autoCompleteEquipos = dialogView.findViewById(R.id.autoCompleteEquipos);
         com.google.android.material.button.MaterialButton btnCrearEntrenamientos = dialogView.findViewById(R.id.btnCrearEntrenamientos);
+        
+        // Referencias para modo avanzado
+        com.google.android.material.button.MaterialButtonToggleGroup toggleGroupHorario = dialogView.findViewById(R.id.toggleGroupHorario);
+        LinearLayout layoutHorarioSimple = dialogView.findViewById(R.id.layoutHorarioSimple);
+        LinearLayout layoutHorarioAvanzado = dialogView.findViewById(R.id.layoutHorarioAvanzado);
+        
+        // Referencias para checkboxes y horarios por día
+        com.google.android.material.checkbox.MaterialCheckBox checkLunes = dialogView.findViewById(R.id.checkLunes);
+        com.google.android.material.checkbox.MaterialCheckBox checkMartes = dialogView.findViewById(R.id.checkMartes);
+        com.google.android.material.checkbox.MaterialCheckBox checkMiercoles = dialogView.findViewById(R.id.checkMiercoles);
+        com.google.android.material.checkbox.MaterialCheckBox checkJueves = dialogView.findViewById(R.id.checkJueves);
+        com.google.android.material.checkbox.MaterialCheckBox checkViernes = dialogView.findViewById(R.id.checkViernes);
+        com.google.android.material.checkbox.MaterialCheckBox checkSabado = dialogView.findViewById(R.id.checkSabado);
+        com.google.android.material.checkbox.MaterialCheckBox checkDomingo = dialogView.findViewById(R.id.checkDomingo);
+        
+        // Referencias para horarios por día
+        TextView horaInicioLunes = dialogView.findViewById(R.id.horaInicioLunes);
+        TextView horaFinLunes = dialogView.findViewById(R.id.horaFinLunes);
+        TextView horaInicioMartes = dialogView.findViewById(R.id.horaInicioMartes);
+        TextView horaFinMartes = dialogView.findViewById(R.id.horaFinMartes);
+        TextView horaInicioMiercoles = dialogView.findViewById(R.id.horaInicioMiercoles);
+        TextView horaFinMiercoles = dialogView.findViewById(R.id.horaFinMiercoles);
+        TextView horaInicioJueves = dialogView.findViewById(R.id.horaInicioJueves);
+        TextView horaFinJueves = dialogView.findViewById(R.id.horaFinJueves);
+        TextView horaInicioViernes = dialogView.findViewById(R.id.horaInicioViernes);
+        TextView horaFinViernes = dialogView.findViewById(R.id.horaFinViernes);
+        TextView horaInicioSabado = dialogView.findViewById(R.id.horaInicioSabado);
+        TextView horaFinSabado = dialogView.findViewById(R.id.horaFinSabado);
+        TextView horaInicioDomingo = dialogView.findViewById(R.id.horaInicioDomingo);
+        TextView horaFinDomingo = dialogView.findViewById(R.id.horaFinDomingo);
+
+        // Configurar toggle group para modo de horario
+        toggleGroupHorario.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (isChecked) {
+                if (checkedId == R.id.btnHorarioSimple) {
+                    layoutHorarioSimple.setVisibility(View.VISIBLE);
+                    layoutHorarioAvanzado.setVisibility(View.GONE);
+                } else if (checkedId == R.id.btnHorarioAvanzado) {
+                    layoutHorarioSimple.setVisibility(View.GONE);
+                    layoutHorarioAvanzado.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        
+        // Seleccionar horario simple por defecto
+        toggleGroupHorario.check(R.id.btnHorarioSimple);
 
         // Configurar selección múltiple de equipos
         List<String> nombresEquipos = dataManager.getNombresEquipos();
@@ -525,11 +570,27 @@ public class GestionEventosFragment extends Fragment {
                 .show();
         });
 
-        // Configurar pickers de fecha y hora
+        // Configurar pickers de fecha y hora para modo simple
         editTextFechaInicio.setOnClickListener(v -> mostrarDatePicker(editTextFechaInicio));
         editTextFechaFin.setOnClickListener(v -> mostrarDatePicker(editTextFechaFin));
         editTextHoraInicio.setOnClickListener(v -> mostrarTimePicker(editTextHoraInicio));
         editTextHoraFin.setOnClickListener(v -> mostrarTimePicker(editTextHoraFin));
+        
+        // Configurar pickers para modo avanzado
+        horaInicioLunes.setOnClickListener(v -> mostrarTimePicker(horaInicioLunes));
+        horaFinLunes.setOnClickListener(v -> mostrarTimePicker(horaFinLunes));
+        horaInicioMartes.setOnClickListener(v -> mostrarTimePicker(horaInicioMartes));
+        horaFinMartes.setOnClickListener(v -> mostrarTimePicker(horaFinMartes));
+        horaInicioMiercoles.setOnClickListener(v -> mostrarTimePicker(horaInicioMiercoles));
+        horaFinMiercoles.setOnClickListener(v -> mostrarTimePicker(horaFinMiercoles));
+        horaInicioJueves.setOnClickListener(v -> mostrarTimePicker(horaInicioJueves));
+        horaFinJueves.setOnClickListener(v -> mostrarTimePicker(horaFinJueves));
+        horaInicioViernes.setOnClickListener(v -> mostrarTimePicker(horaInicioViernes));
+        horaFinViernes.setOnClickListener(v -> mostrarTimePicker(horaFinViernes));
+        horaInicioSabado.setOnClickListener(v -> mostrarTimePicker(horaInicioSabado));
+        horaFinSabado.setOnClickListener(v -> mostrarTimePicker(horaFinSabado));
+        horaInicioDomingo.setOnClickListener(v -> mostrarTimePicker(horaInicioDomingo));
+        horaFinDomingo.setOnClickListener(v -> mostrarTimePicker(horaFinDomingo));
 
         AlertDialog dialog = builder.setView(dialogView)
                 .setTitle("Crear Entrenamientos Recurrentes")
@@ -539,26 +600,16 @@ public class GestionEventosFragment extends Fragment {
         btnCrearEntrenamientos.setOnClickListener(v -> {
             String fechaInicioStr = editTextFechaInicio.getText().toString();
             String fechaFinStr = editTextFechaFin.getText().toString();
-            String horaInicioStr = editTextHoraInicio.getText().toString();
-            String horaFinStr = editTextHoraFin.getText().toString();
             List<String> equipos = (List<String>) autoCompleteEquipos.getTag();
 
-            // Validaciones
-            if (fechaInicioStr.isEmpty() || fechaFinStr.isEmpty() || horaInicioStr.isEmpty() || horaFinStr.isEmpty() || equipos == null || equipos.isEmpty()) {
-                Toast.makeText(requireContext(), "Completa todos los campos y selecciona al menos un equipo", Toast.LENGTH_SHORT).show();
+            // Validaciones básicas
+            if (fechaInicioStr.isEmpty() || fechaFinStr.isEmpty() || equipos == null || equipos.isEmpty()) {
+                Toast.makeText(requireContext(), "Completa las fechas y selecciona al menos un equipo", Toast.LENGTH_SHORT).show();
                 return;
             }
-            List<Integer> diasSeleccionados = new ArrayList<>();
-            for (int i = 0; i < chipGroupDias.getChildCount(); i++) {
-                com.google.android.material.chip.Chip chip = (com.google.android.material.chip.Chip) chipGroupDias.getChildAt(i);
-                if (chip.isChecked()) diasSeleccionados.add(i + 1); // Lunes=1, Domingo=7
-            }
-            if (diasSeleccionados.isEmpty()) {
-                Toast.makeText(requireContext(), "Selecciona al menos un día de la semana", Toast.LENGTH_SHORT).show();
-                return;
-            }
+            
+            // Validar fechas
             java.text.SimpleDateFormat sdfFecha = new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault());
-            java.text.SimpleDateFormat sdfHora = new java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault());
             java.util.Calendar fechaInicio = java.util.Calendar.getInstance();
             java.util.Calendar fechaFin = java.util.Calendar.getInstance();
             try {
@@ -568,33 +619,181 @@ public class GestionEventosFragment extends Fragment {
                 Toast.makeText(requireContext(), "Formato de fecha incorrecto", Toast.LENGTH_SHORT).show();
                 return;
             }
-            int sesionNum = 1;
+            
             List<Evento> sesiones = new ArrayList<>();
-            for (java.util.Calendar fecha = (java.util.Calendar) fechaInicio.clone(); !fecha.after(fechaFin); fecha.add(java.util.Calendar.DATE, 1)) {
-                int diaSemana = fecha.get(java.util.Calendar.DAY_OF_WEEK);
-                int diaApp = (diaSemana == java.util.Calendar.SUNDAY) ? 7 : diaSemana - 1;
-                if (diasSeleccionados.contains(diaApp)) {
-                    for (String equipo : equipos) {
-                        Evento sesion = new Evento();
-                        String nombreSesion = equipo + " - Sesión " + sesionNum + " - " + horaInicioStr + "-" + horaFinStr;
-                        sesion.setTitulo(nombreSesion);
-                        sesion.setEquipo(equipo);
-                        sesion.setTipo("ENTRENAMIENTO");
-                        sesion.setFechaInicio(combinarFechaHora(fecha, horaInicioStr));
-                        sesion.setFechaFin(combinarFechaHora(fecha, horaFinStr));
-                        sesiones.add(sesion);
-                    }
-                    sesionNum++;
+            int sesionNum = 1;
+            
+            // Determinar modo de horario
+            boolean esHorarioSimple = layoutHorarioSimple.getVisibility() == View.VISIBLE;
+            
+            if (esHorarioSimple) {
+                // Modo horario simple
+                String horaInicioStr = editTextHoraInicio.getText().toString();
+                String horaFinStr = editTextHoraFin.getText().toString();
+                
+                if (horaInicioStr.isEmpty() || horaFinStr.isEmpty()) {
+                    Toast.makeText(requireContext(), "Completa los horarios", Toast.LENGTH_SHORT).show();
+                    return;
                 }
+                
+                // Obtener días seleccionados del modo simple (todos los días)
+                List<Integer> diasSeleccionados = new ArrayList<>();
+                for (int i = 1; i <= 7; i++) {
+                    diasSeleccionados.add(i);
+                }
+                
+                sesiones = crearSesionesSimple(fechaInicio, fechaFin, diasSeleccionados, horaInicioStr, horaFinStr, equipos, sesionNum);
+                
+            } else {
+                // Modo horario avanzado
+                List<DiaHorario> diasHorarios = new ArrayList<>();
+                
+                if (checkLunes.isChecked()) {
+                    String horaInicio = horaInicioLunes.getText().toString();
+                    String horaFin = horaFinLunes.getText().toString();
+                    if (!horaInicio.isEmpty() && !horaFin.isEmpty()) {
+                        diasHorarios.add(new DiaHorario(1, horaInicio, horaFin));
+                    }
+                }
+                if (checkMartes.isChecked()) {
+                    String horaInicio = horaInicioMartes.getText().toString();
+                    String horaFin = horaFinMartes.getText().toString();
+                    if (!horaInicio.isEmpty() && !horaFin.isEmpty()) {
+                        diasHorarios.add(new DiaHorario(2, horaInicio, horaFin));
+                    }
+                }
+                if (checkMiercoles.isChecked()) {
+                    String horaInicio = horaInicioMiercoles.getText().toString();
+                    String horaFin = horaFinMiercoles.getText().toString();
+                    if (!horaInicio.isEmpty() && !horaFin.isEmpty()) {
+                        diasHorarios.add(new DiaHorario(3, horaInicio, horaFin));
+                    }
+                }
+                if (checkJueves.isChecked()) {
+                    String horaInicio = horaInicioJueves.getText().toString();
+                    String horaFin = horaFinJueves.getText().toString();
+                    if (!horaInicio.isEmpty() && !horaFin.isEmpty()) {
+                        diasHorarios.add(new DiaHorario(4, horaInicio, horaFin));
+                    }
+                }
+                if (checkViernes.isChecked()) {
+                    String horaInicio = horaInicioViernes.getText().toString();
+                    String horaFin = horaFinViernes.getText().toString();
+                    if (!horaInicio.isEmpty() && !horaFin.isEmpty()) {
+                        diasHorarios.add(new DiaHorario(5, horaInicio, horaFin));
+                    }
+                }
+                if (checkSabado.isChecked()) {
+                    String horaInicio = horaInicioSabado.getText().toString();
+                    String horaFin = horaFinSabado.getText().toString();
+                    if (!horaInicio.isEmpty() && !horaFin.isEmpty()) {
+                        diasHorarios.add(new DiaHorario(6, horaInicio, horaFin));
+                    }
+                }
+                if (checkDomingo.isChecked()) {
+                    String horaInicio = horaInicioDomingo.getText().toString();
+                    String horaFin = horaFinDomingo.getText().toString();
+                    if (!horaInicio.isEmpty() && !horaFin.isEmpty()) {
+                        diasHorarios.add(new DiaHorario(7, horaInicio, horaFin));
+                    }
+                }
+                
+                if (diasHorarios.isEmpty()) {
+                    Toast.makeText(requireContext(), "Selecciona al menos un día con horario", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                
+                sesiones = crearSesionesAvanzado(fechaInicio, fechaFin, diasHorarios, equipos, sesionNum);
             }
+            
+            // Crear las sesiones
             for (Evento sesion : sesiones) {
                 dataManager.agregarEvento(sesion);
             }
+            
             Toast.makeText(requireContext(), "Sesiones creadas: " + sesiones.size(), Toast.LENGTH_LONG).show();
-            dialog.dismiss(); // Solo cerrar si todo fue bien
+            dialog.dismiss();
+            cargarEventos();
+            actualizarEstadisticas();
         });
 
         dialog.show();
+    }
+    
+    // Clase auxiliar para horarios por día
+    private static class DiaHorario {
+        int diaSemana; // 1=Lunes, 7=Domingo
+        String horaInicio;
+        String horaFin;
+        
+        DiaHorario(int diaSemana, String horaInicio, String horaFin) {
+            this.diaSemana = diaSemana;
+            this.horaInicio = horaInicio;
+            this.horaFin = horaFin;
+        }
+    }
+    
+    // Crear sesiones en modo simple
+    private List<Evento> crearSesionesSimple(java.util.Calendar fechaInicio, java.util.Calendar fechaFin, 
+                                           List<Integer> diasSeleccionados, String horaInicioStr, String horaFinStr, 
+                                           List<String> equipos, int sesionNum) {
+        List<Evento> sesiones = new ArrayList<>();
+        
+        for (java.util.Calendar fecha = (java.util.Calendar) fechaInicio.clone(); !fecha.after(fechaFin); fecha.add(java.util.Calendar.DATE, 1)) {
+            int diaSemana = fecha.get(java.util.Calendar.DAY_OF_WEEK);
+            int diaApp = (diaSemana == java.util.Calendar.SUNDAY) ? 7 : diaSemana - 1;
+            if (diasSeleccionados.contains(diaApp)) {
+                for (String equipo : equipos) {
+                    Evento sesion = new Evento();
+                    String nombreSesion = equipo + " - Sesión " + sesionNum + " - " + horaInicioStr + "-" + horaFinStr;
+                    sesion.setTitulo(nombreSesion);
+                    sesion.setEquipo(equipo);
+                    sesion.setTipo("ENTRENAMIENTO");
+                    sesion.setFechaInicio(combinarFechaHora(fecha, horaInicioStr));
+                    sesion.setFechaFin(combinarFechaHora(fecha, horaFinStr));
+                    sesiones.add(sesion);
+                }
+                sesionNum++;
+            }
+        }
+        
+        return sesiones;
+    }
+    
+    // Crear sesiones en modo avanzado
+    private List<Evento> crearSesionesAvanzado(java.util.Calendar fechaInicio, java.util.Calendar fechaFin, 
+                                             List<DiaHorario> diasHorarios, List<String> equipos, int sesionNum) {
+        List<Evento> sesiones = new ArrayList<>();
+        
+        for (java.util.Calendar fecha = (java.util.Calendar) fechaInicio.clone(); !fecha.after(fechaFin); fecha.add(java.util.Calendar.DATE, 1)) {
+            int diaSemana = fecha.get(java.util.Calendar.DAY_OF_WEEK);
+            int diaApp = (diaSemana == java.util.Calendar.SUNDAY) ? 7 : diaSemana - 1;
+            
+            // Buscar horario para este día
+            DiaHorario horarioDia = null;
+            for (DiaHorario dh : diasHorarios) {
+                if (dh.diaSemana == diaApp) {
+                    horarioDia = dh;
+                    break;
+                }
+            }
+            
+            if (horarioDia != null) {
+                for (String equipo : equipos) {
+                    Evento sesion = new Evento();
+                    String nombreSesion = equipo + " - Sesión " + sesionNum + " - " + horarioDia.horaInicio + "-" + horarioDia.horaFin;
+                    sesion.setTitulo(nombreSesion);
+                    sesion.setEquipo(equipo);
+                    sesion.setTipo("ENTRENAMIENTO");
+                    sesion.setFechaInicio(combinarFechaHora(fecha, horarioDia.horaInicio));
+                    sesion.setFechaFin(combinarFechaHora(fecha, horarioDia.horaFin));
+                    sesiones.add(sesion);
+                }
+                sesionNum++;
+            }
+        }
+        
+        return sesiones;
     }
 
     // Métodos auxiliares para pickers y combinar fecha/hora

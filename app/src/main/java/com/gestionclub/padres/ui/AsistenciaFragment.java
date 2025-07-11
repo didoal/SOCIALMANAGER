@@ -114,7 +114,7 @@ public class AsistenciaFragment extends Fragment {
         if (context != null) {
             recyclerViewAsistencias.setLayoutManager(new LinearLayoutManager(context));
             asistenciaAdapter = new AsistenciaAdapter(context, new ArrayList<>(), this::manejarClicEnAsistencia);
-            recyclerViewAsistencias.setAdapter(asistenciaAdapter);
+        recyclerViewAsistencias.setAdapter(asistenciaAdapter);
         }
     }
 
@@ -136,7 +136,7 @@ public class AsistenciaFragment extends Fragment {
             equipos.add(usuarioActual.getEquipo());
         } else {
             // Si es admin, mostrar todos los equipos
-            equipos.addAll(dataManager.getNombresEquipos());
+        equipos.addAll(dataManager.getNombresEquipos());
         }
         
         ArrayAdapter<String> equipoAdapter = new ArrayAdapter<>(requireContext(), 
@@ -164,7 +164,7 @@ public class AsistenciaFragment extends Fragment {
                         jugadores.add(usuario.getJugador());
                     }
                 } else {
-                    jugadores.add(usuario.getJugador());
+                jugadores.add(usuario.getJugador());
                 }
             }
         }
@@ -216,7 +216,7 @@ public class AsistenciaFragment extends Fragment {
         
         if (puedeRegistrarAsistencia) {
             fabRegistrarAsistencia.setVisibility(View.VISIBLE);
-            fabRegistrarAsistencia.setOnClickListener(v -> mostrarDialogoRegistrarAsistencia());
+        fabRegistrarAsistencia.setOnClickListener(v -> mostrarDialogoRegistrarAsistencia());
         } else {
             fabRegistrarAsistencia.setVisibility(View.GONE);
         }
