@@ -397,7 +397,7 @@
             android:layout_marginBottom="20dp">
 
             <Button
-                android:id="@+id/buttonExportarPDF"
+                android:id="@+id/buttonExportarPDFDetallado"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_weight="1"

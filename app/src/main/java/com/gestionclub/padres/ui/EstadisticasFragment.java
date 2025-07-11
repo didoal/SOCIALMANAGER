@@ -61,6 +61,7 @@ public class EstadisticasFragment extends Fragment {
     private TextView textViewEstadisticasDetalladas;
     private Button buttonFiltroEquipo;
     private Button buttonExportarPDF;
+    private Button buttonExportarPDFDetallado;
     private Button buttonVerAsistenciaDetallada;
 
     @Nullable
@@ -105,6 +106,7 @@ public class EstadisticasFragment extends Fragment {
         textViewEstadisticasDetalladas = view.findViewById(R.id.textViewEstadisticasDetalladas);
         buttonFiltroEquipo = view.findViewById(R.id.buttonFiltroEquipo);
         buttonExportarPDF = view.findViewById(R.id.buttonExportarPDF);
+        buttonExportarPDFDetallado = view.findViewById(R.id.buttonExportarPDFDetallado);
         buttonVerAsistenciaDetallada = view.findViewById(R.id.buttonVerAsistenciaDetallada);
         
         if (buttonFiltroEquipo != null) {
@@ -113,6 +115,10 @@ public class EstadisticasFragment extends Fragment {
         
         if (buttonExportarPDF != null) {
             buttonExportarPDF.setOnClickListener(v -> exportarEstadisticasPDF());
+        }
+        
+        if (buttonExportarPDFDetallado != null) {
+            buttonExportarPDFDetallado.setOnClickListener(v -> exportarEstadisticasPDF());
         }
         
         if (buttonVerAsistenciaDetallada != null) {
