@@ -27,8 +27,8 @@ public class DashboardFragment extends Fragment {
     private RecyclerView recyclerViewEventos;
     private RecyclerView recyclerViewDestacados;
     private RecyclerView recyclerViewNotificaciones;
-    private TextView textViewTotalEventos;
-    private TextView textViewTotalUsuarios;
+    private TextView textViewTotalEventosDashboard;
+    private TextView textViewTotalUsuariosDashboard;
 
     @Nullable
     @Override
@@ -70,16 +70,13 @@ public class DashboardFragment extends Fragment {
         textViewUsuario = view.findViewById(R.id.textViewUsuario);
         recyclerViewEventos = view.findViewById(R.id.recyclerViewEventos);
         recyclerViewDestacados = view.findViewById(R.id.recyclerViewDestacados);
-        recyclerViewNotificaciones = view.findViewById(R.id.recyclerViewNotificaciones);
-        textViewTotalEventos = view.findViewById(R.id.textViewTotalEventos);
-        textViewTotalUsuarios = view.findViewById(R.id.textViewTotalUsuarios);
+        textViewTotalEventosDashboard = view.findViewById(R.id.textViewTotalEventosDashboard);
+        textViewTotalUsuariosDashboard = view.findViewById(R.id.textViewTotalUsuariosDashboard);
     }
 
     private void cargarDatosUsuario() {
         if (usuarioActual != null) {
-            String bienvenida = "¡Bienvenido, " + usuarioActual.getNombre() + "!";
-            textViewBienvenida.setText(bienvenida);
-            textViewUsuario.setText(usuarioActual.getEquipo() != null ? usuarioActual.getEquipo() : "Usuario");
+            textViewUsuario.setText("Bienvenido, " + usuarioActual.getNombre());
         }
     }
 
@@ -97,11 +94,11 @@ public class DashboardFragment extends Fragment {
     private void cargarEstadisticasRapidas() {
         List<Evento> eventos = dataManager.getEventos();
         List<Usuario> usuarios = dataManager.getUsuarios();
-        if (textViewTotalEventos != null) {
-            textViewTotalEventos.setText(String.valueOf(eventos.size()));
+        if (textViewTotalEventosDashboard != null) {
+            textViewTotalEventosDashboard.setText(String.valueOf(eventos.size()));
         }
-        if (textViewTotalUsuarios != null) {
-            textViewTotalUsuarios.setText(String.valueOf(usuarios.size()));
+        if (textViewTotalUsuariosDashboard != null) {
+            textViewTotalUsuariosDashboard.setText(String.valueOf(usuarios.size()));
         }
     }
 

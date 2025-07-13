@@ -10,104 +10,100 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="20dp">
 
-        <!-- Header de bienvenida -->
-        <androidx.cardview.widget.CardView
+        <!-- Header Profesional -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp"
-            app:cardBackgroundColor="@color/blue_profesional">
+            android:orientation="vertical"
+            android:background="@drawable/gradient_blue_professional"
+            android:padding="28dp"
+            android:layout_marginBottom="24dp">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/textViewBienvenida"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="24dp">
+                android:text="GESTIÓN PROFESIONAL"
+                android:textColor="@color/white"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginBottom="8dp" />
 
-                <TextView
-                    android:id="@+id/textViewBienvenida"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="¡Bienvenido al Club!"
-                    android:textColor="@color/white"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    android:gravity="center" />
+            <TextView
+                android:id="@+id/textViewUsuario"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Bienvenido al Sistema de Gestión"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:gravity="center"
+                android:alpha="0.9" />
 
-                <TextView
-                    android:id="@+id/textViewUsuario"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Usuario"
-                    android:textColor="@color/blue_profesional_accent"
-                    android:textSize="18sp"
-                    android:gravity="center"
-                    android:layout_marginTop="8dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Control total de tu club deportivo"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:layout_marginTop="8dp"
+                android:alpha="0.8" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Gestiona tu club de fútbol de manera profesional"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    android:gravity="center"
-                    android:layout_marginTop="8dp"
-                    android:alpha="0.8" />
+        </LinearLayout>
 
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <!-- Acciones rápidas -->
+        <!-- Acciones Rápidas Profesionales -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Acciones Rápidas"
+            android:text="ACCIONES PRINCIPALES"
             android:textColor="@color/blue_profesional"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginBottom="16dp"
+            android:gravity="center" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="20dp">
+            android:layout_marginBottom="24dp">
 
             <!-- Botón Crear Evento -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardCrearEvento"
                 android:layout_width="0dp"
-                android:layout_height="120dp"
+                android:layout_height="140dp"
                 android:layout_weight="1"
                 android:layout_marginEnd="8dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp"
-                app:cardBackgroundColor="@color/blue_profesional_light">
+                app:cardBackgroundColor="@color/white">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
                     android:gravity="center"
-                    android:padding="16dp">
+                    android:padding="20dp"
+                    android:background="@drawable/gradient_blue_light">
 
                     <ImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
                         android:src="@drawable/ic_event"
                         app:tint="@color/blue_profesional" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Crear Evento"
-                        android:textColor="@color/text_primary"
+                        android:text="CREAR EVENTO"
+                        android:textColor="@color/blue_profesional"
                         android:textSize="14sp"
                         android:textStyle="bold"
-                        android:layout_marginTop="8dp" />
+                        android:layout_marginTop="12dp" />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -116,34 +112,35 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardNuevaPublicacion"
                 android:layout_width="0dp"
-                android:layout_height="120dp"
+                android:layout_height="140dp"
                 android:layout_weight="1"
                 android:layout_marginStart="8dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp"
-                app:cardBackgroundColor="@color/blue_profesional_light">
+                app:cardBackgroundColor="@color/white">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
                     android:gravity="center"
-                    android:padding="16dp">
+                    android:padding="20dp"
+                    android:background="@drawable/gradient_green_light">
 
                     <ImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
                         android:src="@drawable/ic_message"
-                        app:tint="@color/blue_profesional" />
+                        app:tint="@color/green_success" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Nueva Publicación"
-                        android:textColor="@color/text_primary"
+                        android:text="NUEVA PUBLICACIÓN"
+                        android:textColor="@color/green_success"
                         android:textSize="14sp"
                         android:textStyle="bold"
-                        android:layout_marginTop="8dp" />
+                        android:layout_marginTop="12dp" />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -154,45 +151,48 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Próximos Eventos"
+            android:text="PRÓXIMOS EVENTOS"
             android:textColor="@color/blue_profesional"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginBottom="16dp"
+            android:gravity="center" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewEventos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="24dp"
             android:nestedScrollingEnabled="false" />
 
         <!-- Muro de Destacados -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Muro de Destacados"
+            android:text="MURO DE DESTACADOS"
             android:textColor="@color/blue_profesional"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginBottom="16dp"
+            android:gravity="center" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewDestacados"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="24dp"
             android:nestedScrollingEnabled="false" />
 
         <!-- Estadísticas Rápidas -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Estadísticas Rápidas"
+            android:text="ESTADÍSTICAS RÁPIDAS"
             android:textColor="@color/blue_profesional"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginBottom="16dp"
+            android:gravity="center" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -200,10 +200,10 @@
             android:orientation="horizontal"
             android:layout_marginBottom="20dp">
 
-            <!-- Tarjeta Estadística 1 -->
+            <!-- Tarjeta Total Eventos -->
             <androidx.cardview.widget.CardView
                 android:layout_width="0dp"
-                android:layout_height="100dp"
+                android:layout_height="120dp"
                 android:layout_weight="1"
                 android:layout_marginEnd="8dp"
                 app:cardCornerRadius="12dp"
@@ -215,31 +215,34 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical"
                     android:gravity="center"
-                    android:padding="12dp">
+                    android:padding="16dp"
+                    android:background="@drawable/gradient_blue_light">
 
                     <TextView
-                        android:id="@+id/textViewTotalEventos"
+                        android:id="@+id/textViewTotalEventosDashboard"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0"
                         android:textColor="@color/blue_profesional"
-                        android:textSize="24sp"
+                        android:textSize="32sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Eventos"
+                        android:text="EVENTOS"
                         android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="4dp" />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Tarjeta Estadística 2 -->
+            <!-- Tarjeta Total Usuarios -->
             <androidx.cardview.widget.CardView
                 android:layout_width="0dp"
-                android:layout_height="100dp"
+                android:layout_height="120dp"
                 android:layout_weight="1"
                 android:layout_marginStart="8dp"
                 app:cardCornerRadius="12dp"
@@ -251,45 +254,32 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical"
                     android:gravity="center"
-                    android:padding="12dp">
+                    android:padding="16dp"
+                    android:background="@drawable/gradient_green_light">
 
                     <TextView
-                        android:id="@+id/textViewTotalUsuarios"
+                        android:id="@+id/textViewTotalUsuariosDashboard"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0"
-                        android:textColor="@color/blue_profesional"
-                        android:textSize="24sp"
+                        android:textColor="@color/green_success"
+                        android:textSize="32sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Usuarios"
+                        android:text="USUARIOS"
                         android:textColor="@color/text_secondary"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="4dp" />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
         </LinearLayout>
 
-        <!-- Notificaciones Recientes -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Notificaciones Recientes"
-            android:textColor="@color/blue_profesional"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="12dp" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewNotificaciones"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:nestedScrollingEnabled="false" />
-
     </LinearLayout>
+
 </ScrollView> 
