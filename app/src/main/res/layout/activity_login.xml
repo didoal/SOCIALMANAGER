@@ -1,204 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/login_background">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="32dp">
-
-        <!-- Logo y Título -->
-        <LinearLayout
-            android:id="@+id/app_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:layout_marginBottom="48dp">
-
-            <ImageView
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:src="@drawable/logo_santiaguino"
-                android:contentDescription="Logo del club"
-                android:layout_marginBottom="16dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="CD Santiaguiño de Guizán"
-                android:textColor="@color/gold"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:gravity="center" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Gestión para Padres y Tutores"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:alpha="0.8"
-                android:layout_marginTop="4dp" />
-
-        </LinearLayout>
-
-        <!-- Formulario de Login -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp"
-            app:cardBackgroundColor="@color/black_lighter"
-            android:layout_marginBottom="24dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="24dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Iniciar Sesión"
-                    android:textColor="@color/gold"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:layout_marginBottom="24dp" />
-
-                <!-- Campo Usuario -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:background="@drawable/edit_text_background"
-                    android:layout_marginBottom="16dp"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_person"
-                        android:layout_marginStart="12dp"
-                        android:layout_marginEnd="12dp" />
-
-                    <EditText
-                        android:id="@+id/et_usuario"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@android:color/transparent"
-                        android:hint="Usuario o Email"
-                        android:inputType="textEmailAddress"
-                        android:padding="12dp"
-                        android:textColor="@color/white"
-                        android:textColorHint="@color/gray" />
-
-                    <ImageView
-                        android:id="@+id/iv_clear_usuario"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_clear"
-                        android:layout_marginEnd="12dp"
-                        android:visibility="gone"
-                        android:tint="@color/gray" />
-
-                </LinearLayout>
-
-                <!-- Campo Contraseña -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:background="@drawable/edit_text_background"
-                    android:layout_marginBottom="24dp"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_lock"
-                        android:layout_marginStart="12dp"
-                        android:layout_marginEnd="12dp"
-                        android:tint="@color/gold" />
-
-                    <EditText
-                        android:id="@+id/et_password"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@android:color/transparent"
-                        android:hint="Contraseña"
-                        android:inputType="textPassword"
-                        android:padding="12dp"
-                        android:textColor="@color/white"
-                        android:textColorHint="@color/gray" />
-
-                    <ImageView
-                        android:id="@+id/iv_toggle_password"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_eye"
-                        android:layout_marginEnd="8dp"
-                        android:tint="@color/gold" />
-
-                    <ImageView
-                        android:id="@+id/iv_clear_password"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_clear"
-                        android:layout_marginEnd="12dp"
-                        android:visibility="gone"
-                        android:tint="@color/gray" />
-
-                </LinearLayout>
-
-                <!-- Botón Login -->
-                <Button
-                    android:id="@+id/btn_login"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="INICIAR SESIÓN"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"
-                    android:background="@drawable/button_gold_background"
-                    android:padding="14dp"
-                    android:layout_marginBottom="16dp" />
-
-                <!-- Mensaje de Error -->
-                <TextView
-                    android:id="@+id/tv_error"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Usuario o contraseña incorrectos"
-                    android:textColor="@color/danger"
-                    android:textSize="14sp"
-                    android:gravity="center"
-                    android:background="@drawable/error_background"
-                    android:padding="8dp"
-                    android:visibility="gone" />
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <!-- Texto de ayuda -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Si tienes problemas para acceder, contacta con el administrador del club"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:gravity="center"
-            android:alpha="0.7" />
-
-    </LinearLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+<resources>
+    <color name="rojo_club">#D50000</color>
+    <color name="rojo_club_dark">#B71C1C</color>
+    <color name="rojo_club_light">#FF5252</color>
+    <color name="black">#FF000000</color>
+    <color name="black_light">#1A1A1A</color>
+    <color name="black_lighter">#2D2D2D</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="white_70">#B3FFFFFF</color>
+    <color name="gray">#888888</color>
+    <color name="gray_light">#FFCCCCCC</color>
+    <color name="gray_medium">#FF888888</color>
+    <color name="gray_dark">#FF444444</color>
+    <color name="background">#FFFEF7</color>
+    <color name="surface">#FFF8E1</color>
+    <color name="danger">#FF4444</color>
+    <color name="red">#FF0000</color>
+    <color name="red_dark">#CC0000</color>
+    <color name="transparent">#00000000</color>
+    
+    <!-- Colores faltantes que causan errores de compilación -->
+    <color name="gold">#FFC107</color>
+    <color name="gold_light">#FFECB3</color>
+    <color name="gold_dark">#FFA000</color>
+    <color name="purple_200">#BB86FC</color>
+    <color name="purple_700">#3700B3</color>
+    <color name="teal_200">#03DAC5</color>
+    <color name="green">#4CAF50</color>
+    <color name="text_primary">#222222</color>
+    <color name="text_secondary">#222222</color>
+    <color name="text_title">#111111</color>
+    <color name="blue_profesional">#1565C0</color>
+    <color name="blue_profesional_light">#1E88E5</color>
+    <color name="blue_profesional_card">#E3F2FD</color>
+    <color name="blue_profesional_accent">#0D47A1</color>
+    <color name="colorPrimary">#0D47A1</color>
+    <color name="colorAccent">#FFC107</color>
+    <color name="colorTextSecondary">#222222</color>
+    <color name="colorWarning">#FF9800</color>
+    <color name="colorInfo">#1565C0</color>
+    
+    <!-- Colores para la galería -->
+    <color name="primary">#1565C0</color>
+    <color name="accent">#FFC107</color>
+    <color name="divider">#E0E0E0</color>
+    
+    <!-- Colores para estadísticas profesionales -->
+    <color name="green_success">#4CAF50</color>
+    <color name="orange_warning">#FF9800</color>
+    <color name="purple_accent">#9C27B0</color>
+    <color name="red_error">#F44336</color>
+    
+    <!-- Colores para tema oscuro -->
+    <color name="dark_background">#121212</color>
+    <color name="dark_surface">#1E1E1E</color>
+    <color name="dark_card">#2D2D2D</color>
+    <color name="dark_text_primary">#FFFFFF</color>
+    <color name="dark_text_secondary">#B3FFFFFF</color>
+</resources>

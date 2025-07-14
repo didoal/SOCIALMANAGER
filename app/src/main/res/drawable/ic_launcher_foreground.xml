@@ -1,53 +1,60 @@
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="108dp"
-    android:height="108dp"
-    android:viewportWidth="120"
-    android:viewportHeight="120">
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="rojo_club">#D50000</color>
+    <color name="rojo_club_dark">#B71C1C</color>
+    <color name="rojo_club_light">#FF5252</color>
+    <color name="black">#FF000000</color>
+    <color name="black_light">#1A1A1A</color>
+    <color name="black_lighter">#2D2D2D</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="white_70">#B3FFFFFF</color>
+    <color name="gray">#888888</color>
+    <color name="gray_light">#FFCCCCCC</color>
+    <color name="gray_medium">#FF888888</color>
+    <color name="gray_dark">#FF444444</color>
+    <color name="background">#FFFEF7</color>
+    <color name="surface">#FFF8E1</color>
+    <color name="danger">#FF4444</color>
+    <color name="red">#FF0000</color>
+    <color name="red_dark">#CC0000</color>
+    <color name="transparent">#00000000</color>
     
-    <!-- Círculo exterior dorado -->
-    <path
-        android:fillColor="@color/gold"
-        android:pathData="M60,60m-58,0a58,58 0,1 1,116 0a58,58 0,1 1,-116 0" />
-        
-    <!-- Círculo interior rojo -->
-    <path
-        android:fillColor="@color/rojo_club"
-        android:pathData="M60,60m-50,0a50,50 0,1 1,100 0a50,50 0,1 1,-100 0" />
+    <!-- Colores faltantes que causan errores de compilación -->
+    <color name="gold">#FFC107</color>
+    <color name="gold_light">#FFECB3</color>
+    <color name="gold_dark">#FFA000</color>
+    <color name="purple_200">#BB86FC</color>
+    <color name="purple_700">#3700B3</color>
+    <color name="teal_200">#03DAC5</color>
+    <color name="green">#4CAF50</color>
+    <color name="text_primary">#222222</color>
+    <color name="text_secondary">#222222</color>
+    <color name="text_title">#111111</color>
+    <color name="blue_profesional">#1565C0</color>
+    <color name="blue_profesional_light">#1E88E5</color>
+    <color name="blue_profesional_card">#E3F2FD</color>
+    <color name="blue_profesional_accent">#0D47A1</color>
+    <color name="colorPrimary">#0D47A1</color>
+    <color name="colorAccent">#FFC107</color>
+    <color name="colorTextSecondary">#222222</color>
+    <color name="colorWarning">#FF9800</color>
+    <color name="colorInfo">#1565C0</color>
     
-    <!-- Círculo blanco central -->
-    <path
-        android:fillColor="@color/white"
-        android:pathData="M60,60m-40,0a40,40 0,1 1,80 0a40,40 0,1 1,-80 0" />
+    <!-- Colores para la galería -->
+    <color name="primary">#1565C0</color>
+    <color name="accent">#FFC107</color>
+    <color name="divider">#E0E0E0</color>
     
-    <!-- Letra S estilizada -->
-    <path
-        android:fillColor="@color/rojo_club"
-        android:pathData="M45,35 Q55,25 65,35 Q75,45 65,55 Q55,65 45,55 Q35,45 45,35 Z" />
+    <!-- Colores para estadísticas profesionales -->
+    <color name="green_success">#4CAF50</color>
+    <color name="orange_warning">#FF9800</color>
+    <color name="purple_accent">#9C27B0</color>
+    <color name="red_error">#F44336</color>
     
-    <!-- Texto "CD" estilizado -->
-    <path
-        android:fillColor="@color/rojo_club"
-        android:pathData="M40,65 L55,65 Q60,65 60,70 L60,80 Q60,85 55,85 L40,85 Q35,85 35,80 L35,70 Q35,65 40,65 Z" />
-    
-    <!-- Balón de fútbol estilizado -->
-    <path
-        android:fillColor="@color/black"
-        android:pathData="M85,60m-15,0a15,15 0,1 1,30 0a15,15 0,1 1,-30 0" />
-    <path
-        android:fillColor="@color/white"
-        android:pathData="M85,50 L90,55 L85,60 L80,55 Z" />
-    <path
-        android:fillColor="@color/white"
-        android:pathData="M85,70 L90,65 L85,60 L80,65 Z" />
-    <path
-        android:fillColor="@color/white"
-        android:pathData="M75,60 L80,55 L85,60 L80,65 Z" />
-    <path
-        android:fillColor="@color/white"
-        android:pathData="M95,60 L90,55 L85,60 L90,65 Z" />
-    
-    <!-- Estrella dorada en la parte superior -->
-    <path
-        android:fillColor="@color/gold"
-        android:pathData="M60,15 L63,22 L70,22 L65,27 L67,34 L60,30 L53,34 L55,27 L50,22 L57,22 Z" />
-</vector>
+    <!-- Colores para tema oscuro -->
+    <color name="dark_background">#121212</color>
+    <color name="dark_surface">#1E1E1E</color>
+    <color name="dark_card">#2D2D2D</color>
+    <color name="dark_text_primary">#FFFFFF</color>
+    <color name="dark_text_secondary">#B3FFFFFF</color>
+</resources>
