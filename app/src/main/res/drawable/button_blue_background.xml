@@ -1,60 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <color name="rojo_club">#D50000</color>
-    <color name="rojo_club_dark">#B71C1C</color>
-    <color name="rojo_club_light">#FF5252</color>
-    <color name="black">#FF000000</color>
-    <color name="black_light">#1A1A1A</color>
-    <color name="black_lighter">#2D2D2D</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="white_70">#B3FFFFFF</color>
-    <color name="gray">#888888</color>
-    <color name="gray_light">#FFCCCCCC</color>
-    <color name="gray_medium">#FF888888</color>
-    <color name="gray_dark">#FF444444</color>
-    <color name="background">#FFFEF7</color>
-    <color name="surface">#FFF8E1</color>
-    <color name="danger">#FF4444</color>
-    <color name="red">#FF0000</color>
-    <color name="red_dark">#CC0000</color>
-    <color name="transparent">#00000000</color>
-    
-    <!-- Colores faltantes que causan errores de compilación -->
-    <color name="gold">#FFC107</color>
-    <color name="gold_light">#FFECB3</color>
-    <color name="gold_dark">#FFA000</color>
-    <color name="purple_200">#BB86FC</color>
-    <color name="purple_700">#3700B3</color>
-    <color name="teal_200">#03DAC5</color>
-    <color name="green">#4CAF50</color>
-    <color name="text_primary">#222222</color>
-    <color name="text_secondary">#222222</color>
-    <color name="text_title">#111111</color>
-    <color name="blue_profesional">#1565C0</color>
-    <color name="blue_profesional_light">#1E88E5</color>
-    <color name="blue_profesional_card">#E3F2FD</color>
-    <color name="blue_profesional_accent">#0D47A1</color>
-    <color name="colorPrimary">#0D47A1</color>
-    <color name="colorAccent">#FFC107</color>
-    <color name="colorTextSecondary">#222222</color>
-    <color name="colorWarning">#FF9800</color>
-    <color name="colorInfo">#1565C0</color>
-    
-    <!-- Colores para la galería -->
-    <color name="primary">#1565C0</color>
-    <color name="accent">#FFC107</color>
-    <color name="divider">#E0E0E0</color>
-    
-    <!-- Colores para estadísticas profesionales -->
-    <color name="green_success">#4CAF50</color>
-    <color name="orange_warning">#FF9800</color>
-    <color name="purple_accent">#9C27B0</color>
-    <color name="red_error">#F44336</color>
-    
-    <!-- Colores para tema oscuro -->
-    <color name="dark_background">#121212</color>
-    <color name="dark_surface">#1E1E1E</color>
-    <color name="dark_card">#2D2D2D</color>
-    <color name="dark_text_primary">#FFFFFF</color>
-    <color name="dark_text_secondary">#B3FFFFFF</color>
-</resources>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:startColor="@color/blue_profesional"
+        android:endColor="@color/blue_profesional_accent"
+        android:angle="135" />
+    <corners android:radius="12dp" />
+    <padding android:left="16dp" android:top="8dp" android:right="16dp" android:bottom="8dp" />
+</shape>
