@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:background="@color/background">
 
-    <!-- Header profesional -->
+    <!-- Header profesional con Logo -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,14 +14,59 @@
         android:padding="20dp"
         android:layout_marginBottom="16dp">
 
+        <!-- Logo del Club -->
+        <FrameLayout
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="12dp"
+            android:elevation="8dp">
+
+            <View
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/circle_background_white"
+                android:elevation="6dp" />
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:src="@drawable/logo_santiaguino"
+                android:elevation="8dp" />
+
+        </FrameLayout>
+
+        <!-- Nombre del Club -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CD SANTIAGUIÑO GUIZÁN"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="4dp" />
+
+        <!-- Lema del Club -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="SANTIAGUIÑO, A NOSA FAMILIA"
+            android:textColor="@color/gold"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+
         <TextView
             android:id="@+id/textViewTitulo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Muro de Destacados del Chat"
-            android:textSize="22sp"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="@color/text_primary"
+            android:textColor="@color/white"
             android:gravity="center" />
 
         <TextView
@@ -29,9 +74,10 @@
             android:layout_height="wrap_content"
             android:text="Mensajes importantes del club"
             android:textSize="14sp"
-            android:textColor="@color/text_secondary"
+            android:textColor="@color/white"
             android:gravity="center"
-            android:layout_marginTop="4dp" />
+            android:layout_marginTop="4dp"
+            android:alpha="0.9" />
 
     </LinearLayout>
 

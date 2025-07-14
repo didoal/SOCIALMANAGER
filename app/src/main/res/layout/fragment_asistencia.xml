@@ -11,7 +11,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Header profesional con botón de exportar -->
+        <!-- Header profesional con Logo y botón de exportar -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -23,45 +23,97 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
+                android:orientation="vertical"
                 android:padding="20dp">
 
-                <LinearLayout
-                    android:layout_width="0dp"
+                <!-- Logo del Club -->
+                <FrameLayout
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="12dp"
+                    android:elevation="8dp">
+
+                    <View
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="@drawable/circle_background_white"
+                        android:elevation="6dp" />
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/logo_santiaguino"
+                        android:elevation="8dp" />
+
+                </FrameLayout>
+
+                <!-- Nombre del Club -->
+                <TextView
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:text="CD SANTIAGUIÑO GUIZÁN"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_marginBottom="4dp" />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="📊 Control de Asistencia"
-                        android:textColor="@color/white"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
+                <!-- Lema del Club -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="SANTIAGUIÑO, A NOSA FAMILIA"
+                    android:textColor="@color/gold"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_marginBottom="16dp" />
 
-                    <TextView
-                        android:id="@+id/textViewResumenFiltros"
-                        android:layout_width="match_parent"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Filtros aplicados: Todos los equipos"
-                        android:textColor="@color/white"
-                        android:textSize="12sp"
-                        android:alpha="0.9" />
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="📊 Control de Asistencia"
+                            android:textColor="@color/white"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="8dp" />
+
+                        <TextView
+                            android:id="@+id/textViewResumenFiltros"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Filtros aplicados: Todos los equipos"
+                            android:textColor="@color/white"
+                            android:textSize="12sp"
+                            android:alpha="0.9" />
+
+                    </LinearLayout>
+
+                    <ImageButton
+                        android:id="@+id/btnExportarPdf"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/ic_pdf"
+                        android:background="@drawable/circle_background_white"
+                        android:padding="12dp"
+                        android:contentDescription="Exportar PDF"
+                        android:tint="@color/blue_profesional" />
 
                 </LinearLayout>
-
-                <ImageButton
-                    android:id="@+id/btnExportarPdf"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/ic_pdf"
-                    android:background="@drawable/circle_background_white"
-                    android:padding="12dp"
-                    android:contentDescription="Exportar PDF"
-                    android:tint="@color/blue_profesional" />
 
             </LinearLayout>
 

@@ -6,16 +6,61 @@
     android:orientation="vertical"
     android:background="@color/white">
 
-    <!-- Header del Calendario sobre fondo blanco -->
+    <!-- Header del Calendario con Logo -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="32dp"
-        android:paddingBottom="8dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="16dp"
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
         android:background="@color/white">
+
+        <!-- Logo del Club -->
+        <FrameLayout
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="12dp"
+            android:elevation="8dp">
+
+            <View
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/circle_background_white"
+                android:elevation="6dp" />
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:src="@drawable/logo_santiaguino"
+                android:elevation="8dp" />
+
+        </FrameLayout>
+
+        <!-- Nombre del Club -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CD SANTIAGUIÑO GUIZÁN"
+            android:textColor="@color/blue_profesional"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="4dp" />
+
+        <!-- Lema del Club -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="SANTIAGUIÑO, A NOSA FAMILIA"
+            android:textColor="@color/gold"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
 
         <TextView
             android:layout_width="match_parent"
