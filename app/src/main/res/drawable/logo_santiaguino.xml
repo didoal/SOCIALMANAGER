@@ -5,28 +5,50 @@
     android:viewportWidth="120"
     android:viewportHeight="120">
     
-    <!-- Círculo de fondo -->
+    <!-- Círculo exterior dorado -->
+    <path
+        android:fillColor="@color/gold"
+        android:pathData="M60,60m-58,0a58,58 0,1 1,116 0a58,58 0,1 1,-116 0" />
+        
+    <!-- Círculo interior rojo -->
+    <path
+        android:fillColor="@color/rojo_club"
+        android:pathData="M60,60m-50,0a50,50 0,1 1,100 0a50,50 0,1 1,-100 0" />
+    
+    <!-- Círculo blanco central -->
     <path
         android:fillColor="@color/white"
-        android:pathData="M60,60m-50,0a50,50 0,1 1,100 0a50,50 0,1 1,-100 0" />
+        android:pathData="M60,60m-40,0a40,40 0,1 1,80 0a40,40 0,1 1,-80 0" />
     
     <!-- Letra S estilizada -->
     <path
         android:fillColor="@color/rojo_club"
-        android:pathData="M35,25 Q45,20 55,25 Q65,30 65,40 Q65,50 55,55 Q45,60 35,55 Q25,50 25,40 Q25,30 35,25 Z" />
+        android:pathData="M45,35 Q55,25 65,35 Q75,45 65,55 Q55,65 45,55 Q35,45 45,35 Z" />
     
-    <!-- Texto "CD" -->
+    <!-- Texto "CD" estilizado -->
     <path
         android:fillColor="@color/rojo_club"
-        android:pathData="M30,70 L50,70 L50,85 L30,85 Z" />
+        android:pathData="M40,65 L55,65 Q60,65 60,70 L60,80 Q60,85 55,85 L40,85 Q35,85 35,80 L35,70 Q35,65 40,65 Z" />
     
-    <!-- Texto "Santiaguiño" -->
+    <!-- Balón de fútbol estilizado -->
     <path
-        android:fillColor="@color/rojo_club"
-        android:pathData="M55,75 L90,75 L90,80 L55,80 Z" />
+        android:fillColor="@color/black"
+        android:pathData="M85,60m-15,0a15,15 0,1 1,30 0a15,15 0,1 1,-30 0" />
+    <path
+        android:fillColor="@color/white"
+        android:pathData="M85,50 L90,55 L85,60 L80,55 Z" />
+    <path
+        android:fillColor="@color/white"
+        android:pathData="M85,70 L90,65 L85,60 L80,65 Z" />
+    <path
+        android:fillColor="@color/white"
+        android:pathData="M75,60 L80,55 L85,60 L80,65 Z" />
+    <path
+        android:fillColor="@color/white"
+        android:pathData="M95,60 L90,55 L85,60 L90,65 Z" />
     
-    <!-- Estrella o símbolo deportivo -->
+    <!-- Estrella dorada en la parte superior -->
     <path
         android:fillColor="@color/gold"
-        android:pathData="M60,15 L63,20 L68,20 L65,25 L67,30 L60,27 L53,30 L55,25 L52,20 L57,20 Z" />
+        android:pathData="M60,15 L63,22 L70,22 L65,27 L67,34 L60,30 L53,34 L55,27 L50,22 L57,22 Z" />
 </vector> 

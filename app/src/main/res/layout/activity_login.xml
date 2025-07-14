@@ -5,27 +5,35 @@
     android:layout_height="match_parent"
     android:background="@drawable/login_background">
 
-    <!-- Logo circular con borde azul y sombra mejorada -->
+    <!-- Logo circular mejorado con animación sutil -->
     <FrameLayout
         android:id="@+id/logo_container"
         android:layout_width="160dp"
         android:layout_height="160dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="80dp"
-        android:elevation="16dp">
+        android:elevation="24dp">
 
         <View
             android:layout_width="160dp"
             android:layout_height="160dp"
             android:background="@drawable/circle_background"
-            android:elevation="12dp" />
+            android:elevation="16dp" />
 
         <ImageView
             android:layout_width="140dp"
             android:layout_height="140dp"
             android:layout_gravity="center"
             android:src="@drawable/logo_santiaguino"
-            android:elevation="16dp" />
+            android:elevation="20dp" />
+            
+        <!-- Efecto de brillo en el logo -->
+        <View
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:background="@drawable/circle_gold"
+            android:alpha="0.2"
+            android:elevation="22dp" />
     </FrameLayout>
 
     <!-- Branding mejorado -->
@@ -38,10 +46,14 @@
         android:layout_marginTop="24dp"
         android:text="CD Santiaguiño Guizán"
         android:textSize="28sp"
-        android:textStyle="bold"
+        android:textStyle="bold|italic"
         android:textColor="@color/blue_profesional"
-        android:fontFamily="sans-serif-medium"
-        android:elevation="8dp" />
+        android:fontFamily="sans-serif-black"
+        android:elevation="12dp"
+        android:shadowColor="@color/black"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2" />
 
     <TextView
         android:id="@+id/app_subtitle"
@@ -50,12 +62,16 @@
         android:layout_below="@id/app_title"
         android:layout_centerHorizontal="true"
         android:text="Bienvenido a la familia del Santiaguiño"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:textColor="@color/white"
-        android:alpha="0.9"
-        android:fontFamily="sans-serif"
+        android:alpha="0.95"
+        android:fontFamily="sans-serif-medium"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="16dp"
+        android:shadowColor="@color/black"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1" />
 
     <!-- Tarjeta de login mejorada -->
     <androidx.cardview.widget.CardView
@@ -68,7 +84,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         app:cardCornerRadius="28dp"
-        app:cardElevation="20dp"
+        app:cardElevation="24dp"
         app:cardBackgroundColor="@color/surface">
 
         <LinearLayout
@@ -83,7 +99,7 @@
                 android:text="Iniciar Sesión"
                 android:textSize="22sp"
                 android:textStyle="bold"
-                android:textColor="@color/blue_profesional"
+                android:textColor="@color/rojo_club"
                 android:gravity="center"
                 android:layout_marginBottom="32dp" />
 
@@ -210,10 +226,10 @@
                 android:layout_height="50dp"
                 android:text="INICIAR SESIÓN"
                 android:textSize="16sp"
-                android:textStyle="bold"
+                android:textStyle="bold|italic"
                 android:textColor="@color/white"
-                android:background="@drawable/button_blue_background"
-                android:elevation="12dp"
+                android:background="@drawable/button_red_background"
+                android:elevation="16dp"
                 android:stateListAnimator="@null" />
 
         </LinearLayout>
@@ -226,10 +242,10 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="32dp"
-        android:text="💡 Toca el título para crear datos de ejemplo"
+        android:text="💡 Toca el título para crear datos de ejemplo | v1.0.1"
         android:textSize="14sp"
         android:textColor="@color/white"
-        android:alpha="0.7"
-        android:fontFamily="sans-serif" />
+        android:alpha="0.8"
+        android:fontFamily="sans-serif-medium" />
 
 </RelativeLayout> 

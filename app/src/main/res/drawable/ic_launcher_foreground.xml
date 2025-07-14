@@ -1,14 +1,53 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+    
+    <!-- Círculo exterior dorado -->
     <path
-        android:fillColor="#1976D2"
-        android:pathData="M54,4a50,50 0 1,0 0,100a50,50 0 1,0 0,-100"/>
-    <group>
-        <path
-            android:fillColor="#FFFFFF"
-            android:pathData="M38,74 L38,34 Q38,28 54,28 Q70,28 70,34 L70,38 Q70,44 54,44 Q38,44 38,50 L38,54 Q38,60 54,60 Q70,60 70,54 L70,74 Q70,80 54,80 Q38,80 38,74 Z"/>
-    </group>
+        android:fillColor="@color/gold"
+        android:pathData="M60,60m-58,0a58,58 0,1 1,116 0a58,58 0,1 1,-116 0" />
+        
+    <!-- Círculo interior rojo -->
+    <path
+        android:fillColor="@color/rojo_club"
+        android:pathData="M60,60m-50,0a50,50 0,1 1,100 0a50,50 0,1 1,-100 0" />
+    
+    <!-- Círculo blanco central -->
+    <path
+        android:fillColor="@color/white"
+        android:pathData="M60,60m-40,0a40,40 0,1 1,80 0a40,40 0,1 1,-80 0" />
+    
+    <!-- Letra S estilizada -->
+    <path
+        android:fillColor="@color/rojo_club"
+        android:pathData="M45,35 Q55,25 65,35 Q75,45 65,55 Q55,65 45,55 Q35,45 45,35 Z" />
+    
+    <!-- Texto "CD" estilizado -->
+    <path
+        android:fillColor="@color/rojo_club"
+        android:pathData="M40,65 L55,65 Q60,65 60,70 L60,80 Q60,85 55,85 L40,85 Q35,85 35,80 L35,70 Q35,65 40,65 Z" />
+    
+    <!-- Balón de fútbol estilizado -->
+    <path
+        android:fillColor="@color/black"
+        android:pathData="M85,60m-15,0a15,15 0,1 1,30 0a15,15 0,1 1,-30 0" />
+    <path
+        android:fillColor="@color/white"
+        android:pathData="M85,50 L90,55 L85,60 L80,55 Z" />
+    <path
+        android:fillColor="@color/white"
+        android:pathData="M85,70 L90,65 L85,60 L80,65 Z" />
+    <path
+        android:fillColor="@color/white"
+        android:pathData="M75,60 L80,55 L85,60 L80,65 Z" />
+    <path
+        android:fillColor="@color/white"
+        android:pathData="M95,60 L90,55 L85,60 L90,65 Z" />
+    
+    <!-- Estrella dorada en la parte superior -->
+    <path
+        android:fillColor="@color/gold"
+        android:pathData="M60,15 L63,22 L70,22 L65,27 L67,34 L60,30 L53,34 L55,27 L50,22 L57,22 Z" />
 </vector>

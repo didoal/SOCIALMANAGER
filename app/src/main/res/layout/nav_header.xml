@@ -3,27 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="200dp"
-    android:background="@color/blue_info"
+    android:background="@drawable/gradient_blue_professional"
     android:orientation="vertical"
     android:padding="16dp"
     android:gravity="center">
 
     <!-- Logo del club -->
     <FrameLayout
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_marginBottom="16dp"
-        android:elevation="8dp">
-
-        <View
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:background="@drawable/circle_background"
-            android:alpha="0.9" />
+        android:elevation="12dp">
 
         <ImageView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_gravity="center"
             android:src="@drawable/logo_santiaguino"
             android:scaleType="fitCenter" />
@@ -36,10 +30,14 @@
         android:layout_height="wrap_content"
         android:text="CD Santiaguiño Guizán"
         android:textColor="@color/white"
-        android:textSize="18sp"
+        android:textSize="22sp"
         android:textStyle="bold"
         android:gravity="center"
-        android:layout_marginBottom="4dp" />
+        android:layout_marginBottom="4dp"
+        android:shadowColor="@color/black"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2" />
 
     <!-- Subtítulo -->
     <TextView
@@ -47,9 +45,13 @@
         android:layout_height="wrap_content"
         android:text="Gestión Club Profesional"
         android:textColor="@color/white"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:gravity="center"
-        android:alpha="0.9" />
+        android:alpha="0.9"
+        android:shadowColor="@color/black"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1" />
 
     <!-- Información del usuario -->
     <TextView
@@ -58,9 +60,12 @@
         android:layout_height="wrap_content"
         android:text="Usuario"
         android:textColor="@color/white"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:gravity="center"
         android:layout_marginTop="12dp"
-        android:alpha="0.8" />
+        android:alpha="0.9"
+        android:background="@drawable/rounded_background_white_transparent"
+        android:padding="8dp"
+        android:layout_marginHorizontal="16dp" />
 
 </LinearLayout> 
