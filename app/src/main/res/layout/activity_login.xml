@@ -1,251 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/login_background">
-
-    <!-- Logo circular mejorado con animación sutil -->
-    <FrameLayout
-        android:id="@+id/logo_container"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="80dp"
-        android:elevation="24dp">
-
-        <View
-            android:layout_width="160dp"
-            android:layout_height="160dp"
-            android:background="@drawable/circle_background"
-            android:elevation="16dp" />
-
-        <ImageView
-            android:layout_width="140dp"
-            android:layout_height="140dp"
-            android:layout_gravity="center"
-            android:src="@drawable/logo_santiaguino"
-            android:elevation="20dp" />
-            
-        <!-- Efecto de brillo en el logo -->
-        <View
-            android:layout_width="160dp"
-            android:layout_height="160dp"
-            android:background="@drawable/circle_gold"
-            android:alpha="0.2"
-            android:elevation="22dp" />
-    </FrameLayout>
-
-    <!-- Branding mejorado -->
-    <TextView
-        android:id="@+id/app_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/logo_container"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="24dp"
-        android:text="CD Santiaguiño Guizán"
-        android:textSize="28sp"
-        android:textStyle="bold|italic"
-        android:textColor="@color/blue_profesional"
-        android:fontFamily="sans-serif-black"
-        android:elevation="12dp"
-        android:shadowColor="@color/black"
-        android:shadowDx="1"
-        android:shadowDy="1"
-        android:shadowRadius="2" />
-
-    <TextView
-        android:id="@+id/app_subtitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/app_title"
-        android:layout_centerHorizontal="true"
-        android:text="Bienvenido a la familia del Santiaguiño"
-        android:textSize="18sp"
-        android:textColor="@color/white"
-        android:alpha="0.95"
-        android:fontFamily="sans-serif-medium"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
-        android:shadowColor="@color/black"
-        android:shadowDx="1"
-        android:shadowDy="1"
-        android:shadowRadius="1" />
-
-    <!-- Tarjeta de login mejorada -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/login_card"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/app_subtitle"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        app:cardCornerRadius="28dp"
-        app:cardElevation="24dp"
-        app:cardBackgroundColor="@color/surface">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="40dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Iniciar Sesión"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                android:textColor="@color/rojo_club"
-                android:gravity="center"
-                android:layout_marginBottom="32dp" />
-
-            <!-- Campo Usuario mejorado -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="@drawable/edit_text_background"
-                android:padding="16dp"
-                android:layout_marginBottom="20dp"
-                android:elevation="4dp">
-
-                <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:src="@drawable/ic_person"
-                    app:tint="@color/blue_profesional"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="12dp" />
-
-                <EditText
-                    android:id="@+id/et_usuario"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="Usuario o Email"
-                    android:textColor="@color/white"
-                    android:textColorHint="@color/gray_light"
-                    android:background="@null"
-                    android:inputType="text|textEmailAddress"
-                    android:imeOptions="actionNext"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:textSize="17sp"
-                    android:fontFamily="sans-serif"
-                    android:padding="4dp" />
-
-                <ImageView
-                    android:id="@+id/iv_clear_usuario"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_clear"
-                    app:tint="@color/gray_light"
-                    android:layout_gravity="center_vertical"
-                    android:visibility="gone"
-                    android:background="?attr/selectableItemBackgroundBorderless" />
-            </LinearLayout>
-
-            <!-- Campo Contraseña mejorado -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="@drawable/edit_text_background"
-                android:padding="16dp"
-                android:layout_marginBottom="28dp"
-                android:elevation="4dp">
-
-                <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:src="@drawable/ic_lock"
-                    app:tint="@color/blue_profesional"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="12dp" />
-
-                <EditText
-                    android:id="@+id/et_password"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="Contraseña"
-                    android:textColor="@color/white"
-                    android:textColorHint="@color/gray_light"
-                    android:background="@null"
-                    android:inputType="textPassword"
-                    android:imeOptions="actionDone"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:textSize="17sp"
-                    android:fontFamily="sans-serif"
-                    android:padding="4dp" />
-
-                <ImageView
-                    android:id="@+id/iv_clear_password"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_clear"
-                    app:tint="@color/gray_light"
-                    android:layout_gravity="center_vertical"
-                    android:visibility="gone"
-                    android:background="?attr/selectableItemBackgroundBorderless" />
-
-                <ImageView
-                    android:id="@+id/iv_toggle_password"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:src="@drawable/ic_eye"
-                    app:tint="@color/blue_profesional"
-                    android:layout_gravity="center_vertical"
-                    android:padding="4dp"
-                    android:background="?attr/selectableItemBackgroundBorderless" />
-            </LinearLayout>
-
-            <!-- Mensaje de error animado mejorado -->
-            <TextView
-                android:id="@+id/tv_error"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/red"
-                android:textSize="13sp"
-                android:visibility="gone"
-                android:gravity="center"
-                android:layout_marginBottom="16dp"
-                android:padding="10dp"
-                android:background="@drawable/error_background"
-                android:alpha="0.95" />
-
-            <!-- Botón de Login mejorado -->
-            <Button
-                android:id="@+id/btn_login"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:text="INICIAR SESIÓN"
-                android:textSize="16sp"
-                android:textStyle="bold|italic"
-                android:textColor="@color/white"
-                android:background="@drawable/button_red_background"
-                android:elevation="16dp"
-                android:stateListAnimator="@null" />
-
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-    <!-- Información de ayuda -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="32dp"
-        android:text="💡 Toca el título para crear datos de ejemplo | v1.0.1"
-        android:textSize="14sp"
-        android:textColor="@color/white"
-        android:alpha="0.8"
-        android:fontFamily="sans-serif-medium" />
-
-</RelativeLayout> 
+<resources>
+    <color name="rojo_club">#FF0000</color>
+    <color name="rojo_club_dark">#CC0000</color>
+    <color name="rojo_club_light">#FF6666</color>
+    <color name="black">#FF000000</color>
+    <color name="black_light">#1A1A1A</color>
+    <color name="black_lighter">#2D2D2D</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="white_70">#B3FFFFFF</color>
+    <color name="gray">#888888</color>
+    <color name="gray_light">#FFCCCCCC</color>
+    <color name="gray_medium">#FF888888</color>
+    <color name="gray_dark">#FF444444</color>
+    <color name="background">#FFFEF7</color>
+    <color name="surface">#FFF8E1</color>
+    <color name="danger">#FF4444</color>
+    <color name="red">#FF0000</color>
+    <color name="red_dark">#CC0000</color>
+    <color name="transparent">#00000000</color>
+    
+    <!-- Colores faltantes que causan errores de compilación -->
+    <color name="gold">#FFD700</color>
+    <color name="gold_light">#FFE55C</color>
+    <color name="gold_dark">#B8860B</color>
+    <color name="purple_200">#BB86FC</color>
+    <color name="purple_700">#3700B3</color>
+    <color name="teal_200">#03DAC5</color>
+    <color name="green">#4CAF50</color>
+    <color name="text_primary">#222222</color>
+    <color name="text_secondary">#222222</color>
+    <color name="text_title">#111111</color>
+    <color name="blue_profesional">#2196F3</color>
+    <color name="blue_profesional_light">#42A5F5</color>
+    <color name="blue_profesional_card">#E3F2FD</color>
+    <color name="blue_profesional_accent">#1976D2</color>
+    <color name="colorPrimary">#162447</color>
+    <color name="colorAccent">#FFD700</color>
+    <color name="colorTextSecondary">#222222</color>
+    <color name="colorWarning">#FF9800</color>
+    <color name="colorInfo">#2196F3</color>
+    
+    <!-- Colores para la galería -->
+    <color name="primary">#2196F3</color>
+    <color name="accent">#FFD700</color>
+    <color name="divider">#E0E0E0</color>
+    
+    <!-- Colores para estadísticas profesionales -->
+    <color name="green_success">#4CAF50</color>
+    <color name="orange_warning">#FF9800</color>
+    <color name="purple_accent">#9C27B0</color>
+    <color name="red_error">#F44336</color>
+    <color name="blue_info">#2196F3</color>
+    
+    <!-- Colores para tema oscuro -->
+    <color name="dark_background">#121212</color>
+    <color name="dark_surface">#1E1E1E</color>
+    <color name="dark_card">#2D2D2D</color>
+    <color name="dark_text_primary">#FFFFFF</color>
+    <color name="dark_text_secondary">#B3FFFFFF</color>
+</resources>

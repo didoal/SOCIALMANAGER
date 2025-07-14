@@ -1,67 +1,60 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Theme.Socialmanager" parent="Theme.Material3.DayNight">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/blue_profesional</item>
-        <item name="colorPrimaryVariant">@color/blue_profesional_accent</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/green_success</item>
-        <item name="colorSecondaryVariant">@color/green_success</item>
-        <item name="colorOnSecondary">@color/white</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor">@color/blue_profesional_accent</item>
-        <!-- Background colors -->
-        <item name="android:windowBackground">@color/white</item>
-        <item name="colorSurface">@color/white</item>
-        <item name="colorOnSurface">@color/text_primary</item>
-        <!-- Text colors -->
-        <item name="android:textColorPrimary">@color/text_primary</item>
-        <item name="android:textColorSecondary">@color/text_secondary</item>
-        <!-- Disable default action bar to use custom toolbar -->
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <!-- Card styles -->
-        <item name="cardBackgroundColor">@color/white</item>
-        <item name="cardElevation">4dp</item>
-        <item name="cardCornerRadius">12dp</item>
-        <!-- Button styles -->
-        <item name="buttonStyle">@style/Widget.App.Button</item>
-        <!-- Customize your theme here. -->
-    </style>
-
-    <!-- Professional Button Style -->
-    <style name="Widget.App.Button" parent="Widget.Material3.Button">
-        <item name="android:textSize">14sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:letterSpacing">0.05</item>
-        <item name="cornerRadius">8dp</item>
-        <item name="android:minHeight">48dp</item>
-    </style>
-
-    <!-- Professional Card Style -->
-    <style name="Widget.App.Card" parent="Widget.Material3.CardView.Elevated">
-        <item name="cardCornerRadius">16dp</item>
-        <item name="cardElevation">6dp</item>
-        <item name="cardBackgroundColor">@color/white</item>
-    </style>
-
-    <!-- Professional Text Style -->
-    <style name="TextAppearance.App.Headline" parent="TextAppearance.Material3.HeadlineMedium">
-        <item name="android:textSize">24sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/blue_profesional</item>
-    </style>
-
-    <style name="TextAppearance.App.Title" parent="TextAppearance.Material3.TitleLarge">
-        <item name="android:textSize">20sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/text_primary</item>
-    </style>
-
-    <style name="TextAppearance.App.Body" parent="TextAppearance.Material3.BodyLarge">
-        <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@color/text_primary</item>
-        <item name="android:lineSpacingExtra">4dp</item>
-    </style>
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="rojo_club">#D50000</color>
+    <color name="rojo_club_dark">#B71C1C</color>
+    <color name="rojo_club_light">#FF5252</color>
+    <color name="black">#FF000000</color>
+    <color name="black_light">#1A1A1A</color>
+    <color name="black_lighter">#2D2D2D</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="white_70">#B3FFFFFF</color>
+    <color name="gray">#888888</color>
+    <color name="gray_light">#FFCCCCCC</color>
+    <color name="gray_medium">#FF888888</color>
+    <color name="gray_dark">#FF444444</color>
+    <color name="background">#FFFEF7</color>
+    <color name="surface">#FFF8E1</color>
+    <color name="danger">#FF4444</color>
+    <color name="red">#FF0000</color>
+    <color name="red_dark">#CC0000</color>
+    <color name="transparent">#00000000</color>
+    
+    <!-- Colores faltantes que causan errores de compilación -->
+    <color name="gold">#FFC107</color>
+    <color name="gold_light">#FFECB3</color>
+    <color name="gold_dark">#FFA000</color>
+    <color name="purple_200">#BB86FC</color>
+    <color name="purple_700">#3700B3</color>
+    <color name="teal_200">#03DAC5</color>
+    <color name="green">#4CAF50</color>
+    <color name="text_primary">#222222</color>
+    <color name="text_secondary">#222222</color>
+    <color name="text_title">#111111</color>
+    <color name="blue_profesional">#1565C0</color>
+    <color name="blue_profesional_light">#1E88E5</color>
+    <color name="blue_profesional_card">#E3F2FD</color>
+    <color name="blue_profesional_accent">#0D47A1</color>
+    <color name="colorPrimary">#0D47A1</color>
+    <color name="colorAccent">#FFC107</color>
+    <color name="colorTextSecondary">#222222</color>
+    <color name="colorWarning">#FF9800</color>
+    <color name="colorInfo">#1565C0</color>
+    
+    <!-- Colores para la galería -->
+    <color name="primary">#1565C0</color>
+    <color name="accent">#FFC107</color>
+    <color name="divider">#E0E0E0</color>
+    
+    <!-- Colores para estadísticas profesionales -->
+    <color name="green_success">#4CAF50</color>
+    <color name="orange_warning">#FF9800</color>
+    <color name="purple_accent">#9C27B0</color>
+    <color name="red_error">#F44336</color>
+    
+    <!-- Colores para tema oscuro -->
+    <color name="dark_background">#121212</color>
+    <color name="dark_surface">#1E1E1E</color>
+    <color name="dark_card">#2D2D2D</color>
+    <color name="dark_text_primary">#FFFFFF</color>
+    <color name="dark_text_secondary">#B3FFFFFF</color>
 </resources>

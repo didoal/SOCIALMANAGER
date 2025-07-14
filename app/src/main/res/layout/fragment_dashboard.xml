@@ -1,285 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
-    android:fillViewport="true">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp">
-
-        <!-- Header Profesional -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/gradient_blue_professional"
-            android:padding="28dp"
-            android:layout_marginBottom="24dp">
-
-            <TextView
-                android:id="@+id/textViewBienvenida"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="GESTIÓN PROFESIONAL"
-                android:textColor="@color/white"
-                android:textSize="28sp"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:layout_marginBottom="8dp" />
-
-            <TextView
-                android:id="@+id/textViewUsuario"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Bienvenido al Sistema de Gestión"
-                android:textColor="@color/white"
-                android:textSize="18sp"
-                android:gravity="center"
-                android:alpha="0.9" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Control total de tu club deportivo"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                android:gravity="center"
-                android:layout_marginTop="8dp"
-                android:alpha="0.8" />
-
-        </LinearLayout>
-
-        <!-- Acciones Rápidas Profesionales -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="ACCIONES PRINCIPALES"
-            android:textColor="@color/blue_profesional"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="16dp"
-            android:gravity="center" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="24dp">
-
-            <!-- Botón Crear Evento -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardCrearEvento"
-                android:layout_width="0dp"
-                android:layout_height="140dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="@color/white">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:padding="20dp"
-                    android:background="@drawable/gradient_blue_light">
-
-                    <ImageView
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:src="@drawable/ic_event"
-                        app:tint="@color/blue_profesional" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="CREAR EVENTO"
-                        android:textColor="@color/blue_profesional"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:layout_marginTop="12dp" />
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- Botón Nueva Publicación -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardNuevaPublicacion"
-                android:layout_width="0dp"
-                android:layout_height="140dp"
-                android:layout_weight="1"
-                android:layout_marginStart="8dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="@color/white">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:padding="20dp"
-                    android:background="@drawable/gradient_green_light">
-
-                    <ImageView
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:src="@drawable/ic_message"
-                        app:tint="@color/green_success" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="NUEVA PUBLICACIÓN"
-                        android:textColor="@color/green_success"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:layout_marginTop="12dp" />
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-        </LinearLayout>
-
-        <!-- Próximos Eventos -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="PRÓXIMOS EVENTOS"
-            android:textColor="@color/blue_profesional"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="16dp"
-            android:gravity="center" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewEventos"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:nestedScrollingEnabled="false" />
-
-        <!-- Muro de Destacados -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="MURO DE DESTACADOS"
-            android:textColor="@color/blue_profesional"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="16dp"
-            android:gravity="center" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewDestacados"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:nestedScrollingEnabled="false" />
-
-        <!-- Estadísticas Rápidas -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="ESTADÍSTICAS RÁPIDAS"
-            android:textColor="@color/blue_profesional"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="16dp"
-            android:gravity="center" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="20dp">
-
-            <!-- Tarjeta Total Eventos -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
-                android:layout_height="120dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="@color/white">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:padding="16dp"
-                    android:background="@drawable/gradient_blue_light">
-
-                    <TextView
-                        android:id="@+id/textViewTotalEventosDashboard"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0"
-                        android:textColor="@color/blue_profesional"
-                        android:textSize="32sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="EVENTOS"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:layout_marginTop="4dp" />
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- Tarjeta Total Usuarios -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
-                android:layout_height="120dp"
-                android:layout_weight="1"
-                android:layout_marginStart="8dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="@color/white">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:padding="16dp"
-                    android:background="@drawable/gradient_green_light">
-
-                    <TextView
-                        android:id="@+id/textViewTotalUsuariosDashboard"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0"
-                        android:textColor="@color/green_success"
-                        android:textSize="32sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="USUARIOS"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:layout_marginTop="4dp" />
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-</ScrollView> 
+<resources>
+    <color name="rojo_club">#D50000</color>
+    <color name="rojo_club_dark">#B71C1C</color>
+    <color name="rojo_club_light">#FF5252</color>
+    <color name="black">#FF000000</color>
+    <color name="black_light">#1A1A1A</color>
+    <color name="black_lighter">#2D2D2D</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="white_70">#B3FFFFFF</color>
+    <color name="gray">#888888</color>
+    <color name="gray_light">#FFCCCCCC</color>
+    <color name="gray_medium">#FF888888</color>
+    <color name="gray_dark">#FF444444</color>
+    <color name="background">#FFFEF7</color>
+    <color name="surface">#FFF8E1</color>
+    <color name="danger">#FF4444</color>
+    <color name="red">#FF0000</color>
+    <color name="red_dark">#CC0000</color>
+    <color name="transparent">#00000000</color>
+    
+    <!-- Colores faltantes que causan errores de compilación -->
+    <color name="gold">#FFC107</color>
+    <color name="gold_light">#FFECB3</color>
+    <color name="gold_dark">#FFA000</color>
+    <color name="purple_200">#BB86FC</color>
+    <color name="purple_700">#3700B3</color>
+    <color name="teal_200">#03DAC5</color>
+    <color name="green">#4CAF50</color>
+    <color name="text_primary">#222222</color>
+    <color name="text_secondary">#222222</color>
+    <color name="text_title">#111111</color>
+    <color name="blue_profesional">#1565C0</color>
+    <color name="blue_profesional_light">#1E88E5</color>
+    <color name="blue_profesional_card">#E3F2FD</color>
+    <color name="blue_profesional_accent">#0D47A1</color>
+    <color name="colorPrimary">#0D47A1</color>
+    <color name="colorAccent">#FFC107</color>
+    <color name="colorTextSecondary">#222222</color>
+    <color name="colorWarning">#FF9800</color>
+    <color name="colorInfo">#1565C0</color>
+    
+    <!-- Colores para la galería -->
+    <color name="primary">#1565C0</color>
+    <color name="accent">#FFC107</color>
+    <color name="divider">#E0E0E0</color>
+    
+    <!-- Colores para estadísticas profesionales -->
+    <color name="green_success">#4CAF50</color>
+    <color name="orange_warning">#FF9800</color>
+    <color name="purple_accent">#9C27B0</color>
+    <color name="red_error">#F44336</color>
+    
+    <!-- Colores para tema oscuro -->
+    <color name="dark_background">#121212</color>
+    <color name="dark_surface">#1E1E1E</color>
+    <color name="dark_card">#2D2D2D</color>
+    <color name="dark_text_primary">#FFFFFF</color>
+    <color name="dark_text_secondary">#B3FFFFFF</color>
+</resources>
