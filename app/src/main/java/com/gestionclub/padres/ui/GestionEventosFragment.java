@@ -43,6 +43,8 @@ public class GestionEventosFragment extends Fragment {
     private FloatingActionButton fabAgregarEvento;
     private FloatingActionButton fabAgregarEntrenamiento;
     private Usuario usuarioActual;
+    private Spinner spinnerFiltroTipoEvento;
+    private String tipoFiltroSeleccionado = "Todos";
 
     @Nullable
     @Override
@@ -53,6 +55,7 @@ public class GestionEventosFragment extends Fragment {
         usuarioActual = dataManager.getUsuarioActual();
         inicializarVistas(view);
         configurarRecyclerView();
+        configurarFiltroTipoEvento(view);
         cargarEventos();
         actualizarEstadisticas();
         
@@ -96,6 +99,23 @@ public class GestionEventosFragment extends Fragment {
         recyclerViewEventos.setAdapter(eventoAdapter);
     }
 
+    private void configurarFiltroTipoEvento(View view) {
+        spinnerFiltroTipoEvento = view.findViewById(R.id.spinnerFiltroTipoEvento);
+        String[] tipos = {"Todos", "Entrenamiento", "Partido", "Otro"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, tipos);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFiltroTipoEvento.setAdapter(adapter);
+        spinnerFiltroTipoEvento.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, View v, int position, long id) {
+                tipoFiltroSeleccionado = tipos[position];
+                cargarEventos();
+            }
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+        });
+    }
+
     private void cargarEventos() {
         List<Evento> eventos = dataManager.getEventos();
         
@@ -110,6 +130,20 @@ public class GestionEventosFragment extends Fragment {
                 }
             }
             eventos = eventosFiltrados;
+        }
+        
+        // Filtrar por tipo seleccionado
+        if (!"Todos".equals(tipoFiltroSeleccionado)) {
+            List<Evento> eventosFiltradosTipo = new ArrayList<>();
+            for (Evento evento : eventos) {
+                if (tipoFiltroSeleccionado.equalsIgnoreCase(evento.getTipo())) {
+                    eventosFiltradosTipo.add(evento);
+                } else if ("Otro".equals(tipoFiltroSeleccionado) &&
+                        !("Entrenamiento".equalsIgnoreCase(evento.getTipo()) || "Partido".equalsIgnoreCase(evento.getTipo()))) {
+                    eventosFiltradosTipo.add(evento);
+                }
+            }
+            eventos = eventosFiltradosTipo;
         }
         
         eventoAdapter.actualizarEventos(eventos);

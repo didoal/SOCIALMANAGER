@@ -30,6 +30,16 @@
             android:layout_height="match_parent"
             android:background="@color/white">
 
+            <!-- Logo de fondo -->
+            <ImageView
+                android:id="@+id/imageViewLogoFondo"
+                android:layout_width="220dp"
+                android:layout_height="220dp"
+                android:layout_gravity="center"
+                android:src="@drawable/logo_santiaguino_guizan"
+                android:alpha="0.08"
+                android:scaleType="centerInside" />
+
             <!-- Contenedor de fragmentos -->
             <FrameLayout
                 android:id="@+id/fragment_container"

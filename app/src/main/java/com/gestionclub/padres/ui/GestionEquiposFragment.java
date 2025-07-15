@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.gestionclub.padres.R;
 import com.gestionclub.padres.adapter.EquipoAdapter;
 import com.gestionclub.padres.adapter.JugadorEquipoAdapter;
+import com.gestionclub.padres.adapter.UsuarioAdapter;
 import com.gestionclub.padres.data.DataManager;
 import com.gestionclub.padres.model.Equipo;
 import com.gestionclub.padres.model.Usuario;
@@ -37,6 +38,10 @@ public class GestionEquiposFragment extends Fragment {
     private DataManager dataManager;
     private TextView textViewEstadisticas;
     private FloatingActionButton fabAgregarEquipo;
+    private RecyclerView recyclerViewJugadoresEquipo;
+    private UsuarioAdapter jugadorAdapter;
+    private Spinner spinnerEquipos;
+    private List<Equipo> listaEquipos;
 
     @Nullable
     @Override
@@ -58,6 +63,10 @@ public class GestionEquiposFragment extends Fragment {
         recyclerViewEquipos = view.findViewById(R.id.recyclerViewEquipos);
         textViewEstadisticas = view.findViewById(R.id.textViewEstadisticas);
         fabAgregarEquipo = view.findViewById(R.id.fabAgregarEquipo);
+        recyclerViewJugadoresEquipo = view.findViewById(R.id.recyclerViewJugadoresEquipo);
+        spinnerEquipos = new Spinner(requireContext());
+        ((ViewGroup) view).addView(spinnerEquipos, 0); // Añadir el spinner arriba del RecyclerView
+        spinnerEquipos.setVisibility(View.GONE);
         
         fabAgregarEquipo.setOnClickListener(v -> mostrarDialogoCrearEquipo());
     }
@@ -70,6 +79,9 @@ public class GestionEquiposFragment extends Fragment {
             this::mostrarDialogoEditarEquipo,
             this::mostrarDialogoGestionarJugadores);
         recyclerViewEquipos.setAdapter(equipoAdapter);
+        recyclerViewJugadoresEquipo.setLayoutManager(new LinearLayoutManager(requireContext()));
+        jugadorAdapter = new UsuarioAdapter(new ArrayList<>(), null, null);
+        recyclerViewJugadoresEquipo.setAdapter(jugadorAdapter);
     }
 
     private void cargarEquipos() {
@@ -349,5 +361,44 @@ public class GestionEquiposFragment extends Fragment {
         Log.d(TAG, "onResume: Fragmento resumido");
         cargarEquipos();
         actualizarEstadisticas();
+        cargarJugadoresEquipo();
+    }
+
+    private void cargarJugadoresEquipo() {
+        Usuario usuarioActual = dataManager.getUsuarioActual();
+        if (usuarioActual != null && usuarioActual.isEsAdmin()) {
+            // Mostrar Spinner y cargar equipos
+            spinnerEquipos.setVisibility(View.VISIBLE);
+            listaEquipos = dataManager.getEquipos();
+            List<String> nombresEquipos = new ArrayList<>();
+            for (Equipo equipo : listaEquipos) {
+                nombresEquipos.add(equipo.getNombre());
+            }
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, nombresEquipos);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinnerEquipos.setAdapter(adapter);
+            spinnerEquipos.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                    Equipo equipoSeleccionado = listaEquipos.get(position);
+                    List<Usuario> jugadores = dataManager.getJugadoresPorEquipo(equipoSeleccionado.getId());
+                    jugadorAdapter.actualizarUsuarios(jugadores);
+                }
+                @Override
+                public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+            });
+            // Mostrar jugadores del primer equipo por defecto
+            if (!listaEquipos.isEmpty()) {
+                List<Usuario> jugadores = dataManager.getJugadoresPorEquipo(listaEquipos.get(0).getId());
+                jugadorAdapter.actualizarUsuarios(jugadores);
+            }
+        } else if (usuarioActual != null && usuarioActual.getEquipoId() != null) {
+            spinnerEquipos.setVisibility(View.GONE);
+            List<Usuario> jugadores = dataManager.getJugadoresPorEquipo(usuarioActual.getEquipoId());
+            jugadorAdapter.actualizarUsuarios(jugadores);
+        } else {
+            spinnerEquipos.setVisibility(View.GONE);
+            jugadorAdapter.actualizarUsuarios(new ArrayList<>());
+        }
     }
 } 

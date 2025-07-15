@@ -93,7 +93,7 @@ public class MensajeAdapter extends RecyclerView.Adapter<MensajeAdapter.MensajeV
                 // Mensaje de administrador
                 textViewAutor.setTextColor(itemView.getContext().getResources().getColor(R.color.gold));
                 textViewAutor.setText(mensaje.getAutorNombre() + " (Admin)");
-            } else if (usuarioActual != null && mensaje.getAutorId().equals(usuarioActual.getId())) {
+            } else if (usuarioActual != null && mensaje.getAutorId() != null && mensaje.getAutorId().equals(usuarioActual.getId())) {
                 // Mensaje propio
                 textViewAutor.setTextColor(itemView.getContext().getResources().getColor(R.color.blue_profesional));
                 textViewAutor.setText("Tú");

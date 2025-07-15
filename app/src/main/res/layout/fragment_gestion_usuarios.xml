@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:background="@color/white">
+
+    <!-- Marca de agua: logo auténtico de fondo -->
+    <ImageView
+        android:id="@+id/imageViewLogoFondoUsuarios"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:layout_gravity="center"
+        android:src="@drawable/logo_santiaguino_guizan"
+        android:alpha="0.08"
+        android:scaleType="centerInside" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -96,6 +106,24 @@
 
         </androidx.cardview.widget.CardView>
 
+        <!-- Selector de equipo para admin -->
+        <TextView
+            android:id="@+id/textViewSeleccionEquipo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Selecciona un equipo"
+            android:textColor="@color/blue_profesional"
+            android:textSize="14sp"
+            android:layout_marginBottom="4dp"
+            android:visibility="gone" />
+
+        <Spinner
+            android:id="@+id/spinnerEquipos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:visibility="gone" />
+
         <!-- Lista de usuarios -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewUsuarios"
@@ -120,4 +148,4 @@
         app:tint="@color/white"
         app:fabSize="normal" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout> 
+</FrameLayout> 

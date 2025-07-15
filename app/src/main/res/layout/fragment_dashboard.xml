@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<<<<<<< HEAD
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -12,99 +11,84 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-<<<<<<< Updated upstream
-        <!-- Header con logo y bienvenida -->
-        <androidx.cardview.widget.CardView
-=======
         <!-- Header Profesional con Logo -->
-        <LinearLayout
->>>>>>> Stashed changes
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardCornerRadius="0dp"
             app:cardElevation="8dp"
             app:cardBackgroundColor="@color/blue_profesional">
 
-<<<<<<< Updated upstream
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="24dp"
-                android:gravity="center">
+                android:orientation="vertical">
 
-                <ImageView
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:src="@drawable/logo_santiaguino"
-                    android:layout_marginBottom="16dp" />
-=======
-            <!-- Logo del Club -->
-            <FrameLayout
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center"
-                android:layout_marginBottom="16dp"
-                android:elevation="12dp">
-
-                <View
+                <!-- Logo del Club -->
+                <FrameLayout
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:background="@drawable/circle_background_white"
-                    android:elevation="8dp" />
-
-                <ImageView
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/logo_santiaguino"
-                    android:elevation="12dp" />
+                    android:layout_marginBottom="16dp"
+                    android:elevation="12dp">
 
-            </FrameLayout>
+                    <View
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:background="@drawable/circle_background_white"
+                        android:elevation="8dp" />
 
-            <!-- Nombre del Club -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="CD SANTIAGUIÑO GUIZÁN"
-                android:textColor="@color/white"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:layout_marginBottom="8dp" />
+                    <ImageView
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/logo_santiaguino"
+                        android:elevation="12dp" />
 
-            <!-- Lema del Club -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="SANTIAGUIÑO, A NOSA FAMILIA"
-                android:textColor="@color/gold"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:layout_marginBottom="12dp" />
+                </FrameLayout>
 
-            <TextView
-                android:id="@+id/textViewBienvenida"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="GESTIÓN PROFESIONAL"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:layout_marginBottom="8dp" />
+                <!-- Nombre del Club -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="CD SANTIAGUIÑO GUIZÁN"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_marginBottom="8dp" />
 
-            <TextView
-                android:id="@+id/textViewUsuario"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Bienvenido al Sistema de Gestión"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:gravity="center"
-                android:alpha="0.9" />
->>>>>>> Stashed changes
+                <!-- Lema del Club -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="SANTIAGUIÑO, A NOSA FAMILIA"
+                    android:textColor="@color/gold"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_marginBottom="12dp" />
+
+                <TextView
+                    android:id="@+id/textViewBienvenida"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="GESTIÓN PROFESIONAL"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/textViewUsuario"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Bienvenido al Sistema de Gestión"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:gravity="center"
+                    android:alpha="0.9" />
 
                 <TextView
                     android:id="@+id/textViewBienvenida"
@@ -392,64 +376,3 @@
 
     </LinearLayout>
 </ScrollView>
-=======
-<resources>
-    <color name="rojo_club">#D50000</color>
-    <color name="rojo_club_dark">#B71C1C</color>
-    <color name="rojo_club_light">#FF5252</color>
-    <color name="black">#FF000000</color>
-    <color name="black_light">#1A1A1A</color>
-    <color name="black_lighter">#2D2D2D</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="white_70">#B3FFFFFF</color>
-    <color name="gray">#888888</color>
-    <color name="gray_light">#FFCCCCCC</color>
-    <color name="gray_medium">#FF888888</color>
-    <color name="gray_dark">#FF444444</color>
-    <color name="background">#FFFEF7</color>
-    <color name="surface">#FFF8E1</color>
-    <color name="danger">#FF4444</color>
-    <color name="red">#FF0000</color>
-    <color name="red_dark">#CC0000</color>
-    <color name="transparent">#00000000</color>
-    
-    <!-- Colores faltantes que causan errores de compilación -->
-    <color name="gold">#FFC107</color>
-    <color name="gold_light">#FFECB3</color>
-    <color name="gold_dark">#FFA000</color>
-    <color name="purple_200">#BB86FC</color>
-    <color name="purple_700">#3700B3</color>
-    <color name="teal_200">#03DAC5</color>
-    <color name="green">#4CAF50</color>
-    <color name="text_primary">#222222</color>
-    <color name="text_secondary">#222222</color>
-    <color name="text_title">#111111</color>
-    <color name="blue_profesional">#1565C0</color>
-    <color name="blue_profesional_light">#1E88E5</color>
-    <color name="blue_profesional_card">#E3F2FD</color>
-    <color name="blue_profesional_accent">#0D47A1</color>
-    <color name="colorPrimary">#0D47A1</color>
-    <color name="colorAccent">#FFC107</color>
-    <color name="colorTextSecondary">#222222</color>
-    <color name="colorWarning">#FF9800</color>
-    <color name="colorInfo">#1565C0</color>
-    
-    <!-- Colores para la galería -->
-    <color name="primary">#1565C0</color>
-    <color name="accent">#FFC107</color>
-    <color name="divider">#E0E0E0</color>
-    
-    <!-- Colores para estadísticas profesionales -->
-    <color name="green_success">#4CAF50</color>
-    <color name="orange_warning">#FF9800</color>
-    <color name="purple_accent">#9C27B0</color>
-    <color name="red_error">#F44336</color>
-    
-    <!-- Colores para tema oscuro -->
-    <color name="dark_background">#121212</color>
-    <color name="dark_surface">#1E1E1E</color>
-    <color name="dark_card">#2D2D2D</color>
-    <color name="dark_text_primary">#FFFFFF</color>
-    <color name="dark_text_secondary">#B3FFFFFF</color>
-</resources>
->>>>>>> f10f192404cf0a4be7ab43dcf7bd9aea746c0fba

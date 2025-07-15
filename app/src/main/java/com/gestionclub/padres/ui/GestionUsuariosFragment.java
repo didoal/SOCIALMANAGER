@@ -37,6 +37,9 @@ public class GestionUsuariosFragment extends Fragment {
     private DataManager dataManager;
     private TextView textViewEstadisticas;
     private FloatingActionButton fabAgregarUsuario;
+    private Spinner spinnerEquipos;
+    private TextView textViewSeleccionEquipo;
+    private List<Equipo> listaEquipos;
 
     @Nullable
     @Override
@@ -58,6 +61,8 @@ public class GestionUsuariosFragment extends Fragment {
         recyclerViewUsuarios = view.findViewById(R.id.recyclerViewUsuarios);
         textViewEstadisticas = view.findViewById(R.id.textViewEstadisticas);
         fabAgregarUsuario = view.findViewById(R.id.fabAgregarUsuario);
+        spinnerEquipos = view.findViewById(R.id.spinnerEquipos);
+        textViewSeleccionEquipo = view.findViewById(R.id.textViewSeleccionEquipo);
         
         fabAgregarUsuario.setOnClickListener(v -> mostrarDialogoCrearUsuario());
     }
@@ -73,9 +78,45 @@ public class GestionUsuariosFragment extends Fragment {
 
     private void cargarUsuarios() {
         Log.d(TAG, "cargarUsuarios: Cargando lista de usuarios");
-        List<Usuario> usuarios = dataManager.getUsuarios();
-        usuarioAdapter.actualizarUsuarios(usuarios);
-        Log.d(TAG, "cargarUsuarios: " + usuarios.size() + " usuarios cargados");
+        Usuario usuarioActual = dataManager.getUsuarioActual();
+        if (usuarioActual != null && usuarioActual.isEsAdmin()) {
+            // Mostrar Spinner y cargar equipos
+            spinnerEquipos.setVisibility(View.VISIBLE);
+            textViewSeleccionEquipo.setVisibility(View.VISIBLE);
+            listaEquipos = dataManager.getEquipos();
+            List<String> nombresEquipos = new ArrayList<>();
+            for (Equipo equipo : listaEquipos) {
+                nombresEquipos.add(equipo.getNombre());
+            }
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, nombresEquipos);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinnerEquipos.setAdapter(adapter);
+            spinnerEquipos.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                    Equipo equipoSeleccionado = listaEquipos.get(position);
+                    List<Usuario> jugadores = dataManager.getJugadoresPorEquipo(equipoSeleccionado.getId());
+                    usuarioAdapter.actualizarUsuarios(jugadores);
+                }
+                @Override
+                public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+            });
+            // Mostrar jugadores del primer equipo por defecto
+            if (!listaEquipos.isEmpty()) {
+                List<Usuario> jugadores = dataManager.getJugadoresPorEquipo(listaEquipos.get(0).getId());
+                usuarioAdapter.actualizarUsuarios(jugadores);
+            }
+        } else if (usuarioActual != null && usuarioActual.getEquipoId() != null) {
+            // Ocultar Spinner
+            spinnerEquipos.setVisibility(View.GONE);
+            textViewSeleccionEquipo.setVisibility(View.GONE);
+            List<Usuario> jugadores = dataManager.getJugadoresPorEquipo(usuarioActual.getEquipoId());
+            usuarioAdapter.actualizarUsuarios(jugadores);
+        } else {
+            spinnerEquipos.setVisibility(View.GONE);
+            textViewSeleccionEquipo.setVisibility(View.GONE);
+            usuarioAdapter.actualizarUsuarios(new ArrayList<>());
+        }
     }
 
     private void actualizarEstadisticas() {

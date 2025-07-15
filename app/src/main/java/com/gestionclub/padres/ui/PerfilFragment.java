@@ -13,9 +13,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.gestionclub.padres.R;
 import com.gestionclub.padres.data.DataManager;
 import com.gestionclub.padres.model.Usuario;
+import com.gestionclub.padres.adapter.UsuarioAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PerfilFragment extends Fragment {
     private DataManager dataManager;
@@ -34,6 +40,8 @@ public class PerfilFragment extends Fragment {
     private Button buttonCambiarPassword;
     private Button buttonConfiguracion;
     private Button buttonCerrarSesion;
+    private RecyclerView recyclerViewJugadoresEquipo;
+    private UsuarioAdapter jugadorAdapter;
 
     @Nullable
     @Override
@@ -83,6 +91,11 @@ public class PerfilFragment extends Fragment {
         buttonCambiarPassword = view.findViewById(R.id.buttonCambiarPassword);
         buttonConfiguracion = view.findViewById(R.id.buttonConfiguracion);
         buttonCerrarSesion = view.findViewById(R.id.buttonCerrarSesion);
+        // RecyclerView para jugadores del equipo
+        recyclerViewJugadoresEquipo = view.findViewById(R.id.recyclerViewJugadoresEquipo);
+        recyclerViewJugadoresEquipo.setLayoutManager(new LinearLayoutManager(requireContext()));
+        jugadorAdapter = new UsuarioAdapter(new ArrayList<>(), null, null);
+        recyclerViewJugadoresEquipo.setAdapter(jugadorAdapter);
     }
 
     private void cargarInformacionPerfil() {
@@ -90,21 +103,24 @@ public class PerfilFragment extends Fragment {
             textViewNombre.setText(usuarioActual.getNombre());
             textViewEmail.setText(usuarioActual.getEmail());
             textViewRol.setText(usuarioActual.isEsAdmin() ? "Administrador" : "Usuario");
-            
             String equipo = usuarioActual.getEquipo();
             if (equipo != null && !equipo.isEmpty()) {
                 textViewEquipo.setText(equipo);
+                // Mostrar jugadores del equipo
+                if (usuarioActual.getEquipoId() != null) {
+                    List<Usuario> jugadores = dataManager.getJugadoresPorEquipo(usuarioActual.getEquipoId());
+                    jugadorAdapter.actualizarUsuarios(jugadores);
+                }
             } else {
                 textViewEquipo.setText("No asignado");
+                jugadorAdapter.actualizarUsuarios(new ArrayList<>());
             }
-            
             String jugador = usuarioActual.getJugador();
             if (jugador != null && !jugador.isEmpty()) {
                 textViewJugador.setText(jugador);
             } else {
                 textViewJugador.setText("No asignado");
             }
-            
             // Formatear fecha de registro
             String fechaRegistro = usuarioActual.getFechaRegistro().toString().substring(0, 10);
             textViewFechaRegistro.setText(fechaRegistro);

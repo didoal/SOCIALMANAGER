@@ -18,6 +18,10 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import com.gestionclub.padres.R;
 import java.util.Locale;
+import com.gestionclub.padres.data.DataManager;
+import com.gestionclub.padres.model.Usuario;
+import android.widget.EditText;
+import android.widget.Toast;
 
 public class ConfiguracionFragment extends Fragment {
     
@@ -26,6 +30,14 @@ public class ConfiguracionFragment extends Fragment {
     private Button buttonCambiarIdioma;
     private Button buttonCambiarTema;
     private SharedPreferences sharedPreferences;
+    private DataManager dataManager;
+    private Usuario usuarioActual;
+    private TextView textViewNombre;
+    private TextView textViewEmail;
+    private TextView textViewEquipo;
+    private TextView textViewJugador;
+    private Button buttonEditarPerfil;
+    private Button buttonCambiarPassword;
 
     @Nullable
     @Override
@@ -33,10 +45,13 @@ public class ConfiguracionFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_configuracion, container, false);
         
         sharedPreferences = requireContext().getSharedPreferences("config", Context.MODE_PRIVATE);
+        dataManager = new DataManager(requireContext());
+        usuarioActual = dataManager.getUsuarioActual();
         
         inicializarVistas(view);
         configurarListeners();
         actualizarInformacion();
+        cargarInformacionUsuario();
         
         return view;
     }
@@ -46,11 +61,20 @@ public class ConfiguracionFragment extends Fragment {
         textViewTemaActual = view.findViewById(R.id.textViewTemaActual);
         buttonCambiarIdioma = view.findViewById(R.id.buttonCambiarIdioma);
         buttonCambiarTema = view.findViewById(R.id.buttonCambiarTema);
+        // Usuario
+        textViewNombre = view.findViewById(R.id.textViewNombreUsuario);
+        textViewEmail = view.findViewById(R.id.textViewEmailUsuario);
+        textViewEquipo = view.findViewById(R.id.textViewEquipoUsuario);
+        textViewJugador = view.findViewById(R.id.textViewJugadorUsuario);
+        buttonEditarPerfil = view.findViewById(R.id.buttonEditarPerfilUsuario);
+        buttonCambiarPassword = view.findViewById(R.id.buttonCambiarPasswordUsuario);
     }
     
     private void configurarListeners() {
         buttonCambiarIdioma.setOnClickListener(v -> mostrarDialogoIdioma());
         buttonCambiarTema.setOnClickListener(v -> mostrarDialogoTema());
+        buttonEditarPerfil.setOnClickListener(v -> mostrarDialogoEditarPerfil());
+        buttonCambiarPassword.setOnClickListener(v -> mostrarDialogoCambiarPassword());
     }
     
     private void actualizarInformacion() {
@@ -160,5 +184,85 @@ public class ConfiguracionFragment extends Fragment {
     public void onResume() {
         super.onResume();
         actualizarInformacion();
+    }
+
+    private void cargarInformacionUsuario() {
+        if (usuarioActual != null) {
+            textViewNombre.setText(usuarioActual.getNombre());
+            textViewEmail.setText(usuarioActual.getEmail());
+            String equipo = usuarioActual.getEquipo();
+            textViewEquipo.setText(equipo != null && !equipo.isEmpty() ? equipo : "No asignado");
+            String jugador = usuarioActual.getJugador();
+            textViewJugador.setText(jugador != null && !jugador.isEmpty() ? jugador : "No asignado");
+        }
+    }
+
+    private void mostrarDialogoEditarPerfil() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_editar_perfil, null);
+        EditText editTextNombre = dialogView.findViewById(R.id.editTextNombre);
+        EditText editTextEmail = dialogView.findViewById(R.id.editTextEmail);
+        EditText editTextJugador = dialogView.findViewById(R.id.editTextJugador);
+        // Pre-llenar con datos actuales
+        editTextNombre.setText(usuarioActual.getNombre());
+        editTextEmail.setText(usuarioActual.getEmail());
+        editTextJugador.setText(usuarioActual.getJugador());
+        builder.setView(dialogView)
+                .setTitle("Editar Perfil")
+                .setPositiveButton("Guardar", (dialog, which) -> {
+                    String nuevoNombre = editTextNombre.getText().toString().trim();
+                    String nuevoEmail = editTextEmail.getText().toString().trim();
+                    String nuevoJugador = editTextJugador.getText().toString().trim();
+                    if (nuevoNombre.isEmpty()) {
+                        Toast.makeText(requireContext(), "El nombre no puede estar vacío", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    usuarioActual.setNombre(nuevoNombre);
+                    usuarioActual.setEmail(nuevoEmail);
+                    usuarioActual.setJugador(nuevoJugador);
+                    dataManager.actualizarUsuario(usuarioActual);
+                    dataManager.guardarUsuarioActual(usuarioActual);
+                    cargarInformacionUsuario();
+                    Toast.makeText(requireContext(), "Perfil actualizado correctamente", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void mostrarDialogoCambiarPassword() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_cambiar_password, null);
+        EditText editTextPasswordActual = dialogView.findViewById(R.id.editTextPasswordActual);
+        EditText editTextPasswordNueva = dialogView.findViewById(R.id.editTextPasswordNueva);
+        EditText editTextPasswordConfirmar = dialogView.findViewById(R.id.editTextPasswordConfirmar);
+        builder.setView(dialogView)
+                .setTitle("Cambiar Contraseña")
+                .setPositiveButton("Cambiar", (dialog, which) -> {
+                    String passwordActual = editTextPasswordActual.getText().toString();
+                    String passwordNueva = editTextPasswordNueva.getText().toString();
+                    String passwordConfirmar = editTextPasswordConfirmar.getText().toString();
+                    if (passwordActual.isEmpty() || passwordNueva.isEmpty() || passwordConfirmar.isEmpty()) {
+                        Toast.makeText(requireContext(), "Completa todos los campos", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if (!passwordActual.equals(usuarioActual.getPassword())) {
+                        Toast.makeText(requireContext(), "La contraseña actual es incorrecta", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if (!passwordNueva.equals(passwordConfirmar)) {
+                        Toast.makeText(requireContext(), "Las contraseñas nuevas no coinciden", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if (passwordNueva.length() < 6) {
+                        Toast.makeText(requireContext(), "La contraseña debe tener al menos 6 caracteres", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    usuarioActual.setPassword(passwordNueva);
+                    dataManager.actualizarUsuario(usuarioActual);
+                    dataManager.guardarUsuarioActual(usuarioActual);
+                    Toast.makeText(requireContext(), "Contraseña cambiada correctamente", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
     }
 } 
