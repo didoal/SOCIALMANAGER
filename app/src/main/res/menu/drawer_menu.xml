@@ -13,11 +13,6 @@
             android:title="Calendario" />
 
         <item
-            android:id="@+id/nav_mi_equipo"
-            android:icon="@drawable/ic_team"
-            android:title="Mi Equipo" />
-
-        <item
             android:id="@+id/nav_muro_destacados"
             android:icon="@drawable/ic_star"
             android:title="Muro de Destacados" />

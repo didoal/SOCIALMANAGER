@@ -145,9 +145,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (id == R.id.nav_inicio) {
             fragment = new DashboardFragment();
             titulo = "Inicio";
-        } else if (id == R.id.nav_mi_equipo) {
-            fragment = new PerfilFragment();
-            titulo = "Mi Equipo";
         } else if (id == R.id.nav_calendario) {
             fragment = new CalendarioFragment();
             titulo = "Calendario";
