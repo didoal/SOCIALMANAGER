@@ -569,4 +569,11 @@ public class ChatFragment extends Fragment {
         super.onResume();
         cargarMensajes();
     }
+
+    public void exportarChatPDF() {
+        // TODO: Implementar exportación a PDF
+    }
+    private void actualizarEstadisticas() {
+        // TODO: Implementar estadísticas
+    }
 } 

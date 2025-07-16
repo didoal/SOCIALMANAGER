@@ -11,7 +11,7 @@
         android:layout_width="220dp"
         android:layout_height="220dp"
         android:layout_gravity="center"
-        android:src="@drawable/logo_santiaguino_guizan"
+        android:src="@drawable/logo_santiaguino"
         android:alpha="0.08"
         android:scaleType="centerInside" />
 

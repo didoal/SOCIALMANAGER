@@ -52,6 +52,7 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import android.widget.LinearLayout;
 
 public class GestionEquiposFragment extends Fragment {
     private static final String TAG = "GestionEquiposFragment";
@@ -331,12 +332,14 @@ public class GestionEquiposFragment extends Fragment {
 
     private void configurarRecyclerView() {
         Log.d(TAG, "configurarRecyclerView: Configurando RecyclerView");
-        recyclerViewEquipos.setLayoutManager(new LinearLayoutManager(requireContext()));
-        equipoAdapter = new EquipoAdapter(new ArrayList<>(), 
-            this::mostrarDialogoEliminarEquipo,
-            this::mostrarDialogoEditarEquipo,
-            this::mostrarDialogoGestionarJugadores);
-        recyclerViewEquipos.setAdapter(equipoAdapter);
+        if (recyclerViewEquipos != null) {
+            recyclerViewEquipos.setLayoutManager(new LinearLayoutManager(requireContext()));
+            equipoAdapter = new EquipoAdapter(new ArrayList<>(), 
+                this::mostrarDialogoEliminarEquipo,
+                this::mostrarDialogoEditarEquipo,
+                this::mostrarDialogoGestionarJugadores);
+            recyclerViewEquipos.setAdapter(equipoAdapter);
+        }
         recyclerViewJugadoresEquipo.setLayoutManager(new LinearLayoutManager(requireContext()));
         jugadorAdapter = new UsuarioAdapter(new ArrayList<>(), null, null);
         recyclerViewJugadoresEquipo.setAdapter(jugadorAdapter);
@@ -899,10 +902,11 @@ public class GestionEquiposFragment extends Fragment {
             
             for (Equipo equipo : equipos) {
                 String categoria = equipo.getCategoria();
-                equiposPorCategoria.put(categoria, equiposPorCategoria.getOrDefault(categoria, 0) + 1);
-                
+                int equiposCount = equiposPorCategoria.containsKey(categoria) ? equiposPorCategoria.get(categoria) : 0;
+                equiposPorCategoria.put(categoria, equiposCount + 1);
                 int numJugadores = equipo.getJugadoresIds() != null ? equipo.getJugadoresIds().size() : 0;
-                jugadoresPorCategoria.put(categoria, jugadoresPorCategoria.getOrDefault(categoria, 0) + numJugadores);
+                int jugadoresCount = jugadoresPorCategoria.containsKey(categoria) ? jugadoresPorCategoria.get(categoria) : 0;
+                jugadoresPorCategoria.put(categoria, jugadoresCount + numJugadores);
             }
             
             PdfPTable categoriasTable = new PdfPTable(3);
@@ -920,7 +924,7 @@ public class GestionEquiposFragment extends Fragment {
             for (Map.Entry<String, Integer> entry : equiposPorCategoria.entrySet()) {
                 String categoria = entry.getKey();
                 int numEquipos = entry.getValue();
-                int numJugadores = jugadoresPorCategoria.getOrDefault(categoria, 0);
+                int numJugadores = jugadoresPorCategoria.containsKey(categoria) ? jugadoresPorCategoria.get(categoria) : 0;
                 
                 categoriasTable.addCell(new PdfPCell(new Phrase(categoria, normalFont)));
                 categoriasTable.addCell(new PdfPCell(new Phrase(String.valueOf(numEquipos), normalFont)));

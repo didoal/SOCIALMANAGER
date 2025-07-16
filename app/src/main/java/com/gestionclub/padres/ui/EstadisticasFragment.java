@@ -694,7 +694,8 @@ public class EstadisticasFragment extends Fragment {
         Map<String, Integer> usuariosPorEquipo = new HashMap<>();
         for (Usuario usuario : usuarios) {
             String equipo = usuario.getEquipo() != null ? usuario.getEquipo() : "Sin equipo";
-            usuariosPorEquipo.put(equipo, usuariosPorEquipo.getOrDefault(equipo, 0) + 1);
+            int count = usuariosPorEquipo.containsKey(equipo) ? usuariosPorEquipo.get(equipo) : 0;
+            usuariosPorEquipo.put(equipo, count + 1);
         }
         
         if (!usuariosPorEquipo.isEmpty()) {
@@ -846,7 +847,8 @@ public class EstadisticasFragment extends Fragment {
             Map<String, Integer> eventosPorTipo = new HashMap<>();
             for (Evento evento : eventos) {
                 String tipo = evento.getTipo();
-                eventosPorTipo.put(tipo, eventosPorTipo.getOrDefault(tipo, 0) + 1);
+                int count = eventosPorTipo.containsKey(tipo) ? eventosPorTipo.get(tipo) : 0;
+                eventosPorTipo.put(tipo, count + 1);
             }
             
             PdfPTable tiposTable = new PdfPTable(2);
@@ -866,7 +868,8 @@ public class EstadisticasFragment extends Fragment {
             Map<String, Integer> usuariosPorEquipo = new HashMap<>();
             for (Usuario usuario : usuarios) {
                 String equipo = usuario.getEquipo() != null ? usuario.getEquipo() : "Sin equipo";
-                usuariosPorEquipo.put(equipo, usuariosPorEquipo.getOrDefault(equipo, 0) + 1);
+                int count = usuariosPorEquipo.containsKey(equipo) ? usuariosPorEquipo.get(equipo) : 0;
+                usuariosPorEquipo.put(equipo, count + 1);
             }
             
             PdfPTable equiposTable = new PdfPTable(2);
@@ -886,7 +889,8 @@ public class EstadisticasFragment extends Fragment {
             Map<String, Integer> asistenciasPorEstado = new HashMap<>();
             for (Asistencia asistencia : asistencias) {
                 String estado = asistencia.getEstado();
-                asistenciasPorEstado.put(estado, asistenciasPorEstado.getOrDefault(estado, 0) + 1);
+                int count = asistenciasPorEstado.containsKey(estado) ? asistenciasPorEstado.get(estado) : 0;
+                asistenciasPorEstado.put(estado, count + 1);
             }
             
             PdfPTable asistenciaTable = new PdfPTable(2);

@@ -58,6 +58,10 @@ public class Usuario {
         return "padre".equalsIgnoreCase(rol) || "tutor".equalsIgnoreCase(rol);
     }
 
+    public boolean isEntrenador() {
+        return "entrenador".equalsIgnoreCase(rol);
+    }
+
     // Métodos adicionales para compatibilidad
     public String getUsername() {
         return email; // Usamos el email como username

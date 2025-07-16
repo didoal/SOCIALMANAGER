@@ -22,6 +22,8 @@ public class Evento {
     private String frecuencia; // "DIARIA", "SEMANAL", "MENSUAL"
     private Date fechaFinRecurrencia;
     private String colorMarcador; // Color para marcador visual en calendario
+    private String estado;
+    private String prioridad;
 
     public Evento() {
         this.id = UUID.randomUUID().toString();
@@ -181,5 +183,21 @@ public class Evento {
 
     public void setColorMarcador(String colorMarcador) {
         this.colorMarcador = colorMarcador;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+    public String getPrioridad() {
+        return prioridad;
+    }
+    public void setPrioridad(String prioridad) {
+        this.prioridad = prioridad;
+    }
+    public java.util.Date getFecha() {
+        return fechaInicio;
     }
 }

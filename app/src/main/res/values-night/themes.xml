@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.Socialmanager" parent="Theme.Material3.DayNight">
+    <style name="Theme.Socialmanager" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/blue_profesional</item>
         <item name="colorPrimaryVariant">@color/blue_profesional</item>

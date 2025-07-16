@@ -47,6 +47,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class AsistenciaFragment extends Fragment {
     private DataManager dataManager;
@@ -54,7 +56,7 @@ public class AsistenciaFragment extends Fragment {
     private AsistenciaAdapter asistenciaAdapter;
     private TextView textViewConfirmados, textViewNoAsisten, textViewPorcentaje, textViewResumenFiltros;
     private Button btnFechaDesde, btnFechaHasta, btnAplicarFiltros;
-    private ImageButton btnExportarPdf;
+    private Button btnExportarPdf;
     private Spinner spinnerTipoFiltro, spinnerEquipo, spinnerCategoria, spinnerJugador;
     private LinearLayout layoutFiltroEquipo, layoutFiltroCategoria, layoutFiltroJugador;
     private PieChart chartAsistencias;
@@ -330,7 +332,12 @@ public class AsistenciaFragment extends Fragment {
         }
         
         // Ordenar por fecha (más recientes primero)
-        asistenciasFiltradas.sort((a1, a2) -> a2.getFecha().compareTo(a1.getFecha()));
+        Collections.sort(asistenciasFiltradas, new Comparator<Asistencia>() {
+            @Override
+            public int compare(Asistencia a1, Asistencia a2) {
+                return a2.getFecha().compareTo(a1.getFecha());
+            }
+        });
         
         asistenciaAdapter.actualizarAsistencias(asistenciasFiltradas);
         actualizarEstadisticas();

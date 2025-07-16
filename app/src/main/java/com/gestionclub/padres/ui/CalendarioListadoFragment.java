@@ -16,6 +16,8 @@ import com.gestionclub.padres.data.DataManager;
 import com.gestionclub.padres.model.Evento;
 import com.gestionclub.padres.model.Usuario;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class CalendarioListadoFragment extends Fragment {
@@ -85,7 +87,12 @@ public class CalendarioListadoFragment extends Fragment {
         }
         
         // Ordenar eventos por fecha
-        eventos.sort((e1, e2) -> e1.getFechaInicio().compareTo(e2.getFechaInicio()));
+        Collections.sort(eventos, new Comparator<Evento>() {
+            @Override
+            public int compare(Evento e1, Evento e2) {
+                return e1.getFechaInicio().compareTo(e2.getFechaInicio());
+            }
+        });
         
         eventoAdapter.actualizarEventos(eventos);
         

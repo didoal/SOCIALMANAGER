@@ -11,6 +11,7 @@ public class Asistencia {
     private boolean asistio;
     private String observaciones;
     private String equipoId;
+    private String estado;
 
     public Asistencia() {
         this.id = String.valueOf(System.currentTimeMillis());
@@ -88,5 +89,12 @@ public class Asistencia {
 
     public void setEquipoId(String equipoId) {
         this.equipoId = equipoId;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 } 

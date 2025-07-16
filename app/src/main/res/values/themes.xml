@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Tema principal de la aplicación -->
-    <style name="Theme.Socialmanager" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Theme.Socialmanager" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/blue_profesional</item>
         <item name="colorPrimaryDark">@color/blue_profesional_accent</item>
         <item name="colorAccent">@color/gold</item>
         <item name="android:windowBackground">@color/white</item>
         <item name="android:textColorPrimary">@color/text_primary</item>
         <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

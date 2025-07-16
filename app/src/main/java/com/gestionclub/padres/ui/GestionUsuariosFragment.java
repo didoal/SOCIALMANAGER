@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -54,6 +55,7 @@ public class GestionUsuariosFragment extends Fragment {
     private String estadoFiltroSeleccionado = "Todos";
     private String fechaRegistroFiltroSeleccionada = "Todas";
     private boolean filtrosAvanzadosVisibles = false;
+    private Usuario usuarioActual;
 
     @Nullable
     @Override
@@ -101,7 +103,7 @@ public class GestionUsuariosFragment extends Fragment {
 
     private void cargarUsuarios() {
         Log.d(TAG, "cargarUsuarios: Cargando lista de usuarios");
-        Usuario usuarioActual = dataManager.getUsuarioActual();
+        usuarioActual = dataManager.getUsuarioActual();
         List<Usuario> usuarios = dataManager.getUsuarios();
         
         // Aplicar filtros avanzados si están configurados
@@ -155,7 +157,7 @@ public class GestionUsuariosFragment extends Fragment {
         } else {
             spinnerEquipos.setVisibility(View.GONE);
             textViewSeleccionEquipo.setVisibility(View.GONE);
-            usuarioAdapter.actualizarUsuarios(usuarios);
+        usuarioAdapter.actualizarUsuarios(usuarios);
         }
     }
 

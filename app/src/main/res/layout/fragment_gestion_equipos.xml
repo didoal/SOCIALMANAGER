@@ -14,66 +14,66 @@
 
         <!-- Header Profesional con Logo -->
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
             android:background="@drawable/gradient_blue_professional"
             android:padding="24dp"
             android:layout_marginBottom="24dp">
 
-            <!-- Logo del Club -->
-            <FrameLayout
+                <!-- Logo del Club -->
+                <FrameLayout
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:layout_gravity="center"
-                android:layout_marginBottom="12dp"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="12dp"
                 android:elevation="12dp">
 
-                <View
+                    <View
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:background="@drawable/circle_background_white"
+                        android:background="@drawable/circle_background_white"
                     android:elevation="8dp" />
 
-                <ImageView
+                    <ImageView
                     android:layout_width="64dp"
                     android:layout_height="64dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/logo_santiaguino"
+                        android:layout_gravity="center"
+                        android:src="@drawable/logo_santiaguino"
                     android:elevation="12dp" />
 
-            </FrameLayout>
+                </FrameLayout>
 
-            <!-- Nombre del Club -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="CD SANTIAGUIÑO GUIZÁN"
-                android:textColor="@color/white"
+                <!-- Nombre del Club -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="CD SANTIAGUIÑO GUIZÁN"
+                    android:textColor="@color/white"
                 android:textSize="20sp"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:layout_marginBottom="4dp" />
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_marginBottom="4dp" />
 
-            <!-- Lema del Club -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="SANTIAGUIÑO, A NOSA FAMILIA"
-                android:textColor="@color/gold"
+                <!-- Lema del Club -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="SANTIAGUIÑO, A NOSA FAMILIA"
+                    android:textColor="@color/gold"
                 android:textSize="14sp"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:layout_marginBottom="12dp" />
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_marginBottom="12dp" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                 android:text="GESTIÓN DE EQUIPOS"
-                android:textColor="@color/white"
+                    android:textColor="@color/white"
                 android:textSize="24sp"
-                android:textStyle="bold"
-                android:gravity="center"
+                    android:textStyle="bold"
+                    android:gravity="center"
                 android:layout_marginBottom="8dp" />
 
             <TextView
@@ -120,7 +120,7 @@
                         app:tint="@color/blue_profesional"
                         android:layout_marginEnd="12dp" />
 
-                    <TextView
+                <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -292,8 +292,8 @@
                             android:layout_height="48dp"
                             android:layout_weight="1"
                             android:text="LIMPIAR FILTROS"
-                            android:textColor="@color/white"
-                            android:textSize="14sp"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
                             android:textStyle="bold"
                             android:background="@drawable/button_gray_background"
                             android:layout_marginStart="8dp" />
@@ -565,6 +565,18 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:nestedScrollingEnabled="false" />
+
+        <!-- Botón flotante para agregar equipo -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAgregarEquipo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="24dp"
+        android:src="@drawable/ic_add"
+            app:backgroundTint="@color/blue_profesional"
+        app:tint="@color/white"
+            android:contentDescription="Agregar equipo" />
 
     </LinearLayout>
 

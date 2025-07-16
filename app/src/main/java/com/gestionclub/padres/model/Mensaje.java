@@ -103,4 +103,13 @@ public class Mensaje {
     public void setRemitenteNombre(String nombre) {
         this.autorNombre = nombre;
     }
+
+    public String getUsuario() {
+        return autorNombre;
+    }
+
+    // Método agregado para compatibilidad con ChatFragment
+    public String getTipo() {
+        return "texto";
+    }
 } 
