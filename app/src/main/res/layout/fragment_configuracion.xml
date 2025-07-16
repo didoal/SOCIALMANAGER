@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
@@ -23,94 +24,233 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="24dp">
+            android:padding="0dp">
 
-            <!-- Datos del usuario -->
-            <TextView
-                android:id="@+id/textViewNombreUsuario"
+            <!-- Header profesional -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Nombre"
-                android:textStyle="bold"
-                android:textSize="18sp"
-                android:layout_marginBottom="4dp" />
+                android:orientation="vertical"
+                android:background="@drawable/gradient_blue_professional"
+                android:padding="24dp"
+                android:layout_marginBottom="20dp">
 
-            <TextView
-                android:id="@+id/textViewEmailUsuario"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/logo_santiaguino"
+                        android:layout_marginEnd="16dp" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="CD SANTIAGUIÑO GUIZÁN"
+                            android:textColor="@color/white"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="SANTIAGUIÑO, A NOSA FAMILIA"
+                            android:textColor="@color/gold"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="CONFIGURACIÓN DE USUARIO"
+                    android:textColor="@color/white"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_marginTop="12dp" />
+            </LinearLayout>
+
+            <!-- Tarjeta: Datos del usuario -->
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Email"
-                android:textSize="16sp"
-                android:layout_marginBottom="4dp" />
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/white"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginBottom="20dp">
 
-            <TextView
-                android:id="@+id/textViewEquipoUsuario"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:id="@+id/textViewNombreUsuario"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Nombre"
+                        android:textStyle="bold"
+                        android:textSize="18sp"
+                        android:drawableStart="@drawable/ic_profile"
+                        android:drawablePadding="8dp"
+                        android:layout_marginBottom="4dp" />
+
+                    <TextView
+                        android:id="@+id/textViewEmailUsuario"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Email"
+                        android:textSize="16sp"
+                        android:drawableStart="@drawable/ic_email"
+                        android:drawablePadding="8dp"
+                        android:layout_marginBottom="4dp" />
+
+                    <TextView
+                        android:id="@+id/textViewEquipoUsuario"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Equipo"
+                        android:textSize="16sp"
+                        android:drawableStart="@drawable/ic_team"
+                        android:drawablePadding="8dp"
+                        android:layout_marginBottom="4dp" />
+
+                    <TextView
+                        android:id="@+id/textViewJugadorUsuario"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Jugador"
+                        android:textSize="16sp"
+                        android:drawableStart="@drawable/ic_person"
+                        android:drawablePadding="8dp"
+                        android:layout_marginBottom="12dp" />
+
+                    <TextView
+                        android:id="@+id/textViewRolUsuario"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Rol: Usuario"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/blue_profesional"
+                        android:drawableStart="@drawable/ic_admin"
+                        android:drawablePadding="8dp"
+                        android:layout_marginBottom="16dp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/blue_profesional"
+                        android:alpha="0.1"
+                        android:layout_marginBottom="12dp" />
+
+                    <Button
+                        android:id="@+id/buttonEditarPerfilUsuario"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Editar perfil"
+                        android:background="@drawable/button_blue_background"
+                        android:textColor="@color/white"
+                        android:drawableStart="@drawable/ic_edit"
+                        android:drawablePadding="8dp"
+                        android:layout_marginBottom="8dp" />
+
+                    <Button
+                        android:id="@+id/buttonCambiarPasswordUsuario"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Cambiar contraseña"
+                        android:background="@drawable/button_gold_background"
+                        android:textColor="@color/white"
+                        android:drawableStart="@drawable/ic_lock"
+                        android:drawablePadding="8dp"
+                        android:layout_marginBottom="0dp" />
+
+                    <Button
+                        android:id="@+id/buttonOpcionesAvanzadas"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Opciones avanzadas de administrador"
+                        android:background="@drawable/button_secondary_background"
+                        android:textColor="@color/blue_profesional"
+                        android:drawableStart="@drawable/ic_admin"
+                        android:drawablePadding="8dp"
+                        android:layout_marginTop="16dp"
+                        android:visibility="gone" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Tarjeta: Configuración de idioma y tema -->
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Equipo"
-                android:textSize="16sp"
-                android:layout_marginBottom="4dp" />
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/white"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginBottom="20dp">
 
-            <TextView
-                android:id="@+id/textViewJugadorUsuario"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Jugador"
-                android:textSize="16sp"
-                android:layout_marginBottom="12dp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
 
-            <Button
-                android:id="@+id/buttonEditarPerfilUsuario"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Editar perfil"
-                android:background="@drawable/button_blue_background"
-                android:textColor="@color/white"
-                android:layout_marginBottom="8dp" />
+                    <TextView
+                        android:id="@+id/textViewIdiomaActual"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Idioma actual: Español"
+                        android:textSize="16sp"
+                        android:drawableStart="@drawable/ic_language"
+                        android:drawablePadding="8dp"
+                        android:layout_marginBottom="8dp" />
 
-            <Button
-                android:id="@+id/buttonCambiarPasswordUsuario"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Cambiar contraseña"
-                android:background="@drawable/button_gold_background"
-                android:textColor="@color/white"
-                android:layout_marginBottom="24dp" />
+                    <Button
+                        android:id="@+id/buttonCambiarIdioma"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Cambiar idioma"
+                        android:background="@drawable/button_gray_background"
+                        android:textColor="@color/black"
+                        android:drawableStart="@drawable/ic_edit"
+                        android:drawablePadding="8dp"
+                        android:layout_marginBottom="16dp" />
 
-            <!-- Configuración de idioma y tema -->
-            <TextView
-                android:id="@+id/textViewIdiomaActual"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Idioma actual: Español"
-                android:textSize="16sp"
-                android:layout_marginBottom="8dp" />
+                    <TextView
+                        android:id="@+id/textViewTemaActual"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Tema actual: Claro"
+                        android:textSize="16sp"
+                        android:drawableStart="@drawable/ic_settings"
+                        android:drawablePadding="8dp"
+                        android:layout_marginBottom="8dp" />
 
-            <Button
-                android:id="@+id/buttonCambiarIdioma"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Cambiar idioma"
-                android:background="@drawable/button_gray_background"
-                android:textColor="@color/black"
-                android:layout_marginBottom="16dp" />
-
-            <TextView
-                android:id="@+id/textViewTemaActual"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Tema actual: Claro"
-                android:textSize="16sp"
-                android:layout_marginBottom="8dp" />
-
-            <Button
-                android:id="@+id/buttonCambiarTema"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Cambiar tema"
-                android:background="@drawable/button_gray_background"
-                android:textColor="@color/black"
-                android:layout_marginBottom="16dp" />
+                    <Button
+                        android:id="@+id/buttonCambiarTema"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Cambiar tema"
+                        android:background="@drawable/button_gray_background"
+                        android:textColor="@color/black"
+                        android:drawableStart="@drawable/ic_edit"
+                        android:drawablePadding="8dp"
+                        android:layout_marginBottom="0dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
         </LinearLayout>
     </ScrollView>

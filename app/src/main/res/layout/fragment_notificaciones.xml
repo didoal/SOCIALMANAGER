@@ -211,8 +211,22 @@
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:background="@drawable/button_red_background"
-                android:layout_marginBottom="12dp"
+                android:layout_marginBottom="8dp"
                 android:padding="12dp" />
+
+            <!-- Botón exportar notificaciones (solo admin) -->
+            <Button
+                android:id="@+id/buttonExportarNotificaciones"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="📊 Exportar Reporte"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:background="@drawable/button_green_background"
+                android:layout_marginBottom="12dp"
+                android:padding="12dp"
+                android:visibility="gone" />
 
         </LinearLayout>
 
@@ -264,18 +278,41 @@
 
         </LinearLayout>
 
-        <!-- Botón para mostrar/ocultar filtros avanzados -->
-        <Button
-            android:id="@+id/buttonFiltrosAvanzados"
+        <!-- Botones de filtros avanzados -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="🔍 Filtros Avanzados"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:background="@drawable/button_gold_background"
-            android:layout_marginBottom="16dp"
-            android:padding="16dp" />
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <!-- Botón para mostrar/ocultar filtros avanzados -->
+            <Button
+                android:id="@+id/buttonFiltrosAvanzados"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="🔍 Filtros Avanzados"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:background="@drawable/button_gold_background"
+                android:layout_marginEnd="8dp"
+                android:padding="12dp" />
+
+            <!-- Botón limpiar filtros -->
+            <Button
+                android:id="@+id/buttonLimpiarFiltros"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="🔄 Limpiar"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:background="@drawable/button_secondary_background"
+                android:padding="12dp" />
+
+        </LinearLayout>
 
         <!-- Filtros avanzados (inicialmente ocultos) -->
         <LinearLayout
@@ -329,7 +366,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
 
                 <TextView
                     android:layout_width="80dp"
@@ -341,6 +379,57 @@
 
                 <Spinner
                     android:id="@+id/spinnerEquipo"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/spinner_background"
+                    android:padding="12dp" />
+
+            </LinearLayout>
+
+            <!-- Filtro por fecha -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:text="📅 Fecha:"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_secondary" />
+
+                <Spinner
+                    android:id="@+id/spinnerFecha"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/spinner_background"
+                    android:padding="12dp" />
+
+            </LinearLayout>
+
+            <!-- Filtro por prioridad -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:text="⚠️ Prioridad:"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_secondary" />
+
+                <Spinner
+                    android:id="@+id/spinnerPrioridad"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

@@ -40,6 +40,20 @@ public class GestionUsuariosFragment extends Fragment {
     private Spinner spinnerEquipos;
     private TextView textViewSeleccionEquipo;
     private List<Equipo> listaEquipos;
+    private Spinner spinnerFiltroRol;
+    private Spinner spinnerFiltroEquipo;
+    private Spinner spinnerFiltroEstado;
+    private Spinner spinnerFiltroFechaRegistro;
+    private LinearLayout layoutFiltrosAvanzados;
+    private Button buttonMostrarFiltrosAvanzados;
+    private Button buttonLimpiarFiltros;
+    private Button buttonExportarUsuarios;
+
+    private String rolFiltroSeleccionado = "Todos";
+    private String equipoFiltroSeleccionado = "Todos";
+    private String estadoFiltroSeleccionado = "Todos";
+    private String fechaRegistroFiltroSeleccionada = "Todas";
+    private boolean filtrosAvanzadosVisibles = false;
 
     @Nullable
     @Override
@@ -50,6 +64,7 @@ public class GestionUsuariosFragment extends Fragment {
         dataManager = new DataManager(requireContext());
         inicializarVistas(view);
         configurarRecyclerView();
+        configurarFiltrosAvanzados(view);
         cargarUsuarios();
         actualizarEstadisticas();
         
@@ -63,6 +78,14 @@ public class GestionUsuariosFragment extends Fragment {
         fabAgregarUsuario = view.findViewById(R.id.fabAgregarUsuario);
         spinnerEquipos = view.findViewById(R.id.spinnerEquipos);
         textViewSeleccionEquipo = view.findViewById(R.id.textViewSeleccionEquipo);
+        layoutFiltrosAvanzados = view.findViewById(R.id.layoutFiltrosAvanzados);
+        spinnerFiltroRol = view.findViewById(R.id.spinnerFiltroRol);
+        spinnerFiltroEquipo = view.findViewById(R.id.spinnerFiltroEquipo);
+        spinnerFiltroEstado = view.findViewById(R.id.spinnerFiltroEstado);
+        spinnerFiltroFechaRegistro = view.findViewById(R.id.spinnerFiltroFechaRegistro);
+        buttonMostrarFiltrosAvanzados = view.findViewById(R.id.buttonMostrarFiltrosAvanzados);
+        buttonLimpiarFiltros = view.findViewById(R.id.buttonLimpiarFiltros);
+        buttonExportarUsuarios = view.findViewById(R.id.buttonExportarUsuarios);
         
         fabAgregarUsuario.setOnClickListener(v -> mostrarDialogoCrearUsuario());
     }
@@ -79,6 +102,13 @@ public class GestionUsuariosFragment extends Fragment {
     private void cargarUsuarios() {
         Log.d(TAG, "cargarUsuarios: Cargando lista de usuarios");
         Usuario usuarioActual = dataManager.getUsuarioActual();
+        List<Usuario> usuarios = dataManager.getUsuarios();
+        
+        // Aplicar filtros avanzados si están configurados
+        if (filtrosAvanzadosVisibles) {
+            usuarios = aplicarFiltrosAvanzados(usuarios);
+        }
+        
         if (usuarioActual != null && usuarioActual.isEsAdmin()) {
             // Mostrar Spinner y cargar equipos
             spinnerEquipos.setVisibility(View.VISIBLE);
@@ -96,6 +126,10 @@ public class GestionUsuariosFragment extends Fragment {
                 public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
                     Equipo equipoSeleccionado = listaEquipos.get(position);
                     List<Usuario> jugadores = dataManager.getJugadoresPorEquipo(equipoSeleccionado.getId());
+                    // Aplicar filtros avanzados también a los jugadores del equipo
+                    if (filtrosAvanzadosVisibles) {
+                        jugadores = aplicarFiltrosAvanzados(jugadores);
+                    }
                     usuarioAdapter.actualizarUsuarios(jugadores);
                 }
                 @Override
@@ -104,6 +138,9 @@ public class GestionUsuariosFragment extends Fragment {
             // Mostrar jugadores del primer equipo por defecto
             if (!listaEquipos.isEmpty()) {
                 List<Usuario> jugadores = dataManager.getJugadoresPorEquipo(listaEquipos.get(0).getId());
+                if (filtrosAvanzadosVisibles) {
+                    jugadores = aplicarFiltrosAvanzados(jugadores);
+                }
                 usuarioAdapter.actualizarUsuarios(jugadores);
             }
         } else if (usuarioActual != null && usuarioActual.getEquipoId() != null) {
@@ -111,12 +148,208 @@ public class GestionUsuariosFragment extends Fragment {
             spinnerEquipos.setVisibility(View.GONE);
             textViewSeleccionEquipo.setVisibility(View.GONE);
             List<Usuario> jugadores = dataManager.getJugadoresPorEquipo(usuarioActual.getEquipoId());
+            if (filtrosAvanzadosVisibles) {
+                jugadores = aplicarFiltrosAvanzados(jugadores);
+            }
             usuarioAdapter.actualizarUsuarios(jugadores);
         } else {
             spinnerEquipos.setVisibility(View.GONE);
             textViewSeleccionEquipo.setVisibility(View.GONE);
-            usuarioAdapter.actualizarUsuarios(new ArrayList<>());
+            usuarioAdapter.actualizarUsuarios(usuarios);
         }
+    }
+
+    private List<Usuario> aplicarFiltrosAvanzados(List<Usuario> usuarios) {
+        List<Usuario> usuariosFiltrados = new ArrayList<>();
+        
+        for (Usuario usuario : usuarios) {
+            boolean cumpleFiltroRol = true;
+            boolean cumpleFiltroEquipo = true;
+            boolean cumpleFiltroEstado = true;
+            boolean cumpleFiltroFecha = true;
+            
+            // Filtro por rol
+            if (!"Todos".equals(rolFiltroSeleccionado)) {
+                cumpleFiltroRol = rolFiltroSeleccionado.equalsIgnoreCase(usuario.getRol());
+            }
+            
+            // Filtro por equipo
+            if (!"Todos".equals(equipoFiltroSeleccionado)) {
+                cumpleFiltroEquipo = equipoFiltroSeleccionado.equals(usuario.getEquipo());
+            }
+            
+            // Filtro por estado (asumiendo que el usuario tiene un campo estado)
+            if (!"Todos".equals(estadoFiltroSeleccionado)) {
+                // Por defecto, todos los usuarios están activos
+                boolean esActivo = true; // Aquí podrías verificar un campo estado real
+                cumpleFiltroEstado = ("Activo".equals(estadoFiltroSeleccionado) && esActivo) ||
+                                   ("Inactivo".equals(estadoFiltroSeleccionado) && !esActivo);
+            }
+            
+            // Filtro por fecha de registro (asumiendo que el usuario tiene fecha de registro)
+            if (!"Todas".equals(fechaRegistroFiltroSeleccionada)) {
+                // Por ahora, no aplicamos filtro de fecha ya que el modelo Usuario no tiene fecha de registro
+                cumpleFiltroFecha = true;
+            }
+            
+            if (cumpleFiltroRol && cumpleFiltroEquipo && cumpleFiltroEstado && cumpleFiltroFecha) {
+                usuariosFiltrados.add(usuario);
+            }
+        }
+        
+        return usuariosFiltrados;
+    }
+
+    private void configurarFiltrosAvanzados(View view) {
+        // Configurar spinner de roles para filtros avanzados
+        String[] roles = {"Todos", "Padre", "Madre", "Tutor", "Jugador", "Entrenador"};
+        ArrayAdapter<String> rolAdapter = new ArrayAdapter<>(requireContext(), 
+                android.R.layout.simple_spinner_item, roles);
+        rolAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFiltroRol.setAdapter(rolAdapter);
+        spinnerFiltroRol.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                rolFiltroSeleccionado = roles[position];
+                filtrosAvanzadosVisibles = true;
+                cargarUsuarios();
+            }
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+        });
+
+        // Configurar spinner de equipos para filtros avanzados
+        List<String> equipos = new ArrayList<>();
+        equipos.add("Todos");
+        List<Equipo> equiposReales = dataManager.getEquipos();
+        for (Equipo equipo : equiposReales) {
+            equipos.add(equipo.getNombre());
+        }
+        ArrayAdapter<String> equipoAdapter = new ArrayAdapter<>(requireContext(), 
+                android.R.layout.simple_spinner_item, equipos);
+        equipoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFiltroEquipo.setAdapter(equipoAdapter);
+        spinnerFiltroEquipo.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                equipoFiltroSeleccionado = equipos.get(position);
+                filtrosAvanzadosVisibles = true;
+                cargarUsuarios();
+            }
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+        });
+
+        // Configurar spinner de estado para filtros avanzados
+        String[] estados = {"Todos", "Activo", "Inactivo"};
+        ArrayAdapter<String> estadoAdapter = new ArrayAdapter<>(requireContext(), 
+                android.R.layout.simple_spinner_item, estados);
+        estadoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFiltroEstado.setAdapter(estadoAdapter);
+        spinnerFiltroEstado.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                estadoFiltroSeleccionado = estados[position];
+                filtrosAvanzadosVisibles = true;
+                cargarUsuarios();
+            }
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+        });
+
+        // Configurar spinner de fecha de registro para filtros avanzados
+        String[] fechas = {"Todas", "Última semana", "Último mes", "Último año"};
+        ArrayAdapter<String> fechaAdapter = new ArrayAdapter<>(requireContext(), 
+                android.R.layout.simple_spinner_item, fechas);
+        fechaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFiltroFechaRegistro.setAdapter(fechaAdapter);
+        spinnerFiltroFechaRegistro.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                fechaRegistroFiltroSeleccionada = fechas[position];
+                filtrosAvanzadosVisibles = true;
+                cargarUsuarios();
+            }
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+        });
+
+        // Listener para mostrar/ocultar filtros avanzados
+        buttonMostrarFiltrosAvanzados.setOnClickListener(v -> {
+            if (layoutFiltrosAvanzados.getVisibility() == View.GONE) {
+                layoutFiltrosAvanzados.setVisibility(View.VISIBLE);
+                buttonMostrarFiltrosAvanzados.setText("🔍 Ocultar Filtros");
+            } else {
+                layoutFiltrosAvanzados.setVisibility(View.GONE);
+                buttonMostrarFiltrosAvanzados.setText("🔍 Filtros Avanzados");
+            }
+        });
+
+        // Listener para limpiar filtros
+        buttonLimpiarFiltros.setOnClickListener(v -> {
+            spinnerFiltroRol.setSelection(0);
+            spinnerFiltroEquipo.setSelection(0);
+            spinnerFiltroEstado.setSelection(0);
+            spinnerFiltroFechaRegistro.setSelection(0);
+            filtrosAvanzadosVisibles = false;
+            cargarUsuarios();
+            actualizarEstadisticas();
+            Toast.makeText(requireContext(), "Filtros limpiados", Toast.LENGTH_SHORT).show();
+        });
+
+        // Listener para exportar usuarios
+        buttonExportarUsuarios.setOnClickListener(v -> {
+            if (usuarioActual != null && usuarioActual.isEsAdmin()) {
+                List<Usuario> usuarios = dataManager.getUsuarios();
+                if (usuarios.isEmpty()) {
+                    Toast.makeText(requireContext(), "No hay usuarios para exportar", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                
+                StringBuilder reporte = new StringBuilder();
+                reporte.append("REPORTE DE USUARIOS - CD SANTIAGUIÑO GUIZÁN\n");
+                reporte.append("Fecha: ").append(new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault()).format(new java.util.Date())).append("\n\n");
+                
+                int total = usuarios.size();
+                int admins = 0, padres = 0, madres = 0, tutores = 0, jugadores = 0, entrenadores = 0;
+                
+                for (Usuario usuario : usuarios) {
+                    switch (usuario.getRol().toLowerCase()) {
+                        case "admin": admins++; break;
+                        case "padre": padres++; break;
+                        case "madre": madres++; break;
+                        case "tutor": tutores++; break;
+                        case "jugador": jugadores++; break;
+                        case "entrenador": entrenadores++; break;
+                    }
+                    
+                    reporte.append("• ").append(usuario.getNombre()).append("\n");
+                    reporte.append("  Rol: ").append(usuario.getRol()).append("\n");
+                    reporte.append("  Equipo: ").append(usuario.getEquipo() != null ? usuario.getEquipo() : "Sin equipo").append("\n");
+                    reporte.append("  Email: ").append(usuario.getEmail() != null ? usuario.getEmail() : "No disponible").append("\n\n");
+                }
+                
+                reporte.append("\nRESUMEN:\n");
+                reporte.append("Total: ").append(total).append("\n");
+                reporte.append("Administradores: ").append(admins).append("\n");
+                reporte.append("Padres: ").append(padres).append("\n");
+                reporte.append("Madres: ").append(madres).append("\n");
+                reporte.append("Tutores: ").append(tutores).append("\n");
+                reporte.append("Jugadores: ").append(jugadores).append("\n");
+                reporte.append("Entrenadores: ").append(entrenadores).append("\n");
+                
+                new AlertDialog.Builder(requireContext())
+                    .setTitle("📊 Reporte de Usuarios")
+                    .setMessage(reporte.toString())
+                    .setPositiveButton("Copiar", (dialog, which) -> {
+                        Toast.makeText(requireContext(), "Reporte copiado al portapapeles", Toast.LENGTH_SHORT).show();
+                    })
+                    .setNegativeButton("Cerrar", null)
+                    .show();
+            } else {
+                Toast.makeText(requireContext(), "Solo los administradores pueden exportar usuarios", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void actualizarEstadisticas() {

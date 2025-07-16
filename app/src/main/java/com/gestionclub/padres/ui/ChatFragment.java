@@ -24,6 +24,9 @@ import com.gestionclub.padres.model.Mensaje;
 import com.gestionclub.padres.model.Usuario;
 import java.util.ArrayList;
 import java.util.List;
+import android.widget.LinearLayout;
+import android.widget.ImageView;
+import android.widget.AdapterView;
 
 public class ChatFragment extends Fragment {
     private RecyclerView recyclerViewMensajes;
@@ -38,6 +41,31 @@ public class ChatFragment extends Fragment {
     private Usuario usuarioActual;
     private String equipoFiltroActual = "Todos";
     private boolean mostrandoDestacados = false;
+    
+    // Vistas de filtros avanzados
+    private LinearLayout layoutHeaderFiltros;
+    private LinearLayout layoutContenidoFiltros;
+    private ImageView imageViewExpandirFiltros;
+    private Spinner spinnerFiltroEquipo;
+    private Spinner spinnerFiltroTipoMensaje;
+    private Spinner spinnerFiltroUsuario;
+    private Spinner spinnerFiltroEstado;
+    private Button buttonAplicarFiltros;
+    private Button buttonLimpiarFiltros;
+    
+    // Vistas de estadísticas
+    private TextView textViewTotalMensajes;
+    private TextView textViewMensajesDestacados;
+    
+    // Vistas de controles
+    private Button buttonExportarChat;
+    
+    // Variables de filtros
+    private String filtroEquipoAvanzado = "TODOS";
+    private String filtroTipoMensaje = "TODOS";
+    private String filtroUsuario = "TODOS";
+    private String filtroEstado = "TODOS";
+    private boolean filtrosExpandidos = false;
 
     @Nullable
     @Override
@@ -76,6 +104,24 @@ public class ChatFragment extends Fragment {
         buttonDestacados = view.findViewById(R.id.buttonDestacados);
         textViewChatInfo = view.findViewById(R.id.textViewChatInfo);
         textViewEquipoFiltro = view.findViewById(R.id.textViewEquipoFiltro);
+        
+        // Inicializar vistas de filtros avanzados
+        layoutHeaderFiltros = view.findViewById(R.id.layoutHeaderFiltros);
+        layoutContenidoFiltros = view.findViewById(R.id.layoutContenidoFiltros);
+        imageViewExpandirFiltros = view.findViewById(R.id.imageViewExpandirFiltros);
+        spinnerFiltroEquipo = view.findViewById(R.id.spinnerFiltroEquipo);
+        spinnerFiltroTipoMensaje = view.findViewById(R.id.spinnerFiltroTipoMensaje);
+        spinnerFiltroUsuario = view.findViewById(R.id.spinnerFiltroUsuario);
+        spinnerFiltroEstado = view.findViewById(R.id.spinnerFiltroEstado);
+        buttonAplicarFiltros = view.findViewById(R.id.buttonAplicarFiltros);
+        buttonLimpiarFiltros = view.findViewById(R.id.buttonLimpiarFiltros);
+        
+        // Inicializar vistas de estadísticas
+        textViewTotalMensajes = view.findViewById(R.id.textViewTotalMensajes);
+        textViewMensajesDestacados = view.findViewById(R.id.textViewMensajesDestacados);
+        
+        // Inicializar vistas de controles
+        buttonExportarChat = view.findViewById(R.id.buttonExportarChat);
     }
 
     private void configurarRecyclerView() {
@@ -108,34 +154,218 @@ public class ChatFragment extends Fragment {
             }
         }
     }
+    
+    private void configurarFiltrosAvanzados() {
+        // Configurar expansión/colapso de filtros
+        if (layoutHeaderFiltros != null) {
+            layoutHeaderFiltros.setOnClickListener(v -> toggleFiltros());
+        }
+        
+        // Configurar spinners
+        configurarSpinnerEquipo();
+        configurarSpinnerTipoMensaje();
+        configurarSpinnerUsuario();
+        configurarSpinnerEstado();
+        
+        // Configurar botones de acción
+        if (buttonAplicarFiltros != null) {
+            buttonAplicarFiltros.setOnClickListener(v -> aplicarFiltros());
+        }
+        
+        if (buttonLimpiarFiltros != null) {
+            buttonLimpiarFiltros.setOnClickListener(v -> limpiarFiltros());
+        }
+        
+        if (buttonExportarChat != null) {
+            buttonExportarChat.setOnClickListener(v -> exportarChatPDF());
+        }
+        
+        // Configurar visibilidad según rol
+        configurarVisibilidadFiltros();
+    }
+    
+    private void configurarVisibilidadFiltros() {
+        // Mostrar filtros para administradores y entrenadores
+        boolean puedeGestionar = usuarioActual != null && 
+            (usuarioActual.isEsAdmin() || "entrenador".equals(usuarioActual.getRol()));
+        
+        if (layoutHeaderFiltros != null) {
+            layoutHeaderFiltros.setVisibility(puedeGestionar ? View.VISIBLE : View.GONE);
+        }
+    }
+    
+    private void toggleFiltros() {
+        if (layoutContenidoFiltros == null || imageViewExpandirFiltros == null) return;
+        
+        filtrosExpandidos = !filtrosExpandidos;
+        
+        if (filtrosExpandidos) {
+            layoutContenidoFiltros.setVisibility(View.VISIBLE);
+            imageViewExpandirFiltros.setRotation(180f);
+        } else {
+            layoutContenidoFiltros.setVisibility(View.GONE);
+            imageViewExpandirFiltros.setRotation(0f);
+        }
+    }
+    
+    private void configurarSpinnerEquipo() {
+        if (spinnerFiltroEquipo == null) return;
+        
+        List<String> equipos = new ArrayList<>();
+        equipos.add("TODOS");
+        
+        // Si es entrenador, solo mostrar su equipo
+        if (usuarioActual != null && "entrenador".equals(usuarioActual.getRol()) && 
+            usuarioActual.getEquipo() != null) {
+            equipos.add(usuarioActual.getEquipo());
+        } else {
+            // Si es admin, mostrar todos los equipos
+            equipos.addAll(dataManager.getNombresEquipos());
+        }
+        
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), 
+                android.R.layout.simple_spinner_item, equipos);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFiltroEquipo.setAdapter(adapter);
+        
+        spinnerFiltroEquipo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                filtroEquipoAvanzado = parent.getItemAtPosition(position).toString();
+            }
+            
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                filtroEquipoAvanzado = "TODOS";
+            }
+        });
+    }
+    
+    private void configurarSpinnerTipoMensaje() {
+        if (spinnerFiltroTipoMensaje == null) return;
+        
+        String[] tipos = {"TODOS", "GENERAL", "INFORMATIVO", "URGENTE", "ANUNCIO"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), 
+                android.R.layout.simple_spinner_item, tipos);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFiltroTipoMensaje.setAdapter(adapter);
+        
+        spinnerFiltroTipoMensaje.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                filtroTipoMensaje = parent.getItemAtPosition(position).toString();
+            }
+            
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                filtroTipoMensaje = "TODOS";
+            }
+        });
+    }
+    
+    private void configurarSpinnerUsuario() {
+        if (spinnerFiltroUsuario == null) return;
+        
+        List<String> usuarios = new ArrayList<>();
+        usuarios.add("TODOS");
+        
+        // Obtener usuarios únicos de los mensajes
+        List<Mensaje> mensajes = dataManager.getMensajes();
+        for (Mensaje mensaje : mensajes) {
+            if (mensaje.getUsuario() != null && !mensaje.getUsuario().isEmpty() && 
+                !usuarios.contains(mensaje.getUsuario())) {
+                usuarios.add(mensaje.getUsuario());
+            }
+        }
+        
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), 
+                android.R.layout.simple_spinner_item, usuarios);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFiltroUsuario.setAdapter(adapter);
+        
+        spinnerFiltroUsuario.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                filtroUsuario = parent.getItemAtPosition(position).toString();
+            }
+            
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                filtroUsuario = "TODOS";
+            }
+        });
+    }
+    
+    private void configurarSpinnerEstado() {
+        if (spinnerFiltroEstado == null) return;
+        
+        String[] estados = {"TODOS", "NORMAL", "DESTACADO"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), 
+                android.R.layout.simple_spinner_item, estados);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFiltroEstado.setAdapter(adapter);
+        
+        spinnerFiltroEstado.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                filtroEstado = parent.getItemAtPosition(position).toString();
+            }
+            
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                filtroEstado = "TODOS";
+            }
+        });
+    }
+    
+    private void aplicarFiltros() {
+        // Aplicar filtros y recargar mensajes
+        cargarMensajes();
+        actualizarEstadisticas();
+        Toast.makeText(requireContext(), "Filtros aplicados correctamente", Toast.LENGTH_SHORT).show();
+    }
+    
+    private void limpiarFiltros() {
+        // Limpiar todos los filtros
+        filtroEquipoAvanzado = "TODOS";
+        filtroTipoMensaje = "TODOS";
+        filtroUsuario = "TODOS";
+        filtroEstado = "TODOS";
+        
+        // Resetear spinners
+        if (spinnerFiltroEquipo != null) spinnerFiltroEquipo.setSelection(0);
+        if (spinnerFiltroTipoMensaje != null) spinnerFiltroTipoMensaje.setSelection(0);
+        if (spinnerFiltroUsuario != null) spinnerFiltroUsuario.setSelection(0);
+        if (spinnerFiltroEstado != null) spinnerFiltroEstado.setSelection(0);
+        
+        // Recargar mensajes
+        cargarMensajes();
+        actualizarEstadisticas();
+        Toast.makeText(requireContext(), "Filtros limpiados", Toast.LENGTH_SHORT).show();
+    }
 
     private void cargarMensajes() {
         List<Mensaje> mensajesFiltrados = new ArrayList<>();
         
+        // Obtener mensajes según el modo (destacados o todos)
+        List<Mensaje> todosMensajes;
         if (mostrandoDestacados) {
-            // Mostrar solo mensajes destacados
-            List<Mensaje> todosMensajes = dataManager.getMensajesDestacados();
-            for (Mensaje mensaje : todosMensajes) {
-                if ("Todos".equals(equipoFiltroActual)) {
-                    mensajesFiltrados.add(mensaje);
-                } else {
-                    if (equipoFiltroActual.equals(mensaje.getEquipo()) || 
-                        (mensaje.getEquipo() == null && usuarioActual != null && equipoFiltroActual.equals(usuarioActual.getEquipo()))) {
-                        mensajesFiltrados.add(mensaje);
-                    }
-                }
-            }
+            todosMensajes = dataManager.getMensajesDestacados();
         } else {
-            // Mostrar todos los mensajes
-            List<Mensaje> todosMensajes = dataManager.getMensajes();
-            for (Mensaje mensaje : todosMensajes) {
-                if ("Todos".equals(equipoFiltroActual)) {
+            todosMensajes = dataManager.getMensajes();
+        }
+        
+        // Aplicar filtros avanzados
+        todosMensajes = aplicarFiltrosAvanzados(todosMensajes);
+        
+        // Aplicar filtro de equipo básico (para compatibilidad)
+        for (Mensaje mensaje : todosMensajes) {
+            if ("Todos".equals(equipoFiltroActual)) {
+                mensajesFiltrados.add(mensaje);
+            } else {
+                if (equipoFiltroActual.equals(mensaje.getEquipo()) || 
+                    (mensaje.getEquipo() == null && usuarioActual != null && equipoFiltroActual.equals(usuarioActual.getEquipo()))) {
                     mensajesFiltrados.add(mensaje);
-                } else {
-                    if (equipoFiltroActual.equals(mensaje.getEquipo()) || 
-                        (mensaje.getEquipo() == null && usuarioActual != null && equipoFiltroActual.equals(usuarioActual.getEquipo()))) {
-                        mensajesFiltrados.add(mensaje);
-                    }
                 }
             }
         }
@@ -144,6 +374,53 @@ public class ChatFragment extends Fragment {
         if (!mensajesFiltrados.isEmpty()) {
             recyclerViewMensajes.smoothScrollToPosition(mensajesFiltrados.size() - 1);
         }
+        
+        // Actualizar estadísticas
+        actualizarEstadisticas();
+    }
+    
+    private List<Mensaje> aplicarFiltrosAvanzados(List<Mensaje> mensajes) {
+        List<Mensaje> mensajesFiltrados = new ArrayList<>();
+        
+        for (Mensaje mensaje : mensajes) {
+            boolean cumpleFiltros = true;
+            
+            // Filtro por equipo
+            if (!filtroEquipoAvanzado.equals("TODOS")) {
+                if (!filtroEquipoAvanzado.equals(mensaje.getEquipo())) {
+                    cumpleFiltros = false;
+                }
+            }
+            
+            // Filtro por tipo de mensaje
+            if (!filtroTipoMensaje.equals("TODOS")) {
+                if (!filtroTipoMensaje.equals(mensaje.getTipo())) {
+                    cumpleFiltros = false;
+                }
+            }
+            
+            // Filtro por usuario
+            if (!filtroUsuario.equals("TODOS")) {
+                if (!filtroUsuario.equals(mensaje.getUsuario())) {
+                    cumpleFiltros = false;
+                }
+            }
+            
+            // Filtro por estado
+            if (!filtroEstado.equals("TODOS")) {
+                if (filtroEstado.equals("DESTACADO") && !mensaje.isDestacado()) {
+                    cumpleFiltros = false;
+                } else if (filtroEstado.equals("NORMAL") && mensaje.isDestacado()) {
+                    cumpleFiltros = false;
+                }
+            }
+            
+            if (cumpleFiltros) {
+                mensajesFiltrados.add(mensaje);
+            }
+        }
+        
+        return mensajesFiltrados;
     }
 
     private void configurarListeners() {

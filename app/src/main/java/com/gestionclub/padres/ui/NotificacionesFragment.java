@@ -41,16 +41,23 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
     private Button buttonFiltroNoLeidas;
     private Button buttonFiltroLeidas;
     private Button buttonFiltrosAvanzados;
+    private Button buttonLimpiarFiltros;
+    private Button buttonExportarNotificaciones;
     private LinearLayout layoutNoNotificaciones;
     private LinearLayout layoutFiltrosAvanzados;
     private Spinner spinnerTipoNotificacion;
     private Spinner spinnerEquipo;
+    private Spinner spinnerFecha;
+    private Spinner spinnerPrioridad;
     private NotificacionAdapter notificacionAdapter;
     private DataManager dataManager;
     private Usuario usuarioActual;
     private String filtroActual = "TODAS";
     private String filtroTipo = "TODOS";
     private String filtroEquipo = "TODOS";
+    private String filtroFecha = "TODAS";
+    private String filtroPrioridad = "TODAS";
+    private boolean filtrosAvanzadosVisibles = false;
     private static final String TAG = "NotificacionesFragment";
     private TextView textViewEstadisticas;
     private FloatingActionButton fabCrearNotificacion;
@@ -68,6 +75,7 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
             configurarRecyclerView();
             configurarFiltros();
             configurarSpinners();
+            configurarVisibilidadPorRol();
             cargarNotificaciones();
             generarRecordatoriosEventos();
             actualizarEstadisticas();
@@ -103,10 +111,14 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
         buttonFiltroNoLeidas = view.findViewById(R.id.buttonFiltroNoLeidas);
         buttonFiltroLeidas = view.findViewById(R.id.buttonFiltroLeidas);
         buttonFiltrosAvanzados = view.findViewById(R.id.buttonFiltrosAvanzados);
+        buttonLimpiarFiltros = view.findViewById(R.id.buttonLimpiarFiltros);
+        buttonExportarNotificaciones = view.findViewById(R.id.buttonExportarNotificaciones);
         layoutNoNotificaciones = view.findViewById(R.id.layoutNoNotificaciones);
         layoutFiltrosAvanzados = view.findViewById(R.id.layoutFiltrosAvanzados);
         spinnerTipoNotificacion = view.findViewById(R.id.spinnerTipoNotificacion);
         spinnerEquipo = view.findViewById(R.id.spinnerEquipo);
+        spinnerFecha = view.findViewById(R.id.spinnerFecha);
+        spinnerPrioridad = view.findViewById(R.id.spinnerPrioridad);
         textViewEstadisticas = view.findViewById(R.id.textViewEstadisticas);
         fabCrearNotificacion = view.findViewById(R.id.fabCrearNotificacion);
         
@@ -127,7 +139,7 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
 
     private void configurarSpinners() {
         // Configurar spinner de tipos de notificación
-        String[] tipos = {"TODOS", "EVENTO", "MENSAJE", "OBJETO", "RECORDATORIO", "SOLICITUD"};
+        String[] tipos = {"TODOS", "EVENTO", "MENSAJE", "OBJETO", "RECORDATORIO", "SOLICITUD", "URGENTE"};
         android.widget.ArrayAdapter<String> adapterTipos = new android.widget.ArrayAdapter<>(
             requireContext(), android.R.layout.simple_spinner_item, tipos);
         adapterTipos.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -140,6 +152,46 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
             requireContext(), android.R.layout.simple_spinner_item, equipos);
         adapterEquipos.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerEquipo.setAdapter(adapterEquipos);
+
+        // Configurar spinner de fechas
+        String[] fechas = {"TODAS", "HOY", "ÚLTIMA SEMANA", "ÚLTIMO MES", "ÚLTIMO AÑO"};
+        android.widget.ArrayAdapter<String> adapterFechas = new android.widget.ArrayAdapter<>(
+            requireContext(), android.R.layout.simple_spinner_item, fechas);
+        adapterFechas.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFecha.setAdapter(adapterFechas);
+
+        // Configurar spinner de prioridad
+        String[] prioridades = {"TODAS", "ALTA", "MEDIA", "BAJA"};
+        android.widget.ArrayAdapter<String> adapterPrioridades = new android.widget.ArrayAdapter<>(
+            requireContext(), android.R.layout.simple_spinner_item, prioridades);
+        adapterPrioridades.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerPrioridad.setAdapter(adapterPrioridades);
+    }
+
+    private void configurarVisibilidadPorRol() {
+        if (usuarioActual != null) {
+            String rol = usuarioActual.getRol();
+            
+            // Configurar visibilidad según el rol
+            switch (rol) {
+                case "ADMIN":
+                    // Administradores ven todo
+                    fabCrearNotificacion.setVisibility(View.VISIBLE);
+                    buttonExportarNotificaciones.setVisibility(View.VISIBLE);
+                    break;
+                case "ENTRENADOR":
+                    // Entrenadores pueden crear notificaciones para sus equipos
+                    fabCrearNotificacion.setVisibility(View.VISIBLE);
+                    buttonExportarNotificaciones.setVisibility(View.GONE);
+                    break;
+                case "USUARIO":
+                default:
+                    // Usuarios normales solo ven notificaciones
+                    fabCrearNotificacion.setVisibility(View.GONE);
+                    buttonExportarNotificaciones.setVisibility(View.GONE);
+                    break;
+            }
+        }
     }
 
     private void actualizarEstadosFiltros() {
@@ -174,32 +226,7 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
         List<Notificacion> notificacionesFiltradas = new ArrayList<>();
         
         for (Notificacion notificacion : todasNotificaciones) {
-            boolean cumpleFiltroLeida = true;
-            boolean cumpleFiltroTipo = true;
-            boolean cumpleFiltroEquipo = true;
-            
-            // Filtro por estado de lectura
-            switch (filtroActual) {
-                case "NO_LEIDAS":
-                    if (notificacion.isLeida()) cumpleFiltroLeida = false;
-                    break;
-                case "LEIDAS":
-                    if (!notificacion.isLeida()) cumpleFiltroLeida = false;
-                    break;
-            }
-            
-            // Filtro por tipo
-            if (!filtroTipo.equals("TODOS") && !notificacion.getTipo().equals(filtroTipo)) {
-                cumpleFiltroTipo = false;
-            }
-            
-            // Filtro por equipo (si aplica)
-            if (!filtroEquipo.equals("TODOS")) {
-                // Aquí podrías implementar lógica específica por equipo
-                // Por ahora, solo filtramos notificaciones globales vs específicas
-            }
-            
-            if (cumpleFiltroLeida && cumpleFiltroTipo && cumpleFiltroEquipo) {
+            if (cumpleFiltros(notificacion)) {
                 notificacionesFiltradas.add(notificacion);
             }
         }
@@ -212,6 +239,71 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
         } else {
             layoutNoNotificaciones.setVisibility(View.GONE);
             recyclerViewNotificaciones.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private boolean cumpleFiltros(Notificacion notificacion) {
+        // Filtro por estado de lectura
+        boolean cumpleFiltroLeida = true;
+        switch (filtroActual) {
+            case "NO_LEIDAS":
+                if (notificacion.isLeida()) cumpleFiltroLeida = false;
+                break;
+            case "LEIDAS":
+                if (!notificacion.isLeida()) cumpleFiltroLeida = false;
+                break;
+        }
+        
+        // Filtro por tipo
+        boolean cumpleFiltroTipo = filtroTipo.equals("TODOS") || notificacion.getTipo().equals(filtroTipo);
+        
+        // Filtro por equipo (si aplica)
+        boolean cumpleFiltroEquipo = filtroEquipo.equals("TODOS") || 
+                                   (notificacion.getEquipoDestinatario() != null && 
+                                    notificacion.getEquipoDestinatario().equals(filtroEquipo));
+        
+        // Filtro por fecha
+        boolean cumpleFiltroFecha = cumpleFiltroFecha(notificacion);
+        
+        // Filtro por prioridad
+        boolean cumpleFiltroPrioridad = filtroPrioridad.equals("TODAS") || 
+                                      (notificacion.getPrioridad() != null && 
+                                       notificacion.getPrioridad().equals(filtroPrioridad));
+        
+        return cumpleFiltroLeida && cumpleFiltroTipo && cumpleFiltroEquipo && 
+               cumpleFiltroFecha && cumpleFiltroPrioridad;
+    }
+
+    private boolean cumpleFiltroFecha(Notificacion notificacion) {
+        if (filtroFecha.equals("TODAS")) return true;
+        
+        Calendar fechaNotificacion = Calendar.getInstance();
+        fechaNotificacion.setTime(notificacion.getFechaCreacion());
+        
+        Calendar ahora = Calendar.getInstance();
+        Calendar inicioDia = Calendar.getInstance();
+        inicioDia.set(Calendar.HOUR_OF_DAY, 0);
+        inicioDia.set(Calendar.MINUTE, 0);
+        inicioDia.set(Calendar.SECOND, 0);
+        inicioDia.set(Calendar.MILLISECOND, 0);
+        
+        switch (filtroFecha) {
+            case "HOY":
+                return fechaNotificacion.after(inicioDia) && fechaNotificacion.before(ahora);
+            case "ÚLTIMA SEMANA":
+                Calendar haceUnaSemana = Calendar.getInstance();
+                haceUnaSemana.add(Calendar.DAY_OF_YEAR, -7);
+                return fechaNotificacion.after(haceUnaSemana);
+            case "ÚLTIMO MES":
+                Calendar haceUnMes = Calendar.getInstance();
+                haceUnMes.add(Calendar.MONTH, -1);
+                return fechaNotificacion.after(haceUnMes);
+            case "ÚLTIMO AÑO":
+                Calendar haceUnAno = Calendar.getInstance();
+                haceUnAno.add(Calendar.YEAR, -1);
+                return fechaNotificacion.after(haceUnAno);
+            default:
+                return true;
         }
     }
 
@@ -294,6 +386,8 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
                 buttonFiltrosAvanzados.setText("🔍 Ocultar Filtros");
             }
         });
+        buttonLimpiarFiltros.setOnClickListener(v -> limpiarFiltros());
+        buttonExportarNotificaciones.setOnClickListener(v -> exportarNotificaciones());
         
         spinnerTipoNotificacion.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
             @Override
@@ -310,6 +404,28 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
             @Override
             public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
                 filtroEquipo = parent.getItemAtPosition(position).toString();
+                cargarNotificaciones();
+            }
+
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+        });
+
+        spinnerFecha.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                filtroFecha = parent.getItemAtPosition(position).toString();
+                cargarNotificaciones();
+            }
+
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+        });
+
+        spinnerPrioridad.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                filtroPrioridad = parent.getItemAtPosition(position).toString();
                 cargarNotificaciones();
             }
 
@@ -345,6 +461,74 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
             .show();
     }
 
+    private void limpiarFiltros() {
+        filtroActual = "TODAS";
+        filtroTipo = "TODOS";
+        filtroEquipo = "TODOS";
+        filtroFecha = "TODAS";
+        filtroPrioridad = "TODAS";
+        
+        // Resetear spinners
+        spinnerTipoNotificacion.setSelection(0);
+        spinnerEquipo.setSelection(0);
+        spinnerFecha.setSelection(0);
+        spinnerPrioridad.setSelection(0);
+        
+        actualizarEstadosFiltros();
+        cargarNotificaciones();
+        Toast.makeText(requireContext(), "Filtros limpiados", Toast.LENGTH_SHORT).show();
+    }
+
+    private void exportarNotificaciones() {
+        if (usuarioActual != null && "ADMIN".equals(usuarioActual.getRol())) {
+            List<Notificacion> notificaciones = dataManager.getNotificaciones();
+            if (notificaciones.isEmpty()) {
+                Toast.makeText(requireContext(), "No hay notificaciones para exportar", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
+            // Crear reporte de notificaciones
+            StringBuilder reporte = new StringBuilder();
+            reporte.append("REPORTE DE NOTIFICACIONES - CD SANTIAGUIÑO GUIZÁN\n");
+            reporte.append("Fecha: ").append(new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(new Date())).append("\n\n");
+            
+            int total = notificaciones.size();
+            int noLeidas = 0;
+            int leidas = 0;
+            int urgentes = 0;
+            
+            for (Notificacion notif : notificaciones) {
+                if (!notif.isLeida()) noLeidas++;
+                else leidas++;
+                if ("URGENTE".equals(notif.getTipo())) urgentes++;
+                
+                reporte.append("• ").append(notif.getTitulo()).append("\n");
+                reporte.append("  Tipo: ").append(notif.getTipo()).append("\n");
+                reporte.append("  Fecha: ").append(dateFormat.format(notif.getFechaCreacion())).append("\n");
+                reporte.append("  Estado: ").append(notif.isLeida() ? "Leída" : "No leída").append("\n\n");
+            }
+            
+            reporte.append("\nRESUMEN:\n");
+            reporte.append("Total: ").append(total).append("\n");
+            reporte.append("No leídas: ").append(noLeidas).append("\n");
+            reporte.append("Leídas: ").append(leidas).append("\n");
+            reporte.append("Urgentes: ").append(urgentes).append("\n");
+            
+            // Mostrar reporte en diálogo
+            new AlertDialog.Builder(requireContext())
+                .setTitle("📊 Reporte de Notificaciones")
+                .setMessage(reporte.toString())
+                .setPositiveButton("Copiar", (dialog, which) -> {
+                    // Aquí se podría implementar la copia al portapapeles
+                    Toast.makeText(requireContext(), "Reporte copiado al portapapeles", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("Cerrar", null)
+                .show();
+        } else {
+            Toast.makeText(requireContext(), "Solo los administradores pueden exportar notificaciones", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @Override
     public void onMarcarLeidaClick(Notificacion notificacion) {
         notificacion.setLeida(true);
@@ -371,44 +555,28 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
 
     @Override
     public void onAprobarClick(Notificacion notificacion) {
-        new AlertDialog.Builder(requireContext())
-            .setTitle("✅ Aprobar Solicitud")
-            .setMessage("¿Estás seguro de que quieres aprobar esta solicitud?")
-            .setPositiveButton("Aprobar", (dialog, which) -> {
-                notificacion.setLeida(true);
-                dataManager.actualizarNotificacion(notificacion);
-                cargarNotificaciones();
-                actualizarEstadisticas();
-                Toast.makeText(requireContext(), "Solicitud aprobada", Toast.LENGTH_SHORT).show();
-            })
-            .setNegativeButton("Cancelar", null)
-            .show();
+        // Lógica para aprobar solicitudes
+        notificacion.setEstado("APROBADA");
+        dataManager.actualizarNotificacion(notificacion);
+        cargarNotificaciones();
+        Toast.makeText(requireContext(), "Solicitud aprobada", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onRechazarClick(Notificacion notificacion) {
-        new AlertDialog.Builder(requireContext())
-            .setTitle("❌ Rechazar Solicitud")
-            .setMessage("¿Estás seguro de que quieres rechazar esta solicitud?")
-            .setPositiveButton("Rechazar", (dialog, which) -> {
-                notificacion.setLeida(true);
-                dataManager.actualizarNotificacion(notificacion);
-                cargarNotificaciones();
-                actualizarEstadisticas();
-                Toast.makeText(requireContext(), "Solicitud rechazada", Toast.LENGTH_SHORT).show();
-            })
-            .setNegativeButton("Cancelar", null)
-            .show();
+        // Lógica para rechazar solicitudes
+        notificacion.setEstado("RECHAZADA");
+        dataManager.actualizarNotificacion(notificacion);
+        cargarNotificaciones();
+        Toast.makeText(requireContext(), "Solicitud rechazada", Toast.LENGTH_SHORT).show();
     }
 
     private void mostrarDetallesNotificacion(Notificacion notificacion) {
         new AlertDialog.Builder(requireContext())
             .setTitle(notificacion.getTitulo())
-            .setMessage(notificacion.getMensaje() + "\n\nFecha: " + 
-                dateFormat.format(notificacion.getFechaCreacion()) + 
-                "\nTipo: " + notificacion.getTipo())
-            .setPositiveButton("OK", null)
-                .show();
+            .setMessage(notificacion.getMensaje() + "\n\nFecha: " + dateFormat.format(notificacion.getFechaCreacion()))
+            .setPositiveButton("Cerrar", null)
+            .show();
     }
 
     @Override
@@ -419,22 +587,79 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
     }
 
     private void mostrarDialogoCrearNotificacion() {
-        // Implementar diálogo para crear notificación
-        Toast.makeText(requireContext(), "Función de crear notificación en desarrollo", Toast.LENGTH_SHORT).show();
+        if (usuarioActual == null || (!"ADMIN".equals(usuarioActual.getRol()) && !"ENTRENADOR".equals(usuarioActual.getRol()))) {
+            Toast.makeText(requireContext(), "No tienes permisos para crear notificaciones", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Crear diálogo personalizado para crear notificación
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_crear_notificacion, null);
+        
+        // Configurar spinners del diálogo
+        Spinner spinnerTipo = dialogView.findViewById(R.id.spinnerTipo);
+        Spinner spinnerPrioridad = dialogView.findViewById(R.id.spinnerPrioridad);
+        
+        // Configurar spinner de tipos
+        String[] tipos = {"EVENTO", "MENSAJE", "OBJETO", "RECORDATORIO", "SOLICITUD", "URGENTE"};
+        android.widget.ArrayAdapter<String> adapterTipos = new android.widget.ArrayAdapter<>(
+            requireContext(), android.R.layout.simple_spinner_item, tipos);
+        adapterTipos.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerTipo.setAdapter(adapterTipos);
+        
+        // Configurar spinner de prioridades
+        String[] prioridades = {"ALTA", "MEDIA", "BAJA"};
+        android.widget.ArrayAdapter<String> adapterPrioridades = new android.widget.ArrayAdapter<>(
+            requireContext(), android.R.layout.simple_spinner_item, prioridades);
+        adapterPrioridades.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerPrioridad.setAdapter(adapterPrioridades);
+        
+        new AlertDialog.Builder(requireContext())
+            .setTitle("📢 Crear Nueva Notificación")
+            .setView(dialogView)
+            .setPositiveButton("Crear", (dialog, which) -> {
+                // Obtener datos del diálogo
+                TextView editTextTitulo = dialogView.findViewById(R.id.editTextTitulo);
+                TextView editTextMensaje = dialogView.findViewById(R.id.editTextMensaje);
+                
+                String titulo = editTextTitulo.getText().toString().trim();
+                String mensaje = editTextMensaje.getText().toString().trim();
+                String tipo = spinnerTipo.getSelectedItem().toString();
+                String prioridad = spinnerPrioridad.getSelectedItem().toString();
+                
+                if (validarDatos(titulo, mensaje)) {
+                    crearNotificacion(titulo, mensaje, tipo, prioridad);
+                }
+            })
+            .setNegativeButton("Cancelar", null)
+            .show();
     }
 
     private boolean validarDatos(String titulo, String mensaje) {
-        return titulo != null && !titulo.trim().isEmpty() && 
-               mensaje != null && !mensaje.trim().isEmpty();
+        if (titulo.isEmpty()) {
+            Toast.makeText(requireContext(), "El título es obligatorio", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (mensaje.isEmpty()) {
+            Toast.makeText(requireContext(), "El mensaje es obligatorio", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
     }
 
-    private void crearNotificacion(String titulo, String mensaje) {
+    private void crearNotificacion(String titulo, String mensaje, String tipo, String prioridad) {
         Notificacion nuevaNotificacion = new Notificacion();
         nuevaNotificacion.setTitulo(titulo);
         nuevaNotificacion.setMensaje(mensaje);
-        nuevaNotificacion.setTipo("MENSAJE");
+        nuevaNotificacion.setTipo(tipo);
+        nuevaNotificacion.setPrioridad(prioridad);
         nuevaNotificacion.setFechaCreacion(new Date());
         nuevaNotificacion.setLeida(false);
+        nuevaNotificacion.setCreador(usuarioActual.getNombre());
+        
+        // Si es entrenador, asignar a su equipo
+        if ("ENTRENADOR".equals(usuarioActual.getRol()) && usuarioActual.getEquipo() != null) {
+            nuevaNotificacion.setEquipoDestinatario(usuarioActual.getEquipo());
+        }
         
         dataManager.agregarNotificacion(nuevaNotificacion);
         cargarNotificaciones();

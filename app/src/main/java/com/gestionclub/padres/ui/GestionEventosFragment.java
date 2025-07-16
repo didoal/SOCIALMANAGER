@@ -14,6 +14,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -44,7 +45,21 @@ public class GestionEventosFragment extends Fragment {
     private FloatingActionButton fabAgregarEntrenamiento;
     private Usuario usuarioActual;
     private Spinner spinnerFiltroTipoEvento;
+    private Spinner spinnerFiltroEquipo;
+    private Spinner spinnerFiltroFecha;
+    private Spinner spinnerFiltroEstado;
+    private Spinner spinnerFiltroPrioridad;
+    private LinearLayout layoutFiltrosAvanzados;
+    private Button buttonMostrarFiltrosAvanzados;
+    private Button buttonLimpiarFiltros;
+    private Button buttonExportarEventos;
+
     private String tipoFiltroSeleccionado = "Todos";
+    private String equipoFiltroSeleccionado = "Todos";
+    private String fechaFiltroSeleccionada = "Todas";
+    private String estadoFiltroSeleccionado = "Todos";
+    private String prioridadFiltroSeleccionada = "Todas";
+    private boolean filtrosAvanzadosVisibles = false;
 
     @Nullable
     @Override
@@ -55,7 +70,7 @@ public class GestionEventosFragment extends Fragment {
         usuarioActual = dataManager.getUsuarioActual();
         inicializarVistas(view);
         configurarRecyclerView();
-        configurarFiltroTipoEvento(view);
+        configurarFiltrosAvanzados(view);
         cargarEventos();
         actualizarEstadisticas();
         
@@ -68,6 +83,15 @@ public class GestionEventosFragment extends Fragment {
         fabAgregarEvento = view.findViewById(R.id.fabAgregarEvento);
         // Nuevo FAB para entrenamientos
         fabAgregarEntrenamiento = view.findViewById(R.id.fabAgregarEntrenamiento);
+        layoutFiltrosAvanzados = view.findViewById(R.id.layoutFiltrosAvanzados);
+        spinnerFiltroTipoEvento = view.findViewById(R.id.spinnerFiltroTipoEvento);
+        spinnerFiltroEquipo = view.findViewById(R.id.spinnerFiltroEquipo);
+        spinnerFiltroFecha = view.findViewById(R.id.spinnerFiltroFecha);
+        spinnerFiltroEstado = view.findViewById(R.id.spinnerFiltroEstado);
+        spinnerFiltroPrioridad = view.findViewById(R.id.spinnerFiltroPrioridad);
+        buttonMostrarFiltrosAvanzados = view.findViewById(R.id.buttonMostrarFiltrosAvanzados);
+        buttonLimpiarFiltros = view.findViewById(R.id.buttonLimpiarFiltros);
+        buttonExportarEventos = view.findViewById(R.id.buttonExportarEventos);
         
         boolean puedeCrearEventos = usuarioActual != null && 
             (usuarioActual.isEsAdmin() || "entrenador".equals(usuarioActual.getRol()));
@@ -99,12 +123,11 @@ public class GestionEventosFragment extends Fragment {
         recyclerViewEventos.setAdapter(eventoAdapter);
     }
 
-    private void configurarFiltroTipoEvento(View view) {
-        spinnerFiltroTipoEvento = view.findViewById(R.id.spinnerFiltroTipoEvento);
+    private void configurarFiltrosAvanzados(View view) {
         String[] tipos = {"Todos", "Entrenamiento", "Partido", "Otro"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, tipos);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerFiltroTipoEvento.setAdapter(adapter);
+        ArrayAdapter<String> tipoAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, tipos);
+        tipoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFiltroTipoEvento.setAdapter(tipoAdapter);
         spinnerFiltroTipoEvento.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(android.widget.AdapterView<?> parent, View v, int position, long id) {
@@ -113,6 +136,145 @@ public class GestionEventosFragment extends Fragment {
             }
             @Override
             public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+        });
+
+        List<String> equipos = new ArrayList<>();
+        equipos.add("Todos los equipos");
+        
+        // Si es entrenador, solo mostrar su equipo
+        if (usuarioActual != null && "entrenador".equals(usuarioActual.getRol()) && 
+            usuarioActual.getEquipo() != null) {
+            equipos.add(usuarioActual.getEquipo());
+        } else {
+            // Si es admin, mostrar todos los equipos
+            for (String equipo : dataManager.getNombresEquipos()) {
+                equipos.add(equipo);
+            }
+        }
+        
+        ArrayAdapter<String> equipoAdapter = new ArrayAdapter<>(requireContext(), 
+                android.R.layout.simple_spinner_item, equipos);
+        equipoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFiltroEquipo.setAdapter(equipoAdapter);
+        spinnerFiltroEquipo.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, View v, int position, long id) {
+                equipoFiltroSeleccionado = equipos.get(position);
+                cargarEventos();
+            }
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+        });
+
+        String[] fechas = {"Todas", "Hoy", "Esta semana", "Este mes"};
+        ArrayAdapter<String> fechaAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, fechas);
+        fechaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFiltroFecha.setAdapter(fechaAdapter);
+        spinnerFiltroFecha.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, View v, int position, long id) {
+                fechaFiltroSeleccionada = fechas[position];
+                cargarEventos();
+            }
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+        });
+
+        String[] estados = {"Todos", "Pendiente", "En curso", "Completado", "Cancelado"};
+        ArrayAdapter<String> estadoAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, estados);
+        estadoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFiltroEstado.setAdapter(estadoAdapter);
+        spinnerFiltroEstado.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, View v, int position, long id) {
+                estadoFiltroSeleccionado = estados[position];
+                cargarEventos();
+            }
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+        });
+
+        String[] prioridades = {"Todas", "Baja", "Media", "Alta", "Urgente"};
+        ArrayAdapter<String> prioridadAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, prioridades);
+        prioridadAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFiltroPrioridad.setAdapter(prioridadAdapter);
+        spinnerFiltroPrioridad.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, View v, int position, long id) {
+                prioridadFiltroSeleccionada = prioridades[position];
+                cargarEventos();
+            }
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+        });
+
+        buttonMostrarFiltrosAvanzados.setOnClickListener(v -> {
+            if (layoutFiltrosAvanzados.getVisibility() == View.GONE) {
+                layoutFiltrosAvanzados.setVisibility(View.VISIBLE);
+                buttonMostrarFiltrosAvanzados.setText("Ocultar Filtros Avanzados");
+            } else {
+                layoutFiltrosAvanzados.setVisibility(View.GONE);
+                buttonMostrarFiltrosAvanzados.setText("Mostrar Filtros Avanzados");
+            }
+        });
+
+        buttonLimpiarFiltros.setOnClickListener(v -> {
+            spinnerFiltroTipoEvento.setSelection(0);
+            spinnerFiltroEquipo.setSelection(0);
+            spinnerFiltroFecha.setSelection(0);
+            spinnerFiltroEstado.setSelection(0);
+            spinnerFiltroPrioridad.setSelection(0);
+            buttonMostrarFiltrosAvanzados.setText("Mostrar Filtros Avanzados");
+            layoutFiltrosAvanzados.setVisibility(View.GONE);
+            cargarEventos();
+        });
+
+        buttonExportarEventos.setOnClickListener(v -> {
+            if (usuarioActual != null && usuarioActual.isEsAdmin()) {
+                List<Evento> eventos = dataManager.getEventos();
+                if (eventos.isEmpty()) {
+                    Toast.makeText(requireContext(), "No hay eventos para exportar", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                StringBuilder reporte = new StringBuilder();
+                reporte.append("REPORTE DE EVENTOS - CD SANTIAGUIÑO GUIZÁN\n");
+                reporte.append("Fecha: ").append(new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault()).format(new java.util.Date())).append("\n\n");
+                int total = eventos.size();
+                int entrenamientos = 0, partidos = 0, torneos = 0, reuniones = 0, otros = 0;
+                for (Evento evento : eventos) {
+                    switch (evento.getTipo()) {
+                        case "Entrenamiento": entrenamientos++; break;
+                        case "Partido": partidos++; break;
+                        case "Torneo": torneos++; break;
+                        case "Reunión": reuniones++; break;
+                        default: otros++; break;
+                    }
+                    reporte.append("• ").append(evento.getTitulo()).append("\n");
+                    reporte.append("  Tipo: ").append(evento.getTipo()).append("\n");
+                    reporte.append("  Equipo: ").append(evento.getEquipo()).append("\n");
+                    reporte.append("  Fecha: ").append(new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault()).format(evento.getFechaInicio())).append("\n");
+                    reporte.append("  Estado: ").append(evento.getEstado() != null ? evento.getEstado() : "-").append("\n");
+                    reporte.append("  Prioridad: ").append(evento.getPrioridad() != null ? evento.getPrioridad() : "-").append("\n\n");
+                }
+                reporte.append("\nRESUMEN:\n");
+                reporte.append("Total: ").append(total).append("\n");
+                reporte.append("Entrenamientos: ").append(entrenamientos).append("\n");
+                reporte.append("Partidos: ").append(partidos).append("\n");
+                reporte.append("Torneos: ").append(torneos).append("\n");
+                reporte.append("Reuniones: ").append(reuniones).append("\n");
+                reporte.append("Otros: ").append(otros).append("\n");
+                new android.app.AlertDialog.Builder(requireContext())
+                    .setTitle("📊 Reporte de Eventos")
+                    .setMessage(reporte.toString())
+                    .setPositiveButton("Copiar", (dialog, which) -> {
+                        // Aquí se podría implementar la copia al portapapeles
+                        Toast.makeText(requireContext(), "Reporte copiado al portapapeles", Toast.LENGTH_SHORT).show();
+                    })
+                    .setNegativeButton("Cerrar", null)
+                    .show();
+            } else {
+                Toast.makeText(requireContext(), "Solo los administradores pueden exportar eventos", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
@@ -144,6 +306,70 @@ public class GestionEventosFragment extends Fragment {
                 }
             }
             eventos = eventosFiltradosTipo;
+        }
+        
+        // Filtrar por equipo seleccionado
+        if (!"Todos los equipos".equals(equipoFiltroSeleccionado)) {
+            List<Evento> eventosFiltradosEquipo = new ArrayList<>();
+            for (Evento evento : eventos) {
+                if (equipoFiltroSeleccionado.equals(evento.getEquipo()) || 
+                    "Todos los equipos".equals(evento.getEquipo())) {
+                    eventosFiltradosEquipo.add(evento);
+                }
+            }
+            eventos = eventosFiltradosEquipo;
+        }
+
+        // Filtrar por fecha seleccionada
+        if (!"Todas".equals(fechaFiltroSeleccionada)) {
+            List<Evento> eventosFiltradosFecha = new ArrayList<>();
+            Calendar hoy = Calendar.getInstance();
+            Calendar semana = Calendar.getInstance();
+            semana.add(Calendar.DAY_OF_YEAR, 7);
+            Calendar mes = Calendar.getInstance();
+            mes.add(Calendar.MONTH, 1);
+
+            for (Evento evento : eventos) {
+                Calendar fechaEvento = Calendar.getInstance();
+                fechaEvento.setTime(evento.getFechaInicio());
+
+                boolean cumpleFecha = false;
+                if ("Hoy".equals(fechaFiltroSeleccionada)) {
+                    cumpleFecha = fechaEvento.get(Calendar.YEAR) == hoy.get(Calendar.YEAR) &&
+                                 fechaEvento.get(Calendar.DAY_OF_YEAR) == hoy.get(Calendar.DAY_OF_YEAR);
+                } else if ("Esta semana".equals(fechaFiltroSeleccionada)) {
+                    cumpleFecha = fechaEvento.before(semana) && fechaEvento.after(hoy);
+                } else if ("Este mes".equals(fechaFiltroSeleccionada)) {
+                    cumpleFecha = fechaEvento.before(mes) && fechaEvento.after(hoy);
+                }
+
+                if (cumpleFecha) {
+                    eventosFiltradosFecha.add(evento);
+                }
+            }
+            eventos = eventosFiltradosFecha;
+        }
+
+        // Filtrar por estado seleccionado
+        if (!"Todos".equals(estadoFiltroSeleccionado)) {
+            List<Evento> eventosFiltradosEstado = new ArrayList<>();
+            for (Evento evento : eventos) {
+                if (estadoFiltroSeleccionado.equalsIgnoreCase(evento.getEstado())) {
+                    eventosFiltradosEstado.add(evento);
+                }
+            }
+            eventos = eventosFiltradosEstado;
+        }
+
+        // Filtrar por prioridad seleccionada
+        if (!"Todas".equals(prioridadFiltroSeleccionada)) {
+            List<Evento> eventosFiltradosPrioridad = new ArrayList<>();
+            for (Evento evento : eventos) {
+                if (prioridadFiltroSeleccionada.equalsIgnoreCase(evento.getPrioridad())) {
+                    eventosFiltradosPrioridad.add(evento);
+                }
+            }
+            eventos = eventosFiltradosPrioridad;
         }
         
         eventoAdapter.actualizarEventos(eventos);

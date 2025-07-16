@@ -59,6 +59,9 @@ public class AsistenciaFragment extends Fragment {
     private LinearLayout layoutFiltroEquipo, layoutFiltroCategoria, layoutFiltroJugador;
     private PieChart chartAsistencias;
     private FloatingActionButton fabRegistrarAsistencia;
+    private Button buttonMostrarFiltrosAvanzados;
+    private Button buttonLimpiarFiltros;
+    private LinearLayout layoutFiltrosAvanzados;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
     private Usuario usuarioActual;
     
@@ -70,6 +73,7 @@ public class AsistenciaFragment extends Fragment {
     private String filtroCategoria = "";
     private String filtroJugador = "";
     private List<Asistencia> asistenciasFiltradas = new ArrayList<>();
+    private boolean filtrosAvanzadosVisibles = false;
 
     @Nullable
     @Override
@@ -107,6 +111,9 @@ public class AsistenciaFragment extends Fragment {
         layoutFiltroJugador = view.findViewById(R.id.layoutFiltroJugador);
         chartAsistencias = view.findViewById(R.id.chartAsistencias);
         fabRegistrarAsistencia = view.findViewById(R.id.fabRegistrarAsistencia);
+        buttonMostrarFiltrosAvanzados = view.findViewById(R.id.buttonMostrarFiltrosAvanzados);
+        buttonLimpiarFiltros = view.findViewById(R.id.buttonLimpiarFiltros);
+        layoutFiltrosAvanzados = view.findViewById(R.id.layoutFiltrosAvanzados);
     }
 
     private void configurarRecyclerView() {
@@ -209,6 +216,22 @@ public class AsistenciaFragment extends Fragment {
         btnFechaHasta.setOnClickListener(v -> mostrarDatePicker(false));
         btnAplicarFiltros.setOnClickListener(v -> aplicarFiltros());
         btnExportarPdf.setOnClickListener(v -> exportarPdf());
+        
+        // Configurar botón mostrar/ocultar filtros avanzados
+        buttonMostrarFiltrosAvanzados.setOnClickListener(v -> {
+            if (layoutFiltrosAvanzados.getVisibility() == View.GONE) {
+                layoutFiltrosAvanzados.setVisibility(View.VISIBLE);
+                buttonMostrarFiltrosAvanzados.setText("🔍 Ocultar Filtros");
+            } else {
+                layoutFiltrosAvanzados.setVisibility(View.GONE);
+                buttonMostrarFiltrosAvanzados.setText("🔍 Filtros Avanzados");
+            }
+        });
+        
+        // Configurar botón limpiar filtros
+        buttonLimpiarFiltros.setOnClickListener(v -> {
+            limpiarFiltros();
+        });
         
         // Configurar FAB según el rol del usuario
         boolean puedeRegistrarAsistencia = usuarioActual != null && 
@@ -548,6 +571,35 @@ public class AsistenciaFragment extends Fragment {
 
     private void manejarClicEnAsistencia(Asistencia asistencia) {
         Toast.makeText(requireContext(), "Clic en asistencia: " + asistencia.getJugadorNombre(), Toast.LENGTH_SHORT).show();
+    }
+
+    private void limpiarFiltros() {
+        fechaDesde = null;
+        fechaHasta = null;
+        tipoFiltro = "GLOBAL";
+        filtroEquipo = "";
+        filtroCategoria = "";
+        filtroJugador = "";
+        
+        // Resetear botones de fecha
+        btnFechaDesde.setText("Seleccionar fecha");
+        btnFechaHasta.setText("Seleccionar fecha");
+        
+        // Resetear spinners
+        spinnerTipoFiltro.setSelection(0);
+        spinnerEquipo.setSelection(0);
+        spinnerCategoria.setSelection(0);
+        spinnerJugador.setSelection(0);
+        
+        // Ocultar filtros avanzados
+        layoutFiltrosAvanzados.setVisibility(View.GONE);
+        buttonMostrarFiltrosAvanzados.setText("🔍 Filtros Avanzados");
+        
+        // Recargar datos
+        cargarAsistencias();
+        actualizarResumenFiltros();
+        
+        Toast.makeText(requireContext(), "Filtros limpiados", Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -6,37 +6,35 @@
     android:orientation="vertical"
     android:background="@color/white">
 
-    <!-- Header del Calendario con Logo -->
+    <!-- Header Profesional con Logo -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="24dp"
-        android:paddingBottom="16dp"
-        android:paddingStart="24dp"
-        android:paddingEnd="24dp"
-        android:background="@color/white">
+        android:background="@drawable/gradient_blue_professional"
+        android:padding="24dp"
+        android:layout_marginBottom="20dp">
 
         <!-- Logo del Club -->
         <FrameLayout
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_gravity="center"
             android:layout_marginBottom="12dp"
-            android:elevation="8dp">
+            android:elevation="12dp">
 
             <View
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:background="@drawable/circle_background_white"
-                android:elevation="6dp" />
+                android:elevation="8dp" />
 
             <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
                 android:layout_gravity="center"
                 android:src="@drawable/logo_santiaguino"
-                android:elevation="8dp" />
+                android:elevation="12dp" />
 
         </FrameLayout>
 
@@ -45,8 +43,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="CD SANTIAGUIÑO GUIZÁN"
-            android:textColor="@color/blue_profesional"
-            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:textSize="20sp"
             android:textStyle="bold"
             android:gravity="center"
             android:layout_marginBottom="4dp" />
@@ -57,7 +55,7 @@
             android:layout_height="wrap_content"
             android:text="SANTIAGUIÑO, A NOSA FAMILIA"
             android:textColor="@color/gold"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:textStyle="bold"
             android:gravity="center"
             android:layout_marginBottom="16dp" />
@@ -65,21 +63,23 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Calendario de Eventos"
-            android:textColor="#222"
-            android:textSize="20sp"
+            android:text="CALENDARIO DE EVENTOS"
+            android:textColor="@color/white"
+            android:textSize="24sp"
             android:textStyle="bold"
-            android:gravity="start" />
+            android:gravity="center"
+            android:layout_marginBottom="8dp" />
 
         <TextView
             android:id="@+id/textViewFechaActual"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Julio 2024"
-            android:textColor="#2196F3"
-            android:textSize="14sp"
-            android:gravity="start"
-            android:layout_marginTop="4dp" />
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:alpha="0.9" />
+
     </LinearLayout>
 
     <!-- Pestañas de Vista -->
@@ -88,37 +88,40 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:layout_marginTop="4dp"
-        app:tabIndicatorColor="#2196F3"
-        app:tabSelectedTextColor="#2196F3"
-        app:tabTextColor="#888"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="16dp"
+        app:tabIndicatorColor="@color/blue_profesional"
+        app:tabSelectedTextColor="@color/blue_profesional"
+        app:tabTextColor="@color/text_secondary"
         app:tabTextAppearance="@style/TabTextAppearance"
-        app:tabMode="scrollable">
+        app:tabMode="scrollable"
+        app:tabIndicatorHeight="3dp"
+        app:tabIndicatorFullWidth="false">
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Listado" />
+            android:text="LISTADO" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Día" />
+            android:text="DÍA" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Semana" />
+            android:text="SEMANA" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Mes" />
+            android:text="MES" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Año" />
+            android:text="AÑO" />
 
     </com.google.android.material.tabs.TabLayout>
 
@@ -128,8 +131,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginHorizontal="0dp"
-        android:layout_marginBottom="0dp" />
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="20dp" />
 
     <!-- Botón Flotante para Crear Evento -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -139,7 +142,7 @@
         android:layout_gravity="end|bottom"
         android:layout_margin="24dp"
         android:src="@drawable/ic_add"
-        app:backgroundTint="#2196F3"
+        app:backgroundTint="@color/blue_profesional"
         app:tint="@color/white"
         app:fabSize="normal" />
 

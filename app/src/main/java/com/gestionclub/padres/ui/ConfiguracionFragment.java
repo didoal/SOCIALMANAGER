@@ -38,6 +38,8 @@ public class ConfiguracionFragment extends Fragment {
     private TextView textViewJugador;
     private Button buttonEditarPerfil;
     private Button buttonCambiarPassword;
+    private TextView textViewRolUsuario;
+    private Button buttonOpcionesAvanzadas;
 
     @Nullable
     @Override
@@ -68,6 +70,8 @@ public class ConfiguracionFragment extends Fragment {
         textViewJugador = view.findViewById(R.id.textViewJugadorUsuario);
         buttonEditarPerfil = view.findViewById(R.id.buttonEditarPerfilUsuario);
         buttonCambiarPassword = view.findViewById(R.id.buttonCambiarPasswordUsuario);
+        textViewRolUsuario = view.findViewById(R.id.textViewRolUsuario);
+        buttonOpcionesAvanzadas = view.findViewById(R.id.buttonOpcionesAvanzadas);
     }
     
     private void configurarListeners() {
@@ -75,6 +79,9 @@ public class ConfiguracionFragment extends Fragment {
         buttonCambiarTema.setOnClickListener(v -> mostrarDialogoTema());
         buttonEditarPerfil.setOnClickListener(v -> mostrarDialogoEditarPerfil());
         buttonCambiarPassword.setOnClickListener(v -> mostrarDialogoCambiarPassword());
+        if (buttonOpcionesAvanzadas != null) {
+            buttonOpcionesAvanzadas.setOnClickListener(v -> mostrarDialogoOpcionesAvanzadas());
+        }
     }
     
     private void actualizarInformacion() {
@@ -98,6 +105,12 @@ public class ConfiguracionFragment extends Fragment {
                 break;
         }
         textViewTemaActual.setText(textoTema);
+        // Mostrar botón de opciones avanzadas solo a admins
+        if (usuarioActual != null && usuarioActual.isEsAdmin() && buttonOpcionesAvanzadas != null) {
+            buttonOpcionesAvanzadas.setVisibility(View.VISIBLE);
+        } else if (buttonOpcionesAvanzadas != null) {
+            buttonOpcionesAvanzadas.setVisibility(View.GONE);
+        }
     }
     
     private void mostrarDialogoIdioma() {
@@ -158,6 +171,7 @@ public class ConfiguracionFragment extends Fragment {
         if (getActivity() != null) {
             getActivity().recreate();
         }
+        Toast.makeText(requireContext(), "Idioma cambiado correctamente", Toast.LENGTH_SHORT).show();
     }
     
     private void cambiarTema(int codigoTema) {
@@ -170,6 +184,7 @@ public class ConfiguracionFragment extends Fragment {
         if (getActivity() != null) {
             getActivity().recreate();
         }
+        Toast.makeText(requireContext(), "Tema cambiado correctamente", Toast.LENGTH_SHORT).show();
     }
     
     private void reiniciarAplicacion() {
@@ -194,6 +209,10 @@ public class ConfiguracionFragment extends Fragment {
             textViewEquipo.setText(equipo != null && !equipo.isEmpty() ? equipo : "No asignado");
             String jugador = usuarioActual.getJugador();
             textViewJugador.setText(jugador != null && !jugador.isEmpty() ? jugador : "No asignado");
+            if (textViewRolUsuario != null) {
+                String rol = usuarioActual.isEsAdmin() ? "Administrador" : (usuarioActual.isEntrenador() ? "Entrenador" : "Usuario");
+                textViewRolUsuario.setText("Rol: " + rol);
+            }
         }
     }
 
@@ -264,5 +283,13 @@ public class ConfiguracionFragment extends Fragment {
                 })
                 .setNegativeButton("Cancelar", null)
                 .show();
+    }
+
+    private void mostrarDialogoOpcionesAvanzadas() {
+        new AlertDialog.Builder(requireContext())
+            .setTitle("Opciones avanzadas de administrador")
+            .setMessage("Aquí puedes exportar la configuración o ver logs (funcionalidad próximamente disponible).")
+            .setPositiveButton("Aceptar", null)
+            .show();
     }
 } 

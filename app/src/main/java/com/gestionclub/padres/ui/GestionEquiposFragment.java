@@ -29,6 +29,29 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
+import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.Button;
+import java.util.HashSet;
+import java.util.Set;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Map;
+import java.util.HashMap;
+import android.content.Intent;
+import android.net.Uri;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 
 public class GestionEquiposFragment extends Fragment {
     private static final String TAG = "GestionEquiposFragment";
@@ -42,6 +65,34 @@ public class GestionEquiposFragment extends Fragment {
     private UsuarioAdapter jugadorAdapter;
     private Spinner spinnerEquipos;
     private List<Equipo> listaEquipos;
+    
+    // Vistas de filtros avanzados
+    private LinearLayout layoutHeaderFiltros;
+    private LinearLayout layoutContenidoFiltros;
+    private ImageView imageViewExpandirFiltros;
+    private Spinner spinnerFiltroCategoria;
+    private Spinner spinnerFiltroEstado;
+    private Spinner spinnerFiltroNumJugadores;
+    private Spinner spinnerFiltroEntrenador;
+    private Button buttonAplicarFiltros;
+    private Button buttonLimpiarFiltros;
+    
+    // Vistas de estadísticas
+    private TextView textViewTotalEquipos;
+    private TextView textViewTotalJugadores;
+    private TextView textViewPromedioJugadores;
+    private TextView textViewTotalCategorias;
+    
+    // Vistas de controles
+    private Button buttonExportarEquipos;
+    private Button buttonCrearEquipo;
+    
+    // Variables de filtros
+    private String filtroCategoria = "TODOS";
+    private String filtroEstado = "TODOS";
+    private String filtroNumJugadores = "TODOS";
+    private String filtroEntrenador = "TODOS";
+    private boolean filtrosExpandidos = false;
 
     @Nullable
     @Override
@@ -68,7 +119,214 @@ public class GestionEquiposFragment extends Fragment {
         ((ViewGroup) view).addView(spinnerEquipos, 0); // Añadir el spinner arriba del RecyclerView
         spinnerEquipos.setVisibility(View.GONE);
         
-        fabAgregarEquipo.setOnClickListener(v -> mostrarDialogoCrearEquipo());
+        // Inicializar vistas de filtros avanzados
+        layoutHeaderFiltros = view.findViewById(R.id.layoutHeaderFiltros);
+        layoutContenidoFiltros = view.findViewById(R.id.layoutContenidoFiltros);
+        imageViewExpandirFiltros = view.findViewById(R.id.imageViewExpandirFiltros);
+        spinnerFiltroCategoria = view.findViewById(R.id.spinnerFiltroCategoria);
+        spinnerFiltroEstado = view.findViewById(R.id.spinnerFiltroEstado);
+        spinnerFiltroNumJugadores = view.findViewById(R.id.spinnerFiltroNumJugadores);
+        spinnerFiltroEntrenador = view.findViewById(R.id.spinnerFiltroEntrenador);
+        buttonAplicarFiltros = view.findViewById(R.id.buttonAplicarFiltros);
+        buttonLimpiarFiltros = view.findViewById(R.id.buttonLimpiarFiltros);
+        
+        // Inicializar vistas de estadísticas
+        textViewTotalEquipos = view.findViewById(R.id.textViewTotalEquipos);
+        textViewTotalJugadores = view.findViewById(R.id.textViewTotalJugadores);
+        textViewPromedioJugadores = view.findViewById(R.id.textViewPromedioJugadores);
+        textViewTotalCategorias = view.findViewById(R.id.textViewTotalCategorias);
+        
+        // Inicializar vistas de controles
+        buttonExportarEquipos = view.findViewById(R.id.buttonExportarEquipos);
+        buttonCrearEquipo = view.findViewById(R.id.buttonCrearEquipo);
+        
+        // Configurar listeners
+        if (fabAgregarEquipo != null) {
+            fabAgregarEquipo.setOnClickListener(v -> mostrarDialogoCrearEquipo());
+        }
+        
+        if (buttonCrearEquipo != null) {
+            buttonCrearEquipo.setOnClickListener(v -> mostrarDialogoCrearEquipo());
+        }
+        
+        if (buttonExportarEquipos != null) {
+            buttonExportarEquipos.setOnClickListener(v -> exportarEquiposPDF());
+        }
+        
+        // Configurar filtros avanzados
+        configurarFiltrosAvanzados();
+    }
+    
+    private void configurarFiltrosAvanzados() {
+        // Configurar expansión/colapso de filtros
+        if (layoutHeaderFiltros != null) {
+            layoutHeaderFiltros.setOnClickListener(v -> toggleFiltros());
+        }
+        
+        // Configurar spinners
+        configurarSpinnerCategoria();
+        configurarSpinnerEstado();
+        configurarSpinnerNumJugadores();
+        configurarSpinnerEntrenador();
+        
+        // Configurar botones de acción
+        if (buttonAplicarFiltros != null) {
+            buttonAplicarFiltros.setOnClickListener(v -> aplicarFiltros());
+        }
+        
+        if (buttonLimpiarFiltros != null) {
+            buttonLimpiarFiltros.setOnClickListener(v -> limpiarFiltros());
+        }
+        
+        // Configurar visibilidad según rol
+        configurarVisibilidadFiltros();
+    }
+    
+    private void configurarVisibilidadFiltros() {
+        // Por ahora, mostrar filtros para todos los usuarios
+        // En el futuro se puede diferenciar por roles
+        if (layoutHeaderFiltros != null) {
+            layoutHeaderFiltros.setVisibility(View.VISIBLE);
+        }
+    }
+    
+    private void toggleFiltros() {
+        if (layoutContenidoFiltros == null || imageViewExpandirFiltros == null) return;
+        
+        filtrosExpandidos = !filtrosExpandidos;
+        
+        if (filtrosExpandidos) {
+            layoutContenidoFiltros.setVisibility(View.VISIBLE);
+            imageViewExpandirFiltros.setRotation(180f);
+        } else {
+            layoutContenidoFiltros.setVisibility(View.GONE);
+            imageViewExpandirFiltros.setRotation(0f);
+        }
+    }
+    
+    private void configurarSpinnerCategoria() {
+        if (spinnerFiltroCategoria == null) return;
+        
+        String[] categorias = {"TODOS", "Biberones", "Prebenjamín", "Benjamín", "Alevín", "Infantil", "Cadete", "Juvenil"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), 
+                android.R.layout.simple_spinner_item, categorias);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFiltroCategoria.setAdapter(adapter);
+        
+        spinnerFiltroCategoria.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                filtroCategoria = parent.getItemAtPosition(position).toString();
+            }
+            
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                filtroCategoria = "TODOS";
+            }
+        });
+    }
+    
+    private void configurarSpinnerEstado() {
+        if (spinnerFiltroEstado == null) return;
+        
+        String[] estados = {"TODOS", "ACTIVO", "INACTIVO", "EN FORMACIÓN"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), 
+                android.R.layout.simple_spinner_item, estados);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFiltroEstado.setAdapter(adapter);
+        
+        spinnerFiltroEstado.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                filtroEstado = parent.getItemAtPosition(position).toString();
+            }
+            
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                filtroEstado = "TODOS";
+            }
+        });
+    }
+    
+    private void configurarSpinnerNumJugadores() {
+        if (spinnerFiltroNumJugadores == null) return;
+        
+        String[] numeros = {"TODOS", "0-5", "6-10", "11-15", "16-20", "20+"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), 
+                android.R.layout.simple_spinner_item, numeros);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFiltroNumJugadores.setAdapter(adapter);
+        
+        spinnerFiltroNumJugadores.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                filtroNumJugadores = parent.getItemAtPosition(position).toString();
+            }
+            
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                filtroNumJugadores = "TODOS";
+            }
+        });
+    }
+    
+    private void configurarSpinnerEntrenador() {
+        if (spinnerFiltroEntrenador == null) return;
+        
+        List<String> entrenadores = new ArrayList<>();
+        entrenadores.add("TODOS");
+        
+        // Obtener entrenadores únicos de los equipos
+        List<Equipo> equipos = dataManager.getEquipos();
+        for (Equipo equipo : equipos) {
+            if (equipo.getEntrenador() != null && !equipo.getEntrenador().isEmpty() && 
+                !entrenadores.contains(equipo.getEntrenador())) {
+                entrenadores.add(equipo.getEntrenador());
+            }
+        }
+        
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), 
+                android.R.layout.simple_spinner_item, entrenadores);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFiltroEntrenador.setAdapter(adapter);
+        
+        spinnerFiltroEntrenador.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                filtroEntrenador = parent.getItemAtPosition(position).toString();
+            }
+            
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                filtroEntrenador = "TODOS";
+            }
+        });
+    }
+    
+    private void aplicarFiltros() {
+        // Aplicar filtros y recargar equipos
+        cargarEquipos();
+        actualizarEstadisticas();
+        Toast.makeText(requireContext(), "Filtros aplicados correctamente", Toast.LENGTH_SHORT).show();
+    }
+    
+    private void limpiarFiltros() {
+        // Limpiar todos los filtros
+        filtroCategoria = "TODOS";
+        filtroEstado = "TODOS";
+        filtroNumJugadores = "TODOS";
+        filtroEntrenador = "TODOS";
+        
+        // Resetear spinners
+        if (spinnerFiltroCategoria != null) spinnerFiltroCategoria.setSelection(0);
+        if (spinnerFiltroEstado != null) spinnerFiltroEstado.setSelection(0);
+        if (spinnerFiltroNumJugadores != null) spinnerFiltroNumJugadores.setSelection(0);
+        if (spinnerFiltroEntrenador != null) spinnerFiltroEntrenador.setSelection(0);
+        
+        // Recargar equipos
+        cargarEquipos();
+        actualizarEstadisticas();
+        Toast.makeText(requireContext(), "Filtros limpiados", Toast.LENGTH_SHORT).show();
     }
 
     private void configurarRecyclerView() {
@@ -87,24 +345,123 @@ public class GestionEquiposFragment extends Fragment {
     private void cargarEquipos() {
         Log.d(TAG, "cargarEquipos: Cargando lista de equipos");
         List<Equipo> equipos = dataManager.getEquipos();
+        
+        // Aplicar filtros avanzados
+        equipos = aplicarFiltrosAvanzados(equipos);
+        
         equipoAdapter.actualizarEquipos(equipos);
         Log.d(TAG, "cargarEquipos: " + equipos.size() + " equipos cargados");
+    }
+    
+    private List<Equipo> aplicarFiltrosAvanzados(List<Equipo> equipos) {
+        List<Equipo> equiposFiltrados = new ArrayList<>();
+        
+        for (Equipo equipo : equipos) {
+            boolean cumpleFiltros = true;
+            
+            // Filtro por categoría
+            if (!filtroCategoria.equals("TODOS")) {
+                if (!filtroCategoria.equals(equipo.getCategoria())) {
+                    cumpleFiltros = false;
+                }
+            }
+            
+            // Filtro por estado (por ahora todos están activos, pero se puede expandir)
+            if (!filtroEstado.equals("TODOS")) {
+                // Por defecto todos los equipos están activos
+                if (!filtroEstado.equals("ACTIVO")) {
+                    cumpleFiltros = false;
+                }
+            }
+            
+            // Filtro por número de jugadores
+            if (!filtroNumJugadores.equals("TODOS")) {
+                int numJugadores = equipo.getJugadoresIds() != null ? equipo.getJugadoresIds().size() : 0;
+                if (!cumpleFiltroNumJugadores(numJugadores)) {
+                    cumpleFiltros = false;
+                }
+            }
+            
+            // Filtro por entrenador
+            if (!filtroEntrenador.equals("TODOS")) {
+                if (!filtroEntrenador.equals(equipo.getEntrenador())) {
+                    cumpleFiltros = false;
+                }
+            }
+            
+            if (cumpleFiltros) {
+                equiposFiltrados.add(equipo);
+            }
+        }
+        
+        return equiposFiltrados;
+    }
+    
+    private boolean cumpleFiltroNumJugadores(int numJugadores) {
+        switch (filtroNumJugadores) {
+            case "0-5":
+                return numJugadores >= 0 && numJugadores <= 5;
+            case "6-10":
+                return numJugadores >= 6 && numJugadores <= 10;
+            case "11-15":
+                return numJugadores >= 11 && numJugadores <= 15;
+            case "16-20":
+                return numJugadores >= 16 && numJugadores <= 20;
+            case "20+":
+                return numJugadores > 20;
+            default:
+                return true;
+        }
     }
 
     private void actualizarEstadisticas() {
         Log.d(TAG, "actualizarEstadisticas: Actualizando estadísticas");
         List<Equipo> equipos = dataManager.getEquipos();
-        int totalEquipos = equipos.size();
-        int totalJugadores = 0;
         
-        for (Equipo equipo : equipos) {
+        // Aplicar filtros para las estadísticas
+        List<Equipo> equiposFiltrados = aplicarFiltrosAvanzados(equipos);
+        
+        int totalEquipos = equiposFiltrados.size();
+        int totalJugadores = 0;
+        int totalCategorias = 0;
+        Set<String> categoriasUnicas = new HashSet<>();
+        
+        for (Equipo equipo : equiposFiltrados) {
             if (equipo.getJugadoresIds() != null) {
                 totalJugadores += equipo.getJugadoresIds().size();
             }
+            if (equipo.getCategoria() != null) {
+                categoriasUnicas.add(equipo.getCategoria());
+            }
         }
         
-        String estadisticas = String.format("Total Equipos: %d | Total Jugadores: %d", totalEquipos, totalJugadores);
-        textViewEstadisticas.setText(estadisticas);
+        totalCategorias = categoriasUnicas.size();
+        double promedioJugadores = totalEquipos > 0 ? (double) totalJugadores / totalEquipos : 0;
+        
+        // Actualizar vistas de estadísticas
+        if (textViewTotalEquipos != null) {
+            textViewTotalEquipos.setText(String.valueOf(totalEquipos));
+        }
+        
+        if (textViewTotalJugadores != null) {
+            textViewTotalJugadores.setText(String.valueOf(totalJugadores));
+        }
+        
+        if (textViewPromedioJugadores != null) {
+            textViewPromedioJugadores.setText(String.format("%.1f", promedioJugadores));
+        }
+        
+        if (textViewTotalCategorias != null) {
+            textViewTotalCategorias.setText(String.valueOf(totalCategorias));
+        }
+        
+        // Mantener compatibilidad con la vista antigua
+        if (textViewEstadisticas != null) {
+            String estadisticas = String.format("Total Equipos: %d | Total Jugadores: %d", totalEquipos, totalJugadores);
+            textViewEstadisticas.setText(estadisticas);
+        }
+        
+        Log.d(TAG, "actualizarEstadisticas: Estadísticas actualizadas - Equipos: " + totalEquipos + ", Jugadores: " + totalJugadores);
     }
 
     private void mostrarDialogoCrearEquipo() {
@@ -400,5 +757,204 @@ public class GestionEquiposFragment extends Fragment {
             spinnerEquipos.setVisibility(View.GONE);
             jugadorAdapter.actualizarUsuarios(new ArrayList<>());
         }
+    }
+    
+    private void exportarEquiposPDF() {
+        try {
+            // Crear directorio si no existe
+            File directory = new File(requireContext().getExternalFilesDir(null), "Reportes");
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+            
+            // Generar nombre de archivo con timestamp
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault());
+            String timestamp = sdf.format(new Date());
+            String fileName = "Equipos_Club_" + timestamp + ".pdf";
+            File file = new File(directory, fileName);
+            
+            Document document = new Document();
+            PdfWriter.getInstance(document, new FileOutputStream(file));
+            document.open();
+            
+            // Configurar fuentes
+            Font titleFont = new Font(Font.FontFamily.HELVETICA, 18, Font.BOLD);
+            Font subtitleFont = new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD);
+            Font normalFont = new Font(Font.FontFamily.HELVETICA, 12, Font.NORMAL);
+            Font smallFont = new Font(Font.FontFamily.HELVETICA, 10, Font.NORMAL);
+            
+            // Título principal
+            Paragraph title = new Paragraph("REPORTE DE EQUIPOS", titleFont);
+            title.setAlignment(Element.ALIGN_CENTER);
+            document.add(title);
+            
+            // Subtítulo del club
+            Paragraph clubTitle = new Paragraph("CD SANTIAGUIÑO GUIZÁN", subtitleFont);
+            clubTitle.setAlignment(Element.ALIGN_CENTER);
+            document.add(clubTitle);
+            
+            Paragraph lema = new Paragraph("SANTIAGUIÑO, A NOSA FAMILIA", smallFont);
+            lema.setAlignment(Element.ALIGN_CENTER);
+            document.add(lema);
+            
+            // Información de filtros aplicados
+            if (!filtroCategoria.equals("TODOS") || !filtroEstado.equals("TODOS") || 
+                !filtroNumJugadores.equals("TODOS") || !filtroEntrenador.equals("TODOS")) {
+                
+                document.add(new Paragraph(" ", normalFont));
+                Paragraph filtrosTitle = new Paragraph("FILTROS APLICADOS:", subtitleFont);
+                document.add(filtrosTitle);
+                
+                PdfPTable filtrosTable = new PdfPTable(2);
+                filtrosTable.setWidthPercentage(100);
+                
+                if (!filtroCategoria.equals("TODOS")) {
+                    agregarFilaTabla(filtrosTable, "Categoría:", filtroCategoria);
+                }
+                if (!filtroEstado.equals("TODOS")) {
+                    agregarFilaTabla(filtrosTable, "Estado:", filtroEstado);
+                }
+                if (!filtroNumJugadores.equals("TODOS")) {
+                    agregarFilaTabla(filtrosTable, "Nº Jugadores:", filtroNumJugadores);
+                }
+                if (!filtroEntrenador.equals("TODOS")) {
+                    agregarFilaTabla(filtrosTable, "Entrenador:", filtroEntrenador);
+                }
+                
+                document.add(filtrosTable);
+            }
+            
+            // Fecha de generación
+            document.add(new Paragraph(" ", normalFont));
+            Paragraph fechaGeneracion = new Paragraph("Fecha de generación: " + 
+                    new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(new Date()), smallFont);
+            document.add(fechaGeneracion);
+            
+            // Separador
+            document.add(new Paragraph(" ", normalFont));
+            document.add(new Paragraph("=".repeat(50), normalFont));
+            document.add(new Paragraph(" ", normalFont));
+            
+            // Obtener equipos filtrados
+            List<Equipo> equipos = dataManager.getEquipos();
+            equipos = aplicarFiltrosAvanzados(equipos);
+            
+            // Resumen general
+            Paragraph resumenTitle = new Paragraph("RESUMEN GENERAL", subtitleFont);
+            document.add(resumenTitle);
+            
+            PdfPTable resumenTable = new PdfPTable(2);
+            resumenTable.setWidthPercentage(100);
+            
+            agregarFilaTabla(resumenTable, "Total de Equipos:", String.valueOf(equipos.size()));
+            
+            int totalJugadores = 0;
+            Set<String> categoriasUnicas = new HashSet<>();
+            for (Equipo equipo : equipos) {
+                if (equipo.getJugadoresIds() != null) {
+                    totalJugadores += equipo.getJugadoresIds().size();
+                }
+                if (equipo.getCategoria() != null) {
+                    categoriasUnicas.add(equipo.getCategoria());
+                }
+            }
+            
+            agregarFilaTabla(resumenTable, "Total de Jugadores:", String.valueOf(totalJugadores));
+            agregarFilaTabla(resumenTable, "Categorías:", String.valueOf(categoriasUnicas.size()));
+            
+            double promedioJugadores = equipos.size() > 0 ? (double) totalJugadores / equipos.size() : 0;
+            agregarFilaTabla(resumenTable, "Promedio Jugadores/Equipo:", String.format("%.1f", promedioJugadores));
+            
+            document.add(resumenTable);
+            
+            // Listado detallado de equipos
+            document.add(new Paragraph(" ", normalFont));
+            Paragraph equiposTitle = new Paragraph("LISTADO DETALLADO DE EQUIPOS", subtitleFont);
+            document.add(equiposTitle);
+            
+            for (Equipo equipo : equipos) {
+                document.add(new Paragraph(" ", normalFont));
+                
+                PdfPTable equipoTable = new PdfPTable(2);
+                equipoTable.setWidthPercentage(100);
+                
+                agregarFilaTabla(equipoTable, "Nombre:", equipo.getNombre());
+                agregarFilaTabla(equipoTable, "Categoría:", equipo.getCategoria());
+                agregarFilaTabla(equipoTable, "Entrenador:", equipo.getEntrenador() != null ? equipo.getEntrenador() : "No asignado");
+                
+                int numJugadores = equipo.getJugadoresIds() != null ? equipo.getJugadoresIds().size() : 0;
+                agregarFilaTabla(equipoTable, "Nº Jugadores:", String.valueOf(numJugadores));
+                
+                document.add(equipoTable);
+                document.add(new Paragraph("─".repeat(30), smallFont));
+            }
+            
+            // Estadísticas por categoría
+            document.add(new Paragraph(" ", normalFont));
+            Paragraph categoriasTitle = new Paragraph("ESTADÍSTICAS POR CATEGORÍA", subtitleFont);
+            document.add(categoriasTitle);
+            
+            Map<String, Integer> equiposPorCategoria = new HashMap<>();
+            Map<String, Integer> jugadoresPorCategoria = new HashMap<>();
+            
+            for (Equipo equipo : equipos) {
+                String categoria = equipo.getCategoria();
+                equiposPorCategoria.put(categoria, equiposPorCategoria.getOrDefault(categoria, 0) + 1);
+                
+                int numJugadores = equipo.getJugadoresIds() != null ? equipo.getJugadoresIds().size() : 0;
+                jugadoresPorCategoria.put(categoria, jugadoresPorCategoria.getOrDefault(categoria, 0) + numJugadores);
+            }
+            
+            PdfPTable categoriasTable = new PdfPTable(3);
+            categoriasTable.setWidthPercentage(100);
+            
+            // Encabezados
+            PdfPCell header1 = new PdfPCell(new Phrase("Categoría", subtitleFont));
+            PdfPCell header2 = new PdfPCell(new Phrase("Equipos", subtitleFont));
+            PdfPCell header3 = new PdfPCell(new Phrase("Jugadores", subtitleFont));
+            
+            categoriasTable.addCell(header1);
+            categoriasTable.addCell(header2);
+            categoriasTable.addCell(header3);
+            
+            for (Map.Entry<String, Integer> entry : equiposPorCategoria.entrySet()) {
+                String categoria = entry.getKey();
+                int numEquipos = entry.getValue();
+                int numJugadores = jugadoresPorCategoria.getOrDefault(categoria, 0);
+                
+                categoriasTable.addCell(new PdfPCell(new Phrase(categoria, normalFont)));
+                categoriasTable.addCell(new PdfPCell(new Phrase(String.valueOf(numEquipos), normalFont)));
+                categoriasTable.addCell(new PdfPCell(new Phrase(String.valueOf(numJugadores), normalFont)));
+            }
+            
+            document.add(categoriasTable);
+            
+            document.close();
+            
+            // Mostrar mensaje de éxito
+            Toast.makeText(requireContext(), "Reporte exportado: " + fileName, Toast.LENGTH_LONG).show();
+            
+            // Abrir el archivo
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            Uri uri = Uri.fromFile(file);
+            intent.setDataAndType(uri, "application/pdf");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            startActivity(intent);
+            
+        } catch (Exception e) {
+            Log.e(TAG, "Error al exportar PDF", e);
+            Toast.makeText(requireContext(), "Error al exportar el reporte", Toast.LENGTH_SHORT).show();
+        }
+    }
+    
+    private void agregarFilaTabla(PdfPTable table, String label, String value) {
+        PdfPCell cell1 = new PdfPCell(new Phrase(label, new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD)));
+        PdfPCell cell2 = new PdfPCell(new Phrase(value, new Font(Font.FontFamily.HELVETICA, 12, Font.NORMAL)));
+        
+        cell1.setBorder(PdfPCell.NO_BORDER);
+        cell2.setBorder(PdfPCell.NO_BORDER);
+        
+        table.addCell(cell1);
+        table.addCell(cell2);
     }
 } 

@@ -6,18 +6,24 @@ public class Notificacion {
     private String id;
     private String titulo;
     private String mensaje;
-    private String tipo; // "EVENTO", "MENSAJE", "OBJETO", "GENERAL"
+    private String tipo; // "EVENTO", "MENSAJE", "OBJETO", "RECORDATORIO", "SOLICITUD", "URGENTE"
     private Date fechaCreacion;
     private boolean leida;
     private String destinatarioId; // null para notificaciones globales
     private String remitenteId;
     private String remitenteNombre;
     private boolean esAdmin;
+    private String prioridad; // "ALTA", "MEDIA", "BAJA"
+    private String equipoDestinatario; // Equipo específico para la notificación
+    private String estado; // "PENDIENTE", "APROBADA", "RECHAZADA"
+    private String creador; // Nombre del creador de la notificación
 
     public Notificacion() {
         this.id = String.valueOf(System.currentTimeMillis());
         this.fechaCreacion = new Date();
         this.leida = false;
+        this.prioridad = "MEDIA";
+        this.estado = "PENDIENTE";
     }
 
     public Notificacion(String titulo, String mensaje, String tipo, 
@@ -112,5 +118,37 @@ public class Notificacion {
 
     public void setEsAdmin(boolean esAdmin) {
         this.esAdmin = esAdmin;
+    }
+
+    public String getPrioridad() {
+        return prioridad;
+    }
+
+    public void setPrioridad(String prioridad) {
+        this.prioridad = prioridad;
+    }
+
+    public String getEquipoDestinatario() {
+        return equipoDestinatario;
+    }
+
+    public void setEquipoDestinatario(String equipoDestinatario) {
+        this.equipoDestinatario = equipoDestinatario;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public String getCreador() {
+        return creador;
+    }
+
+    public void setCreador(String creador) {
+        this.creador = creador;
     }
 } 
