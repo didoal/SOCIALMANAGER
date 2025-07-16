@@ -10,6 +10,15 @@
         <item name="android:textColorSecondary">@color/text_secondary</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <!-- Configuración para permitir acceso a la barra de tareas -->
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

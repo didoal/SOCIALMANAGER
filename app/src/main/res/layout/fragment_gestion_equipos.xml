@@ -564,7 +564,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:nestedScrollingEnabled="false" />
+            android:nestedScrollingEnabled="false"
+            android:scrollbars="vertical"
+            android:fadeScrollbars="false"
+            android:scrollbarStyle="insideOverlay"
+            style="@style/RecyclerViewStyle" />
 
         <!-- Botón flotante para agregar equipo -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton

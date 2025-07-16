@@ -3,19 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="8dp"
-    android:layout_marginBottom="8dp">
+    android:padding="12dp"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginBottom="12dp">
 
     <!-- Avatar del usuario -->
     <ImageView
         android:id="@+id/imageViewAvatar"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:src="@drawable/ic_person"
         android:background="@drawable/circle_background"
-        android:padding="8dp"
-        android:layout_marginEnd="12dp"
-        android:layout_gravity="top" />
+        android:padding="12dp"
+        android:layout_marginEnd="16dp"
+        android:layout_gravity="top"
+        android:elevation="2dp" />
 
     <!-- Contenido del mensaje -->
     <LinearLayout
@@ -30,7 +32,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginBottom="4dp">
+            android:layout_marginBottom="8dp">
 
             <TextView
                 android:id="@+id/textViewAutor"
@@ -38,14 +40,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textStyle="bold"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:textColor="@color/text_primary" />
 
             <!-- Ícono de destacado -->
             <ImageView
                 android:id="@+id/imageViewDestacado"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:src="@drawable/ic_star"
                 android:visibility="gone"
                 android:layout_marginEnd="8dp"
@@ -55,7 +57,7 @@
                 android:id="@+id/textViewFecha"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
+                android:textSize="13sp"
                 android:textColor="@color/text_secondary" />
 
         </LinearLayout>
@@ -67,16 +69,18 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@drawable/mensaje_background"
-            android:padding="12dp"
-            android:maxWidth="280dp">
+            android:padding="16dp"
+            android:maxWidth="300dp"
+            android:elevation="2dp">
 
             <TextView
                 android:id="@+id/textViewMensaje"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
+                android:textSize="15sp"
                 android:textColor="@color/text_primary"
-                android:lineSpacingExtra="2dp" />
+                android:lineSpacingExtra="4dp"
+                android:textStyle="normal" />
 
         </LinearLayout>
 

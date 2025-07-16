@@ -185,21 +185,23 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:layout_marginBottom="16dp">
 
             <!-- Botón exportar asistencia (solo admin) -->
             <Button
                 android:id="@+id/btnExportarPdf"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:text="📊 Exportar Reporte PDF"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:text="📊 Exportar\nReporte PDF"
                 android:textColor="@color/white"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 android:textStyle="bold"
                 android:background="@drawable/button_green_background"
-                android:layout_marginBottom="12dp"
-                android:padding="12dp" />
+                android:padding="8dp"
+                android:gravity="center"
+                android:lineSpacingExtra="2dp" />
 
         </LinearLayout>
 
@@ -214,27 +216,31 @@
             <Button
                 android:id="@+id/buttonMostrarFiltrosAvanzados"
                 android:layout_width="0dp"
-                android:layout_height="40dp"
+                android:layout_height="48dp"
                 android:layout_weight="1"
-                android:text="🔍 Filtros Avanzados"
+                android:text="🔍 Filtros\nAvanzados"
                 android:textColor="@color/white"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 android:textStyle="bold"
                 android:background="@drawable/button_gold_background"
                 android:layout_marginEnd="8dp"
-                android:padding="12dp" />
+                android:padding="8dp"
+                android:gravity="center"
+                android:lineSpacingExtra="2dp" />
 
             <Button
                 android:id="@+id/buttonLimpiarFiltros"
                 android:layout_width="0dp"
-                android:layout_height="40dp"
+                android:layout_height="48dp"
                 android:layout_weight="1"
-                android:text="🔄 Limpiar"
+                android:text="🔄 Limpiar\nFiltros"
                 android:textColor="@color/white"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 android:textStyle="bold"
                 android:background="@drawable/button_secondary_background"
-                android:padding="12dp" />
+                android:padding="8dp"
+                android:gravity="center"
+                android:lineSpacingExtra="2dp" />
 
         </LinearLayout>
 
@@ -418,14 +424,15 @@
             <Button
                 android:id="@+id/btnAplicarFiltros"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="56dp"
                 android:text="✅ Aplicar Filtros"
                 android:textColor="@color/white"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:background="@drawable/button_blue_background"
-                android:layout_marginTop="8dp"
-                android:padding="12dp" />
+                android:layout_marginTop="12dp"
+                android:padding="12dp"
+                android:gravity="center" />
 
         </LinearLayout>
 
@@ -472,7 +479,8 @@
             android:layout_weight="1"
             android:scrollbars="vertical"
             android:clipToPadding="false"
-            android:paddingBottom="80dp" />
+            android:paddingBottom="80dp"
+            style="@style/RecyclerViewStyle" />
 
     </LinearLayout>
 

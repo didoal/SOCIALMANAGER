@@ -32,9 +32,21 @@ public class DataManager {
 
     public DataManager(Context context) {
         if (context != null) {
-        sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        gson = new Gson();
-        inicializarDatosEjemplo();
+            try {
+                sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+                gson = new Gson();
+                inicializarDatosEjemplo();
+            } catch (Exception e) {
+                android.util.Log.e("DataManager", "Error al inicializar DataManager", e);
+                // En caso de error, crear objetos básicos para evitar NullPointerException
+                sharedPreferences = null;
+                gson = new Gson();
+            }
+        } else {
+            android.util.Log.e("DataManager", "Error: Context es null en DataManager");
+            // Crear objetos básicos para evitar NullPointerException
+            sharedPreferences = null;
+            gson = new Gson();
         }
     }
 
@@ -306,9 +318,27 @@ public class DataManager {
 
     // Gestión de Eventos
     public List<Evento> getEventos() {
-        String json = sharedPreferences.getString(KEY_EVENTOS, "[]");
-        Type type = new TypeToken<ArrayList<Evento>>(){}.getType();
-        return gson.fromJson(json, type);
+        try {
+            if (sharedPreferences == null || gson == null) {
+                android.util.Log.w("DataManager", "Advertencia: sharedPreferences o gson es null, retornando lista vacía");
+                return new ArrayList<>();
+            }
+            
+            String json = sharedPreferences.getString(KEY_EVENTOS, "[]");
+            Type type = new TypeToken<ArrayList<Evento>>(){}.getType();
+            List<Evento> eventos = gson.fromJson(json, type);
+            
+            // Verificar que la lista no sea null
+            if (eventos == null) {
+                android.util.Log.w("DataManager", "Advertencia: getEventos() devolvió null, retornando lista vacía");
+                return new ArrayList<>();
+            }
+            
+            return eventos;
+        } catch (Exception e) {
+            android.util.Log.e("DataManager", "Error al obtener eventos", e);
+            return new ArrayList<>();
+        }
     }
 
     public void guardarEventos(List<Evento> eventos) {
@@ -411,8 +441,22 @@ public class DataManager {
     }
 
     public Usuario getUsuarioActual() {
-        String json = sharedPreferences.getString(KEY_USUARIO_ACTUAL, null);
-        return json != null ? gson.fromJson(json, Usuario.class) : null;
+        try {
+            if (sharedPreferences == null || gson == null) {
+                android.util.Log.w("DataManager", "Advertencia: sharedPreferences o gson es null en getUsuarioActual");
+                return null;
+            }
+            
+            String json = sharedPreferences.getString(KEY_USUARIO_ACTUAL, null);
+            if (json == null) {
+                return null;
+            }
+            
+            return gson.fromJson(json, Usuario.class);
+        } catch (Exception e) {
+            android.util.Log.e("DataManager", "Error al obtener usuario actual", e);
+            return null;
+        }
     }
 
     public void guardarUsuarioActual(Usuario usuario) {

@@ -18,7 +18,11 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:scrollbars="vertical"
+        android:fadeScrollbars="false"
+        android:scrollbarStyle="insideOverlay"
+        style="@style/ScrollViewStyle">
 
         <LinearLayout
             android:layout_width="match_parent"

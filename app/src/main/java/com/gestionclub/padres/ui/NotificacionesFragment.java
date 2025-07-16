@@ -102,9 +102,19 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
 
     private void inicializarVistas(View view) {
         Log.d(TAG, "inicializarVistas: Inicializando vistas");
+        
+        // Inicializar vistas principales con comprobación de nulos
         recyclerViewNotificaciones = view.findViewById(R.id.recyclerViewNotificaciones);
+        if (recyclerViewNotificaciones == null) {
+            Log.e(TAG, "Error: recyclerViewNotificaciones no encontrado en el layout");
+            return;
+        }
+        
         textViewNoLeidas = view.findViewById(R.id.textViewNoLeidas);
         textViewTotal = view.findViewById(R.id.textViewTotal);
+        textViewEstadisticas = view.findViewById(R.id.textViewEstadisticas);
+        
+        // Inicializar botones con comprobación
         buttonMarcarLeidas = view.findViewById(R.id.buttonMarcarLeidas);
         buttonBorrarNotificaciones = view.findViewById(R.id.buttonBorrarNotificaciones);
         buttonFiltroTodas = view.findViewById(R.id.buttonFiltroTodas);
@@ -113,16 +123,26 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
         buttonFiltrosAvanzados = view.findViewById(R.id.buttonFiltrosAvanzados);
         buttonLimpiarFiltros = view.findViewById(R.id.buttonLimpiarFiltros);
         buttonExportarNotificaciones = view.findViewById(R.id.buttonExportarNotificaciones);
+        
+        // Inicializar layouts con comprobación
         layoutNoNotificaciones = view.findViewById(R.id.layoutNoNotificaciones);
         layoutFiltrosAvanzados = view.findViewById(R.id.layoutFiltrosAvanzados);
+        
+        // Inicializar spinners con comprobación
         spinnerTipoNotificacion = view.findViewById(R.id.spinnerTipoNotificacion);
         spinnerEquipo = view.findViewById(R.id.spinnerEquipo);
         spinnerFecha = view.findViewById(R.id.spinnerFecha);
         spinnerPrioridad = view.findViewById(R.id.spinnerPrioridad);
-        textViewEstadisticas = view.findViewById(R.id.textViewEstadisticas);
+        
+        // Inicializar FAB con comprobación
         fabCrearNotificacion = view.findViewById(R.id.fabCrearNotificacion);
         
-        fabCrearNotificacion.setOnClickListener(v -> mostrarDialogoCrearNotificacion());
+        // Configurar FAB solo si se encontró
+        if (fabCrearNotificacion != null) {
+            fabCrearNotificacion.setOnClickListener(v -> mostrarDialogoCrearNotificacion());
+        } else {
+            Log.w(TAG, "Advertencia: fabCrearNotificacion no encontrado en el layout");
+        }
     }
 
     private void configurarRecyclerView() {
@@ -176,19 +196,31 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
             switch (rol) {
                 case "ADMIN":
                     // Administradores ven todo
-                    fabCrearNotificacion.setVisibility(View.VISIBLE);
-                    buttonExportarNotificaciones.setVisibility(View.VISIBLE);
+                    if (fabCrearNotificacion != null) {
+                        fabCrearNotificacion.setVisibility(View.VISIBLE);
+                    }
+                    if (buttonExportarNotificaciones != null) {
+                        buttonExportarNotificaciones.setVisibility(View.VISIBLE);
+                    }
                     break;
                 case "ENTRENADOR":
                     // Entrenadores pueden crear notificaciones para sus equipos
-                    fabCrearNotificacion.setVisibility(View.VISIBLE);
-                    buttonExportarNotificaciones.setVisibility(View.GONE);
+                    if (fabCrearNotificacion != null) {
+                        fabCrearNotificacion.setVisibility(View.VISIBLE);
+                    }
+                    if (buttonExportarNotificaciones != null) {
+                        buttonExportarNotificaciones.setVisibility(View.GONE);
+                    }
                     break;
                 case "USUARIO":
                 default:
                     // Usuarios normales solo ven notificaciones
-                    fabCrearNotificacion.setVisibility(View.GONE);
-                    buttonExportarNotificaciones.setVisibility(View.GONE);
+                    if (fabCrearNotificacion != null) {
+                        fabCrearNotificacion.setVisibility(View.GONE);
+                    }
+                    if (buttonExportarNotificaciones != null) {
+                        buttonExportarNotificaciones.setVisibility(View.GONE);
+                    }
                     break;
             }
         }
@@ -196,26 +228,38 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
 
     private void actualizarEstadosFiltros() {
         // Resetear todos los botones
-        buttonFiltroTodas.setBackgroundResource(R.drawable.button_secondary_background);
-        buttonFiltroTodas.setTextColor(getResources().getColor(R.color.text_primary));
-        buttonFiltroNoLeidas.setBackgroundResource(R.drawable.button_secondary_background);
-        buttonFiltroNoLeidas.setTextColor(getResources().getColor(R.color.text_primary));
-        buttonFiltroLeidas.setBackgroundResource(R.drawable.button_secondary_background);
-        buttonFiltroLeidas.setTextColor(getResources().getColor(R.color.text_primary));
+        if (buttonFiltroTodas != null) {
+            buttonFiltroTodas.setBackgroundResource(R.drawable.button_secondary_background);
+            buttonFiltroTodas.setTextColor(getResources().getColor(R.color.text_primary));
+        }
+        if (buttonFiltroNoLeidas != null) {
+            buttonFiltroNoLeidas.setBackgroundResource(R.drawable.button_secondary_background);
+            buttonFiltroNoLeidas.setTextColor(getResources().getColor(R.color.text_primary));
+        }
+        if (buttonFiltroLeidas != null) {
+            buttonFiltroLeidas.setBackgroundResource(R.drawable.button_secondary_background);
+            buttonFiltroLeidas.setTextColor(getResources().getColor(R.color.text_primary));
+        }
 
         // Activar el filtro actual
         switch (filtroActual) {
             case "TODAS":
-                buttonFiltroTodas.setBackgroundResource(R.drawable.button_gold_background);
-                buttonFiltroTodas.setTextColor(getResources().getColor(R.color.black));
+                if (buttonFiltroTodas != null) {
+                    buttonFiltroTodas.setBackgroundResource(R.drawable.button_gold_background);
+                    buttonFiltroTodas.setTextColor(getResources().getColor(R.color.black));
+                }
                 break;
             case "NO_LEIDAS":
-                buttonFiltroNoLeidas.setBackgroundResource(R.drawable.button_gold_background);
-                buttonFiltroNoLeidas.setTextColor(getResources().getColor(R.color.black));
+                if (buttonFiltroNoLeidas != null) {
+                    buttonFiltroNoLeidas.setBackgroundResource(R.drawable.button_gold_background);
+                    buttonFiltroNoLeidas.setTextColor(getResources().getColor(R.color.black));
+                }
                 break;
             case "LEIDAS":
-                buttonFiltroLeidas.setBackgroundResource(R.drawable.button_gold_background);
-                buttonFiltroLeidas.setTextColor(getResources().getColor(R.color.black));
+                if (buttonFiltroLeidas != null) {
+                    buttonFiltroLeidas.setBackgroundResource(R.drawable.button_gold_background);
+                    buttonFiltroLeidas.setTextColor(getResources().getColor(R.color.black));
+                }
                 break;
         }
     }
@@ -234,11 +278,19 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
         notificacionAdapter.actualizarNotificaciones(notificacionesFiltradas);
         
         if (notificacionesFiltradas.isEmpty()) {
-            layoutNoNotificaciones.setVisibility(View.VISIBLE);
-            recyclerViewNotificaciones.setVisibility(View.GONE);
+            if (layoutNoNotificaciones != null) {
+                layoutNoNotificaciones.setVisibility(View.VISIBLE);
+            }
+            if (recyclerViewNotificaciones != null) {
+                recyclerViewNotificaciones.setVisibility(View.GONE);
+            }
         } else {
-            layoutNoNotificaciones.setVisibility(View.GONE);
-            recyclerViewNotificaciones.setVisibility(View.VISIBLE);
+            if (layoutNoNotificaciones != null) {
+                layoutNoNotificaciones.setVisibility(View.GONE);
+            }
+            if (recyclerViewNotificaciones != null) {
+                recyclerViewNotificaciones.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -353,85 +405,115 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
             if (notif.getTipo().contains("MENSAJE")) mensajes++;
         }
         
-        textViewTotal.setText(String.valueOf(total));
-        textViewNoLeidas.setText(String.valueOf(noLeidas));
-        textViewEstadisticas.setText("Total: " + total + " | No leídas: " + noLeidas + 
+        if (textViewTotal != null) {
+            textViewTotal.setText(String.valueOf(total));
+        }
+        if (textViewNoLeidas != null) {
+            textViewNoLeidas.setText(String.valueOf(noLeidas));
+        }
+        if (textViewEstadisticas != null) {
+            textViewEstadisticas.setText("Total: " + total + " | No leídas: " + noLeidas + 
                                    " | Recordatorios: " + recordatorios + " | Mensajes: " + mensajes);
+        }
     }
 
     private void configurarListeners() {
-        buttonMarcarLeidas.setOnClickListener(v -> marcarTodasComoLeidas());
-        buttonBorrarNotificaciones.setOnClickListener(v -> mostrarDialogoBorrarNotificaciones());
-        buttonFiltroTodas.setOnClickListener(v -> {
-            filtroActual = "TODAS";
-            actualizarEstadosFiltros();
-            cargarNotificaciones();
-        });
-        buttonFiltroNoLeidas.setOnClickListener(v -> {
-            filtroActual = "NO_LEIDAS";
-            actualizarEstadosFiltros();
-            cargarNotificaciones();
-        });
-        buttonFiltroLeidas.setOnClickListener(v -> {
-            filtroActual = "LEIDAS";
-            actualizarEstadosFiltros();
-            cargarNotificaciones();
-        });
-        buttonFiltrosAvanzados.setOnClickListener(v -> {
-            if (layoutFiltrosAvanzados.getVisibility() == View.VISIBLE) {
-                layoutFiltrosAvanzados.setVisibility(View.GONE);
-                buttonFiltrosAvanzados.setText("🔍 Filtros Avanzados");
-            } else {
-                layoutFiltrosAvanzados.setVisibility(View.VISIBLE);
-                buttonFiltrosAvanzados.setText("🔍 Ocultar Filtros");
-            }
-        });
-        buttonLimpiarFiltros.setOnClickListener(v -> limpiarFiltros());
-        buttonExportarNotificaciones.setOnClickListener(v -> exportarNotificaciones());
+        if (buttonMarcarLeidas != null) {
+            buttonMarcarLeidas.setOnClickListener(v -> marcarTodasComoLeidas());
+        }
+        if (buttonBorrarNotificaciones != null) {
+            buttonBorrarNotificaciones.setOnClickListener(v -> mostrarDialogoBorrarNotificaciones());
+        }
+        if (buttonFiltroTodas != null) {
+            buttonFiltroTodas.setOnClickListener(v -> {
+                filtroActual = "TODAS";
+                actualizarEstadosFiltros();
+                cargarNotificaciones();
+            });
+        }
+        if (buttonFiltroNoLeidas != null) {
+            buttonFiltroNoLeidas.setOnClickListener(v -> {
+                filtroActual = "NO_LEIDAS";
+                actualizarEstadosFiltros();
+                cargarNotificaciones();
+            });
+        }
+        if (buttonFiltroLeidas != null) {
+            buttonFiltroLeidas.setOnClickListener(v -> {
+                filtroActual = "LEIDAS";
+                actualizarEstadosFiltros();
+                cargarNotificaciones();
+            });
+        }
+        if (buttonFiltrosAvanzados != null) {
+            buttonFiltrosAvanzados.setOnClickListener(v -> {
+                if (layoutFiltrosAvanzados != null && layoutFiltrosAvanzados.getVisibility() == View.VISIBLE) {
+                    layoutFiltrosAvanzados.setVisibility(View.GONE);
+                    buttonFiltrosAvanzados.setText("🔍 Filtros Avanzados");
+                } else {
+                    layoutFiltrosAvanzados.setVisibility(View.VISIBLE);
+                    buttonFiltrosAvanzados.setText("🔍 Ocultar Filtros");
+                }
+            });
+        }
+        if (buttonLimpiarFiltros != null) {
+            buttonLimpiarFiltros.setOnClickListener(v -> limpiarFiltros());
+        }
+        if (buttonExportarNotificaciones != null) {
+            buttonExportarNotificaciones.setOnClickListener(v -> exportarNotificaciones());
+        }
         
-        spinnerTipoNotificacion.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
-                filtroTipo = parent.getItemAtPosition(position).toString();
-                cargarNotificaciones();
-            }
+        if (spinnerTipoNotificacion != null) {
+            spinnerTipoNotificacion.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                    filtroTipo = parent.getItemAtPosition(position).toString();
+                    cargarNotificaciones();
+                }
 
-            @Override
-            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
-        });
+                @Override
+                public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+            });
+        }
         
-        spinnerEquipo.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
-                filtroEquipo = parent.getItemAtPosition(position).toString();
-                cargarNotificaciones();
-            }
+        if (spinnerEquipo != null) {
+            spinnerEquipo.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                    filtroEquipo = parent.getItemAtPosition(position).toString();
+                    cargarNotificaciones();
+                }
 
-            @Override
-            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
-        });
+                @Override
+                public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+            });
+        }
 
-        spinnerFecha.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
-                filtroFecha = parent.getItemAtPosition(position).toString();
-                cargarNotificaciones();
-            }
+        if (spinnerFecha != null) {
+            spinnerFecha.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                    filtroFecha = parent.getItemAtPosition(position).toString();
+                    cargarNotificaciones();
+                }
 
-            @Override
-            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
-        });
+                @Override
+                public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+            });
+        }
 
-        spinnerPrioridad.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
-                filtroPrioridad = parent.getItemAtPosition(position).toString();
-                cargarNotificaciones();
-            }
+        if (spinnerPrioridad != null) {
+            spinnerPrioridad.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                    filtroPrioridad = parent.getItemAtPosition(position).toString();
+                    cargarNotificaciones();
+                }
 
-            @Override
-            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
-        });
+                @Override
+                public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+            });
+        }
     }
 
     private void marcarTodasComoLeidas() {
@@ -448,17 +530,19 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
     }
 
     private void mostrarDialogoBorrarNotificaciones() {
-        new AlertDialog.Builder(requireContext())
-            .setTitle("🗑️ Borrar Notificaciones")
-            .setMessage("¿Estás seguro de que quieres borrar todas las notificaciones? Esta acción no se puede deshacer.")
-            .setPositiveButton("Borrar", (dialog, which) -> {
-                dataManager.borrarTodasNotificaciones();
-                cargarNotificaciones();
-                actualizarEstadisticas();
-                Toast.makeText(requireContext(), "Todas las notificaciones han sido borradas", Toast.LENGTH_SHORT).show();
-            })
-            .setNegativeButton("Cancelar", null)
-            .show();
+        if (buttonBorrarNotificaciones != null) {
+            new AlertDialog.Builder(requireContext())
+                .setTitle("🗑️ Borrar Notificaciones")
+                .setMessage("¿Estás seguro de que quieres borrar todas las notificaciones? Esta acción no se puede deshacer.")
+                .setPositiveButton("Borrar", (dialog, which) -> {
+                    dataManager.borrarTodasNotificaciones();
+                    cargarNotificaciones();
+                    actualizarEstadisticas();
+                    Toast.makeText(requireContext(), "Todas las notificaciones han sido borradas", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+        }
     }
 
     private void limpiarFiltros() {
@@ -469,10 +553,18 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
         filtroPrioridad = "TODAS";
         
         // Resetear spinners
-        spinnerTipoNotificacion.setSelection(0);
-        spinnerEquipo.setSelection(0);
-        spinnerFecha.setSelection(0);
-        spinnerPrioridad.setSelection(0);
+        if (spinnerTipoNotificacion != null) {
+            spinnerTipoNotificacion.setSelection(0);
+        }
+        if (spinnerEquipo != null) {
+            spinnerEquipo.setSelection(0);
+        }
+        if (spinnerFecha != null) {
+            spinnerFecha.setSelection(0);
+        }
+        if (spinnerPrioridad != null) {
+            spinnerPrioridad.setSelection(0);
+        }
         
         actualizarEstadosFiltros();
         cargarNotificaciones();
@@ -540,17 +632,19 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
 
     @Override
     public void onBorrarClick(Notificacion notificacion) {
-        new AlertDialog.Builder(requireContext())
-            .setTitle("🗑️ Borrar Notificación")
-            .setMessage("¿Estás seguro de que quieres borrar esta notificación?")
-            .setPositiveButton("Borrar", (dialog, which) -> {
-                dataManager.borrarNotificacion(notificacion.getId());
-                cargarNotificaciones();
-                actualizarEstadisticas();
-                Toast.makeText(requireContext(), "Notificación borrada", Toast.LENGTH_SHORT).show();
-            })
-            .setNegativeButton("Cancelar", null)
-            .show();
+        if (buttonBorrarNotificaciones != null) {
+            new AlertDialog.Builder(requireContext())
+                .setTitle("🗑️ Borrar Notificación")
+                .setMessage("¿Estás seguro de que quieres borrar esta notificación?")
+                .setPositiveButton("Borrar", (dialog, which) -> {
+                    dataManager.borrarNotificacion(notificacion.getId());
+                    cargarNotificaciones();
+                    actualizarEstadisticas();
+                    Toast.makeText(requireContext(), "Notificación borrada", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+        }
     }
 
     @Override
@@ -572,11 +666,13 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
     }
 
     private void mostrarDetallesNotificacion(Notificacion notificacion) {
-        new AlertDialog.Builder(requireContext())
-            .setTitle(notificacion.getTitulo())
-            .setMessage(notificacion.getMensaje() + "\n\nFecha: " + dateFormat.format(notificacion.getFechaCreacion()))
-            .setPositiveButton("Cerrar", null)
-            .show();
+        if (textViewEstadisticas != null) {
+            new AlertDialog.Builder(requireContext())
+                .setTitle(notificacion.getTitulo())
+                .setMessage(notificacion.getMensaje() + "\n\nFecha: " + dateFormat.format(notificacion.getFechaCreacion()))
+                .setPositiveButton("Cerrar", null)
+                .show();
+        }
     }
 
     @Override

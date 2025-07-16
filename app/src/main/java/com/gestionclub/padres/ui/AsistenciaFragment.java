@@ -95,35 +95,55 @@ public class AsistenciaFragment extends Fragment {
     }
 
     private void inicializarVistas(View view) {
+        // Inicializar vistas principales con comprobación de nulos
         recyclerViewAsistencias = view.findViewById(R.id.recyclerViewAsistencias);
+        if (recyclerViewAsistencias == null) {
+            Log.e("AsistenciaFragment", "Error: recyclerViewAsistencias no encontrado en el layout");
+            return;
+        }
+        
         textViewConfirmados = view.findViewById(R.id.textViewConfirmados);
         textViewNoAsisten = view.findViewById(R.id.textViewNoAsisten);
         textViewPorcentaje = view.findViewById(R.id.textViewPorcentaje);
         textViewResumenFiltros = view.findViewById(R.id.textViewResumenFiltros);
+        
+        // Inicializar botones con comprobación
         btnFechaDesde = view.findViewById(R.id.btnFechaDesde);
         btnFechaHasta = view.findViewById(R.id.btnFechaHasta);
         btnAplicarFiltros = view.findViewById(R.id.btnAplicarFiltros);
         btnExportarPdf = view.findViewById(R.id.btnExportarPdf);
+        
+        // Inicializar spinners con comprobación
         spinnerTipoFiltro = view.findViewById(R.id.spinnerTipoFiltro);
         spinnerEquipo = view.findViewById(R.id.spinnerEquipo);
         spinnerCategoria = view.findViewById(R.id.spinnerCategoria);
         spinnerJugador = view.findViewById(R.id.spinnerJugador);
+        
+        // Inicializar layouts con comprobación
         layoutFiltroEquipo = view.findViewById(R.id.layoutFiltroEquipo);
         layoutFiltroCategoria = view.findViewById(R.id.layoutFiltroCategoria);
         layoutFiltroJugador = view.findViewById(R.id.layoutFiltroJugador);
+        layoutFiltrosAvanzados = view.findViewById(R.id.layoutFiltrosAvanzados);
+        
+        // Inicializar gráfico con comprobación
         chartAsistencias = view.findViewById(R.id.chartAsistencias);
+        
+        // Inicializar FAB con comprobación
         fabRegistrarAsistencia = view.findViewById(R.id.fabRegistrarAsistencia);
+        
+        // Inicializar botones adicionales con comprobación
         buttonMostrarFiltrosAvanzados = view.findViewById(R.id.buttonMostrarFiltrosAvanzados);
         buttonLimpiarFiltros = view.findViewById(R.id.buttonLimpiarFiltros);
-        layoutFiltrosAvanzados = view.findViewById(R.id.layoutFiltrosAvanzados);
     }
 
     private void configurarRecyclerView() {
         Context context = getContext();
-        if (context != null) {
+        if (context != null && recyclerViewAsistencias != null) {
             recyclerViewAsistencias.setLayoutManager(new LinearLayoutManager(context));
             asistenciaAdapter = new AsistenciaAdapter(context, new ArrayList<>(), this::manejarClicEnAsistencia);
-        recyclerViewAsistencias.setAdapter(asistenciaAdapter);
+            recyclerViewAsistencias.setAdapter(asistenciaAdapter);
+        } else {
+            Log.e("AsistenciaFragment", "Error: Context o RecyclerView es null");
         }
     }
 
@@ -194,68 +214,88 @@ public class AsistenciaFragment extends Fragment {
     }
 
     private void configurarGrafico() {
-        chartAsistencias.setUsePercentValues(true);
-        chartAsistencias.getDescription().setEnabled(false);
-        chartAsistencias.setExtraOffsets(5, 10, 5, 5);
-        chartAsistencias.setDragDecelerationFrictionCoef(0.95f);
-        chartAsistencias.setDrawHoleEnabled(true);
-        chartAsistencias.setHoleColor(android.graphics.Color.WHITE);
-        chartAsistencias.setTransparentCircleColor(android.graphics.Color.WHITE);
-        chartAsistencias.setTransparentCircleAlpha(110);
-        chartAsistencias.setHoleRadius(58f);
-        chartAsistencias.setTransparentCircleRadius(61f);
-        chartAsistencias.setDrawCenterText(true);
-        chartAsistencias.setCenterText("Asistencias");
-        chartAsistencias.setRotationAngle(0);
-        chartAsistencias.setRotationEnabled(true);
-        chartAsistencias.setHighlightPerTapEnabled(true);
-        chartAsistencias.animateY(1400);
-        chartAsistencias.getLegend().setEnabled(false);
+        if (chartAsistencias != null) {
+            chartAsistencias.setUsePercentValues(true);
+            chartAsistencias.getDescription().setEnabled(false);
+            chartAsistencias.setExtraOffsets(5, 10, 5, 5);
+            chartAsistencias.setDragDecelerationFrictionCoef(0.95f);
+            chartAsistencias.setDrawHoleEnabled(true);
+            chartAsistencias.setHoleColor(android.graphics.Color.WHITE);
+            chartAsistencias.setTransparentCircleColor(android.graphics.Color.WHITE);
+            chartAsistencias.setTransparentCircleAlpha(110);
+            chartAsistencias.setHoleRadius(58f);
+            chartAsistencias.setTransparentCircleRadius(61f);
+            chartAsistencias.setDrawCenterText(true);
+            chartAsistencias.setCenterText("Asistencias");
+            chartAsistencias.setRotationAngle(0);
+            chartAsistencias.setRotationEnabled(true);
+            chartAsistencias.setHighlightPerTapEnabled(true);
+            chartAsistencias.animateY(1400);
+            chartAsistencias.getLegend().setEnabled(false);
+        } else {
+            Log.w("AsistenciaFragment", "Advertencia: chartAsistencias es null");
+        }
     }
 
     private void configurarListeners() {
-        btnFechaDesde.setOnClickListener(v -> mostrarDatePicker(true));
-        btnFechaHasta.setOnClickListener(v -> mostrarDatePicker(false));
-        btnAplicarFiltros.setOnClickListener(v -> aplicarFiltros());
-        btnExportarPdf.setOnClickListener(v -> exportarPdf());
+        if (btnFechaDesde != null) {
+            btnFechaDesde.setOnClickListener(v -> mostrarDatePicker(true));
+        }
+        if (btnFechaHasta != null) {
+            btnFechaHasta.setOnClickListener(v -> mostrarDatePicker(false));
+        }
+        if (btnAplicarFiltros != null) {
+            btnAplicarFiltros.setOnClickListener(v -> aplicarFiltros());
+        }
+        if (btnExportarPdf != null) {
+            btnExportarPdf.setOnClickListener(v -> exportarPdf());
+        }
         
         // Configurar botón mostrar/ocultar filtros avanzados
-        buttonMostrarFiltrosAvanzados.setOnClickListener(v -> {
-            if (layoutFiltrosAvanzados.getVisibility() == View.GONE) {
-                layoutFiltrosAvanzados.setVisibility(View.VISIBLE);
-                buttonMostrarFiltrosAvanzados.setText("🔍 Ocultar Filtros");
-            } else {
-                layoutFiltrosAvanzados.setVisibility(View.GONE);
-                buttonMostrarFiltrosAvanzados.setText("🔍 Filtros Avanzados");
-            }
-        });
+        if (buttonMostrarFiltrosAvanzados != null && layoutFiltrosAvanzados != null) {
+            buttonMostrarFiltrosAvanzados.setOnClickListener(v -> {
+                if (layoutFiltrosAvanzados.getVisibility() == View.GONE) {
+                    layoutFiltrosAvanzados.setVisibility(View.VISIBLE);
+                    buttonMostrarFiltrosAvanzados.setText("🔍 Ocultar Filtros");
+                } else {
+                    layoutFiltrosAvanzados.setVisibility(View.GONE);
+                    buttonMostrarFiltrosAvanzados.setText("🔍 Filtros Avanzados");
+                }
+            });
+        }
         
         // Configurar botón limpiar filtros
-        buttonLimpiarFiltros.setOnClickListener(v -> {
-            limpiarFiltros();
-        });
+        if (buttonLimpiarFiltros != null) {
+            buttonLimpiarFiltros.setOnClickListener(v -> {
+                limpiarFiltros();
+            });
+        }
         
         // Configurar FAB según el rol del usuario
         boolean puedeRegistrarAsistencia = usuarioActual != null && 
             (usuarioActual.isEsAdmin() || "entrenador".equals(usuarioActual.getRol()));
         
-        if (puedeRegistrarAsistencia) {
-            fabRegistrarAsistencia.setVisibility(View.VISIBLE);
-        fabRegistrarAsistencia.setOnClickListener(v -> mostrarDialogoRegistrarAsistencia());
-        } else {
-            fabRegistrarAsistencia.setVisibility(View.GONE);
+        if (fabRegistrarAsistencia != null) {
+            if (puedeRegistrarAsistencia) {
+                fabRegistrarAsistencia.setVisibility(View.VISIBLE);
+                fabRegistrarAsistencia.setOnClickListener(v -> mostrarDialogoRegistrarAsistencia());
+            } else {
+                fabRegistrarAsistencia.setVisibility(View.GONE);
+            }
         }
 
-        spinnerTipoFiltro.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
-                tipoFiltro = parent.getItemAtPosition(position).toString();
-                mostrarFiltrosCondicionales();
-            }
-            
-            @Override
-            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
-        });
+        if (spinnerTipoFiltro != null) {
+            spinnerTipoFiltro.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                    tipoFiltro = parent.getItemAtPosition(position).toString();
+                    mostrarFiltrosCondicionales();
+                }
+                
+                @Override
+                public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+            });
+        }
     }
 
     private void mostrarDatePicker(boolean esDesde) {
@@ -397,12 +437,23 @@ public class AsistenciaFragment extends Fragment {
         double porcentajeAsistencia = totalAsistencias > 0 ? 
             (double) asistenciasPositivas / totalAsistencias * 100 : 0;
         
-        textViewConfirmados.setText(String.valueOf(asistenciasPositivas));
-        textViewNoAsisten.setText(String.valueOf(asistenciasNegativas));
-        textViewPorcentaje.setText(String.format(Locale.getDefault(), "%.1f%%", porcentajeAsistencia));
+        if (textViewConfirmados != null) {
+            textViewConfirmados.setText(String.valueOf(asistenciasPositivas));
+        }
+        if (textViewNoAsisten != null) {
+            textViewNoAsisten.setText(String.valueOf(asistenciasNegativas));
+        }
+        if (textViewPorcentaje != null) {
+            textViewPorcentaje.setText(String.format(Locale.getDefault(), "%.1f%%", porcentajeAsistencia));
+        }
     }
 
     private void actualizarGrafico() {
+        if (chartAsistencias == null) {
+            Log.w("AsistenciaFragment", "Advertencia: chartAsistencias es null, no se puede actualizar gráfico");
+            return;
+        }
+        
         int asistenciasPositivas = 0, asistenciasNegativas = 0;
         
         for (Asistencia asistencia : asistenciasFiltradas) {
@@ -432,6 +483,11 @@ public class AsistenciaFragment extends Fragment {
     }
 
     private void actualizarResumenFiltros() {
+        if (textViewResumenFiltros == null) {
+            Log.w("AsistenciaFragment", "Advertencia: textViewResumenFiltros es null");
+            return;
+        }
+        
         StringBuilder resumen = new StringBuilder("Filtros aplicados: ");
         
         if (fechaDesde != null || fechaHasta != null) {
@@ -589,18 +645,34 @@ public class AsistenciaFragment extends Fragment {
         filtroJugador = "";
         
         // Resetear botones de fecha
-        btnFechaDesde.setText("Seleccionar fecha");
-        btnFechaHasta.setText("Seleccionar fecha");
+        if (btnFechaDesde != null) {
+            btnFechaDesde.setText("Seleccionar fecha");
+        }
+        if (btnFechaHasta != null) {
+            btnFechaHasta.setText("Seleccionar fecha");
+        }
         
         // Resetear spinners
-        spinnerTipoFiltro.setSelection(0);
-        spinnerEquipo.setSelection(0);
-        spinnerCategoria.setSelection(0);
-        spinnerJugador.setSelection(0);
+        if (spinnerTipoFiltro != null) {
+            spinnerTipoFiltro.setSelection(0);
+        }
+        if (spinnerEquipo != null) {
+            spinnerEquipo.setSelection(0);
+        }
+        if (spinnerCategoria != null) {
+            spinnerCategoria.setSelection(0);
+        }
+        if (spinnerJugador != null) {
+            spinnerJugador.setSelection(0);
+        }
         
         // Ocultar filtros avanzados
-        layoutFiltrosAvanzados.setVisibility(View.GONE);
-        buttonMostrarFiltrosAvanzados.setText("🔍 Filtros Avanzados");
+        if (layoutFiltrosAvanzados != null) {
+            layoutFiltrosAvanzados.setVisibility(View.GONE);
+        }
+        if (buttonMostrarFiltrosAvanzados != null) {
+            buttonMostrarFiltrosAvanzados.setText("🔍 Filtros Avanzados");
+        }
         
         // Recargar datos
         cargarAsistencias();

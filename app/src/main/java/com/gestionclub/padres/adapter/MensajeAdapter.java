@@ -83,9 +83,13 @@ public class MensajeAdapter extends RecyclerView.Adapter<MensajeAdapter.MensajeV
             if (mensaje.isDestacado()) {
                 imageViewDestacado.setVisibility(View.VISIBLE);
                 layoutMensaje.setBackgroundResource(R.drawable.mensaje_destacado_background);
+                // Texto blanco para mensajes destacados
+                textViewMensaje.setTextColor(itemView.getContext().getResources().getColor(R.color.white));
             } else {
                 imageViewDestacado.setVisibility(View.GONE);
                 layoutMensaje.setBackgroundResource(R.drawable.mensaje_background);
+                // Texto normal para mensajes no destacados
+                textViewMensaje.setTextColor(itemView.getContext().getResources().getColor(R.color.text_primary));
             }
 
             // Configurar colores según el tipo de usuario

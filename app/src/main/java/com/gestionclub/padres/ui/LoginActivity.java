@@ -35,6 +35,9 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+        // Configurar sistema de ventanas para permitir acceso a la barra de tareas
+        configurarSistemaVentanas();
+        
         // Aplicar configuración de idioma y tema
         LocaleHelper.setLocale(this);
         LocaleHelper.setTheme(this);
@@ -116,6 +119,25 @@ public class LoginActivity extends AppCompatActivity {
             (android.view.inputmethod.InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null && getCurrentFocus() != null) {
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
+    }
+
+    private void configurarSistemaVentanas() {
+        // Configurar para permitir acceso a la barra de tareas
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+            getWindow().getAttributes().layoutInDisplayCutoutMode = 
+                android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+        }
+        
+        // Configurar barras del sistema
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT);
+            getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT);
+        }
+        
+        // Configurar para que la aplicación no interfiera con los gestos del sistema
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            getWindow().setDecorFitsSystemWindows(false);
         }
     }
 
