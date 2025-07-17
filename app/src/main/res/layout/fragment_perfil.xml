@@ -520,7 +520,6 @@
 
         </LinearLayout>
     </ScrollView>
-    
     <!-- FloatingActionButton para crear notificación -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabCrearNotificacion"
