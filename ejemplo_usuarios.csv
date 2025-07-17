@@ -1,0 +1,9 @@
+nombre,email,password,rol,jugador,equipo
+Juan Pérez,juan@club.com,padre123,padre,Carlos Pérez,Alevín A
+María García,maria@club.com,padre123,padre,Ana García,Infantil B
+Luis Martínez,luis@club.com,padre123,padre,Pedro Martínez,Cadete A
+Carmen López,carmen@club.com,padre123,padre,Miguel López,Alevín A
+Diego Admin,diego@club.com,admin123,administrador,,Todos
+Ana Entrenadora,ana@club.com,entrenador123,entrenador,,Todos
+Pedro Tutor,pedro@club.com,padre123,tutor,Lucas Tutor,Infantil A
+Sofia Madre,sofia@club.com,padre123,padre,Emma Madre,Cadete B 

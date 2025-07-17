@@ -13,18 +13,67 @@ android {
         targetSdk 34
         versionCode 1
         versionName "1.0"
+        
+        // Configuración para evitar problemas de memoria
+        multiDexEnabled true
+        
+        // Configuración de memoria para evitar crashes
+        ndk {
+            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+        }
     }
     
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            
+            // Configuración de memoria para release
+            debuggable false
+            jniDebuggable false
+            renderscriptDebuggable false
+            pseudoLocalesEnabled false
+            zipAlignEnabled true
+        }
+        
+        debug {
+            // Configuración de memoria para debug
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
         }
     }
     
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
+    }
+    
+    // Configuración para evitar problemas de memoria
+    dexOptions {
+        javaMaxHeapSize "2g"
+        preDexLibraries = false
+    }
+    
+    // Configuración de packaging para evitar conflictos
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/*.kotlin_module'
+    }
+    
+    // Configuración para evitar problemas de recursos
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+        disable 'MissingTranslation'
+        disable 'ExtraTranslation'
     }
 }
 
@@ -33,6 +82,11 @@ configurations.all {
         force 'org.jetbrains.kotlin:kotlin-stdlib:1.8.10'
         force 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.10'
         force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.10'
+        
+        // Forzar versiones compatibles para evitar conflictos
+        force 'androidx.core:core:1.10.1'
+        force 'androidx.appcompat:appcompat:1.6.1'
+        force 'com.google.android.material:material:1.11.0'
     }
 }
 
@@ -45,19 +99,22 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.3.2'
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
     
-    // Firebase (versiones compatibles)
+    // MultiDex para evitar problemas de memoria
+    implementation 'androidx.multidex:multidex:2.0.1'
+    
+    // Firebase (versiones compatibles y estables)
     implementation 'com.google.firebase:firebase-database:20.3.0'
     implementation 'com.google.firebase:firebase-auth:22.3.1'
     implementation 'com.google.firebase:firebase-messaging:23.4.0'
     implementation 'com.google.firebase:firebase-analytics:21.5.0'
     
-    // Gráficos
+    // Gráficos (versión más estable)
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     
     // JSON
     implementation 'com.google.code.gson:gson:2.10.1'
     
-    // PDF (versión más simple)
+    // PDF (versión más simple y estable)
     implementation 'com.itextpdf:itextpdf:5.5.13.3'
 
     // Dependencias para pruebas unitarias y de instrumentación

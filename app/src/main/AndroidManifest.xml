@@ -5,8 +5,13 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    
+    <!-- Permisos para evitar problemas de memoria -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
+        android:name=".SocialManagerApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -14,15 +19,22 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Socialmanager"
-        android:usesCleartextTraffic="true">
+        android:theme="@style/Theme.Socialmanager.Fullscreen"
+        android:usesCleartextTraffic="true"
+        android:largeHeap="true"
+        android:hardwareAccelerated="true"
+        android:requestLegacyExternalStorage="true"
+        tools:targetApi="31">
 
         <activity 
             android:name=".ui.LoginActivity" 
             android:exported="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
-            android:theme="@style/Theme.Socialmanager">
+            android:theme="@style/Theme.Socialmanager.Fullscreen"
+            android:windowFullscreen="true"
+            android:launchMode="singleTop"
+            android:clearTaskOnLaunch="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -33,7 +45,16 @@
             android:name=".ui.MainActivity" 
             android:exported="false"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.Socialmanager" />
+            android:theme="@style/Theme.Socialmanager.Fullscreen"
+            android:windowFullscreen="true"
+            android:launchMode="singleTop"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+
+        <!-- Servicio para manejo de memoria -->
+        <service
+            android:name=".service.MemoryManagementService"
+            android:enabled="true"
+            android:exported="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

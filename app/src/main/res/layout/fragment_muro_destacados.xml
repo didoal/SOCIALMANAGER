@@ -123,6 +123,7 @@
     <!-- Lista de mensajes destacados -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewMensajes"
+        style="@style/RecyclerViewStyle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -130,8 +131,7 @@
         android:background="@android:color/transparent"
         android:scrollbars="vertical"
         android:fadeScrollbars="false"
-        android:scrollbarStyle="insideOverlay"
-        style="@style/RecyclerViewStyle" />
+        android:scrollbarStyle="insideOverlay" />
 
     <!-- Campo de texto y botón para publicar (solo admin) -->
     <androidx.cardview.widget.CardView

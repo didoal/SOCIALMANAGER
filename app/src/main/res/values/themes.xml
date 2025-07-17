@@ -10,7 +10,8 @@
         <item name="android:textColorSecondary">@color/text_secondary</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <!-- Configuración para permitir acceso a la barra de tareas -->
+        <!-- Configuración para pantalla completa y evitar superposición de botones -->
+        <item name="android:windowFullscreen">true</item>
         <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowTranslucentNavigation">false</item>
@@ -19,6 +20,20 @@
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+        <!-- Configurar para que la app use toda la pantalla -->
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <!-- Tema para pantalla completa sin barras del sistema -->
+    <style name="Theme.Socialmanager.Fullscreen" parent="Theme.Socialmanager">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">false</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

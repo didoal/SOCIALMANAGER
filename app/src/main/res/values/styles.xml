@@ -117,28 +117,24 @@
     </style>
 
     <!-- Estilo para layouts que respetan el sistema de ventanas -->
-    <style name="SystemWindowLayout" parent="android:LinearLayout">
+    <style name="SystemWindowLayout">
         <item name="android:fitsSystemWindows">false</item>
         <item name="android:clipToPadding">false</item>
         <item name="android:clipChildren">false</item>
     </style>
 
     <!-- Estilo global para ScrollView con barras de scroll visibles -->
-    <style name="ScrollViewStyle" parent="android:ScrollView">
+    <style name="ScrollViewStyle">
         <item name="android:scrollbars">vertical</item>
         <item name="android:fadeScrollbars">false</item>
         <item name="android:scrollbarStyle">insideOverlay</item>
-        <item name="android:scrollbarThumbVertical">@drawable/scrollbar_thumb</item>
-        <item name="android:scrollbarTrackVertical">@drawable/scrollbar_track</item>
     </style>
 
     <!-- Estilo global para RecyclerView con barras de scroll visibles -->
-    <style name="RecyclerViewStyle" parent="android:RecyclerView">
+    <style name="RecyclerViewStyle">
         <item name="android:scrollbars">vertical</item>
         <item name="android:fadeScrollbars">false</item>
         <item name="android:scrollbarStyle">insideOverlay</item>
-        <item name="android:scrollbarThumbVertical">@drawable/scrollbar_thumb</item>
-        <item name="android:scrollbarTrackVertical">@drawable/scrollbar_track</item>
     </style>
 
 </resources> 

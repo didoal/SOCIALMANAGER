@@ -7,29 +7,78 @@
     android:background="@color/white"
     android:padding="20dp">
 
-    <!-- Header de la vista de día -->
+    <!-- Header Profesional con Logo -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:background="@drawable/gradient_blue_professional"
+        android:padding="24dp"
         android:layout_marginBottom="20dp">
 
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_calendar"
-            app:tint="@color/blue_profesional"
-            android:layout_marginEnd="12dp" />
+        <!-- Logo del Club -->
+        <FrameLayout
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="12dp"
+            android:elevation="12dp">
+
+            <View
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@drawable/circle_background_white"
+                android:elevation="8dp" />
+
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_gravity="center"
+                android:src="@drawable/logo_santiaguino"
+                android:elevation="12dp" />
+
+        </FrameLayout>
+
+        <!-- Nombre del Club -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CD SANTIAGUIÑO GUIZÁN"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="4dp" />
+
+        <!-- Lema del Club -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="SANTIAGUIÑO, A NOSA FAMILIA"
+            android:textColor="@color/gold"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="VISTA DE DÍA"
-            android:textColor="@color/blue_profesional"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Eventos del día seleccionado"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:alpha="0.9" />
 
     </LinearLayout>
 
