@@ -70,7 +70,7 @@
         android:id="@+id/tv_error"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/red_error"
+        android:textColor="@color/blue_profesional"
         android:textSize="14sp"
         android:visibility="gone"
         android:layout_marginBottom="8dp" />

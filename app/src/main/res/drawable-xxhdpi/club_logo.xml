@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="120dp"
     android:height="120dp"
@@ -9,9 +10,9 @@
         android:fillColor="@color/gold"
         android:pathData="M60,60m-58,0a58,58 0,1 1,116 0a58,58 0,1 1,-116 0" />
         
-    <!-- Círculo interior rojo -->
+    <!-- Círculo interior azul -->
     <path
-        android:fillColor="@color/rojo_club"
+        android:fillColor="@color/blue_profesional"
         android:pathData="M60,60m-50,0a50,50 0,1 1,100 0a50,50 0,1 1,-100 0" />
     
     <!-- Círculo blanco central -->
@@ -21,12 +22,12 @@
     
     <!-- Letra S estilizada -->
     <path
-        android:fillColor="@color/rojo_club"
+        android:fillColor="@color/blue_profesional"
         android:pathData="M45,35 Q55,25 65,35 Q75,45 65,55 Q55,65 45,55 Q35,45 45,35 Z" />
     
     <!-- Texto "CD" estilizado -->
     <path
-        android:fillColor="@color/rojo_club"
+        android:fillColor="@color/blue_profesional"
         android:pathData="M40,65 L55,65 Q60,65 60,70 L60,80 Q60,85 55,85 L40,85 Q35,85 35,80 L35,70 Q35,65 40,65 Z" />
     
     <!-- Balón de fútbol estilizado -->

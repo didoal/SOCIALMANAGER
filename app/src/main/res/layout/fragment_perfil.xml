@@ -19,6 +19,7 @@
         style="@style/ScrollViewStyle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        
         android:fillViewport="true"
         android:scrollbars="vertical"
         android:fadeScrollbars="false"
@@ -485,7 +486,7 @@
                         android:layout_height="wrap_content"
                         android:text="CERRAR SESIÓN"
                         android:textColor="@color/white"
-                        android:background="@drawable/button_red_background"
+                        android:background="@drawable/button_blue_background"
                         android:drawableStart="@drawable/ic_logout"
                         android:drawablePadding="8dp"
                         android:paddingStart="16dp"

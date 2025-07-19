@@ -101,7 +101,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:src="@drawable/ic_delete"
-                android:background="@drawable/circle_button_red"
+                android:background="@drawable/circle_button_blue"
                 android:contentDescription="Eliminar usuario"
                 android:scaleType="centerInside"
                 android:padding="8dp" />

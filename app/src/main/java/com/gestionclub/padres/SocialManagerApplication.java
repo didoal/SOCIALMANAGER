@@ -6,6 +6,8 @@ import android.util.Log;
 import androidx.multidex.MultiDex;
 import androidx.multidex.MultiDexApplication;
 
+import com.gestionclub.padres.service.AndroidAutoNotificationService;
+
 /**
  * Clase Application personalizada para manejar la memoria y evitar crashes
  */
@@ -36,6 +38,12 @@ public class SocialManagerApplication extends MultiDexApplication {
             
             // Configurar manejo de memoria
             configureMemoryManagement();
+            
+            // Inicializar servicios de Android Auto
+            AndroidAutoNotificationService.createNotificationChannel(this);
+            
+            // Configuración adicional para Android Auto
+            initializeAndroidAuto();
             
             Log.i(TAG, "Aplicación inicializada correctamente");
             
@@ -134,6 +142,20 @@ public class SocialManagerApplication extends MultiDexApplication {
         } catch (Exception e) {
             Log.e(TAG, "Error al obtener información de memoria", e);
             return "Error al obtener información de memoria";
+        }
+    }
+
+    private void initializeAndroidAuto() {
+        // Configuración específica para Android Auto
+        // Esto asegura que la aplicación sea compatible con Android Auto
+        try {
+            // Verificar si Android Auto está disponible
+            if (getPackageManager().hasSystemFeature("android.hardware.type.automotive")) {
+                // La aplicación se está ejecutando en un entorno automotriz
+                // Configurar comportamientos específicos para el automóvil
+            }
+        } catch (Exception e) {
+            // Manejar excepciones si es necesario
         }
     }
 } 

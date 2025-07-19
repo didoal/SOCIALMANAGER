@@ -9,7 +9,7 @@ android {
     
     defaultConfig {
         applicationId "com.gestionclub.padres"
-        minSdk 21
+        minSdk 29
         targetSdk 34
         versionCode 1
         versionName "1.0"
@@ -111,6 +111,10 @@ dependencies {
     
     // PDF (versión más simple y estable)
     implementation 'com.itextpdf:itextpdf:5.5.13.3'
+    
+    // Android Auto support
+    implementation 'androidx.car.app:app:1.4.0'
+    implementation 'androidx.car.app:app-automotive:1.4.0'
 
     // Dependencias para pruebas unitarias y de instrumentación
     testImplementation 'junit:junit:4.13.2'

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="rojo_club">#D50000</color>
-    <color name="rojo_club_dark">#B71C1C</color>
-    <color name="rojo_club_light">#FF5252</color>
+    <!-- Cambio de colores rojos a azules profesionales -->
+    <color name="rojo_club">#1565C0</color>
+    <color name="rojo_club_dark">#0D47A1</color>
+    <color name="rojo_club_light">#42A5F5</color>
     <color name="black">#FF000000</color>
     <color name="black_light">#1A1A1A</color>
     <color name="black_lighter">#2D2D2D</color>
@@ -14,9 +15,9 @@
     <color name="gray_dark">#FF444444</color>
     <color name="background">#FFFEF7</color>
     <color name="surface">#FFF8E1</color>
-    <color name="danger">#FF4444</color>
-    <color name="red">#FF0000</color>
-    <color name="red_dark">#CC0000</color>
+    <color name="danger">#1565C0</color>
+    <color name="red">#1565C0</color>
+    <color name="red_dark">#0D47A1</color>
     <color name="transparent">#00000000</color>
     
     <!-- Colores faltantes que causan errores de compilación -->
@@ -49,7 +50,7 @@
     <color name="green_success">#4CAF50</color>
     <color name="orange_warning">#FF9800</color>
     <color name="purple_accent">#9C27B0</color>
-    <color name="red_error">#F44336</color>
+    <color name="red_error">#1565C0</color>
     <color name="blue_info">#1565C0</color>
     
     <!-- Colores para tema oscuro -->
