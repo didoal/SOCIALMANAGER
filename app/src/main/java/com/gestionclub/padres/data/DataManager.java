@@ -238,6 +238,13 @@ public class DataManager {
                 destacados.add(mensaje);
             }
         }
+        // Ordenar de más nuevos a más antiguos
+        destacados.sort((m1, m2) -> {
+            if (m1.getFechaCreacion() == null && m2.getFechaCreacion() == null) return 0;
+            if (m1.getFechaCreacion() == null) return 1;
+            if (m2.getFechaCreacion() == null) return -1;
+            return m2.getFechaCreacion().compareTo(m1.getFechaCreacion());
+        });
         return destacados;
     }
 

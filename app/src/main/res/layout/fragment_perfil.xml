@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@drawable/background_with_logo">
 
     <!-- Marca de agua: logo auténtico de fondo -->
     <ImageView
@@ -29,108 +29,85 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Header Profesional con Logo -->
+            <!-- Cabecero reducido -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Perfil"
+                android:textColor="@color/blue_profesional"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Nombre del Club -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="CD SANTIAGUIÑO GUIZÁN"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginBottom="4dp" />
+
+            <!-- Lema del Club -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SANTIAGUIÑO, A NOSA FAMILIA"
+                android:textColor="@color/gold"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Información del usuario -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/gradient_blue_professional"
-                android:padding="24dp"
-                android:layout_marginBottom="20dp">
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="16dp">
 
-                <!-- Logo del Club -->
-                <FrameLayout
+                <ImageView
+                    android:id="@+id/imageViewProfilePic"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="12dp"
-                    android:elevation="12dp">
+                    android:src="@drawable/ic_person"
+                    android:background="@drawable/circle_background_white"
+                    android:padding="16dp"
+                    android:layout_marginEnd="16dp" />
 
-                    <View
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:background="@drawable/circle_background_white"
-                        android:elevation="8dp" />
-
-                    <ImageView
-                        android:layout_width="64dp"
-                        android:layout_height="64dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/logo_santiaguino"
-                        android:elevation="12dp" />
-
-                </FrameLayout>
-
-                <!-- Nombre del Club -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="CD SANTIAGUIÑO GUIZÁN"
-                    android:textColor="@color/white"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:layout_marginBottom="4dp" />
-
-                <!-- Lema del Club -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="SANTIAGUIÑO, A NOSA FAMILIA"
-                    android:textColor="@color/gold"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:layout_marginBottom="16dp" />
-
-                <!-- Información del usuario -->
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginTop="16dp">
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-                    <ImageView
-                        android:id="@+id/imageViewProfilePic"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:src="@drawable/ic_person"
-                        android:background="@drawable/circle_background_white"
-                        android:padding="16dp"
-                        android:layout_marginEnd="16dp" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
+                    <TextView
+                        android:id="@+id/textViewNombre"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
+                        android:text="Nombre del Usuario"
+                        android:textColor="@color/white"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp" />
 
-                        <TextView
-                            android:id="@+id/textViewNombre"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Nombre del Usuario"
-                            android:textColor="@color/white"
-                            android:textSize="22sp"
-                            android:textStyle="bold"
-                            android:layout_marginBottom="4dp" />
+                    <TextView
+                        android:id="@+id/textViewRol"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Rol"
+                        android:textColor="@color/gold"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:background="@drawable/rol_background"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="4dp" />
 
-                        <TextView
-                            android:id="@+id/textViewRol"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Rol"
-                            android:textColor="@color/gold"
-                            android:textSize="14sp"
-                            android:textStyle="bold"
-                            android:background="@drawable/rol_background"
-                            android:paddingHorizontal="12dp"
-                            android:paddingVertical="4dp" />
-
-                    </LinearLayout>
                 </LinearLayout>
-
             </LinearLayout>
 
             <!-- Tarjetas de Estadísticas Personales -->
@@ -520,6 +497,7 @@
 
         </LinearLayout>
     </ScrollView>
+
     <!-- FloatingActionButton para crear notificación -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabCrearNotificacion"

@@ -1,1 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@drawable/background_with_logo">
+
+        <!-- Cabecero reducido -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Notificaciones"
+            android:textColor="@color/blue_profesional"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="8dp" />
+
+
+
+        <!-- Botones de filtro -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp"
+            android:layout_marginBottom="16dp">
+
+            <Button
+                android:id="@+id/buttonFiltroTodas"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:text="📋\nTodas"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:background="@drawable/button_gray_selector"
+                android:padding="12dp"
+                android:gravity="center"
+                android:lineSpacingExtra="4dp"
+                android:stateListAnimator="@null"
+                android:elevation="3dp" />
+
+            <Button
+                android:id="@+id/buttonFiltroNoLeidas"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:text="🔴\nNo leídas"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:background="@drawable/button_red_background"
+                android:padding="12dp"
+                android:gravity="center"
+                android:lineSpacingExtra="4dp"
+                android:stateListAnimator="@null"
+                android:elevation="3dp" />
+
+            <Button
+                android:id="@+id/buttonFiltroLeidas"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:text="✅\nLeídas"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:background="@drawable/button_green_selector"
+                android:padding="12dp"
+                android:gravity="center"
+                android:lineSpacingExtra="4dp"
+                android:stateListAnimator="@null"
+                android:elevation="3dp" />
+        </LinearLayout>
+
+        <!-- Filtros avanzados -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp"
+            android:layout_marginBottom="20dp">
+
+            <Button
+                android:id="@+id/buttonFiltrosAvanzados"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="🔍 Filtros\nAvanzados"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:background="@drawable/button_gold_selector"
+                android:padding="16dp"
+                android:gravity="center"
+                android:lineSpacingExtra="6dp"
+                android:stateListAnimator="@null"
+                android:elevation="4dp" />
+
+            <Button
+                android:id="@+id/buttonExportarNotificaciones"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="📊 Exportar\nReporte"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:background="@drawable/button_green_background"
+                android:padding="16dp"
+                android:gravity="center"
+                android:lineSpacingExtra="6dp"
+                android:stateListAnimator="@null"
+                android:elevation="4dp" />
+        </LinearLayout>
+
+        <!-- Layout para mostrar mensaje si no hay notificaciones -->
+        <LinearLayout
+            android:id="@+id/layoutNoNotificaciones"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="40dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📭"
+                android:textSize="64sp"
+                android:gravity="center"
+                android:layout_marginBottom="20dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No hay notificaciones disponibles"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Las notificaciones aparecerán aquí cuando lleguen"
+                android:textSize="16sp"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+        <!-- Lista de notificaciones -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewNotificaciones"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:scrollbars="vertical"
+            android:paddingBottom="16dp" />
+
+        <!-- Spinners para filtros avanzados (ocultos por defecto) -->
+        <Spinner
+            android:id="@+id/spinnerTipoNotificacion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+        <Spinner
+            android:id="@+id/spinnerFecha"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <!-- TextViews requeridos por el código Java -->
+        <TextView
+            android:id="@+id/textViewNoLeidas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+        <TextView
+            android:id="@+id/textViewTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+        <TextView
+            android:id="@+id/textViewEstadisticas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -53,6 +53,11 @@ public class GestionEventosFragment extends Fragment {
     private Button buttonMostrarFiltrosAvanzados;
     private Button buttonLimpiarFiltros;
     private Button buttonExportarEventos;
+    private Button buttonCrearEvento;
+    private Button buttonCrearEntrenamiento;
+    private Button buttonCrearPartido;
+    private Button buttonCrearReunion;
+    private Button buttonCalendarioEventos;
 
     private String tipoFiltroSeleccionado = "Todos";
     private String equipoFiltroSeleccionado = "Todos";
@@ -92,6 +97,11 @@ public class GestionEventosFragment extends Fragment {
         buttonMostrarFiltrosAvanzados = view.findViewById(R.id.buttonMostrarFiltrosAvanzados);
         buttonLimpiarFiltros = view.findViewById(R.id.buttonLimpiarFiltros);
         buttonExportarEventos = view.findViewById(R.id.buttonExportarEventos);
+        buttonCrearEvento = view.findViewById(R.id.buttonCrearEvento);
+        buttonCrearEntrenamiento = view.findViewById(R.id.buttonCrearEntrenamiento);
+        buttonCrearPartido = view.findViewById(R.id.buttonCrearPartido);
+        buttonCrearReunion = view.findViewById(R.id.buttonCrearReunion);
+        buttonCalendarioEventos = view.findViewById(R.id.buttonCalendarioEventos);
         
         boolean puedeCrearEventos = usuarioActual != null && 
             (usuarioActual.isEsAdmin() || "entrenador".equals(usuarioActual.getRol()));
@@ -101,9 +111,37 @@ public class GestionEventosFragment extends Fragment {
             fabAgregarEvento.setOnClickListener(v -> mostrarDialogoCrearEvento());
             fabAgregarEntrenamiento.setVisibility(View.VISIBLE);
             fabAgregarEntrenamiento.setOnClickListener(v -> mostrarDialogoCrearEntrenamiento());
+            
+            // Configurar botones principales
+            if (buttonCrearEvento != null) {
+                buttonCrearEvento.setOnClickListener(v -> mostrarDialogoCrearEvento());
+            }
+            if (buttonCrearEntrenamiento != null) {
+                buttonCrearEntrenamiento.setOnClickListener(v -> mostrarDialogoCrearEntrenamiento());
+            }
+            if (buttonCrearPartido != null) {
+                buttonCrearPartido.setOnClickListener(v -> mostrarDialogoCrearPartido());
+            }
+            if (buttonCrearReunion != null) {
+                buttonCrearReunion.setOnClickListener(v -> mostrarDialogoCrearReunion());
+            }
         } else {
             fabAgregarEvento.setVisibility(View.GONE);
             fabAgregarEntrenamiento.setVisibility(View.GONE);
+            
+            // Ocultar botones principales para usuarios sin permisos
+            if (buttonCrearEvento != null) buttonCrearEvento.setVisibility(View.GONE);
+            if (buttonCrearEntrenamiento != null) buttonCrearEntrenamiento.setVisibility(View.GONE);
+            if (buttonCrearPartido != null) buttonCrearPartido.setVisibility(View.GONE);
+            if (buttonCrearReunion != null) buttonCrearReunion.setVisibility(View.GONE);
+        }
+        
+        // Configurar botones que todos pueden usar
+        if (buttonCalendarioEventos != null) {
+            buttonCalendarioEventos.setOnClickListener(v -> abrirCalendarioEventos());
+        }
+        if (buttonExportarEventos != null) {
+            buttonExportarEventos.setOnClickListener(v -> exportarEventos());
         }
     }
 
@@ -1088,5 +1126,113 @@ public class GestionEventosFragment extends Fragment {
         super.onResume();
         cargarEventos();
         actualizarEstadisticas();
+    }
+    
+    // Métodos para los nuevos botones
+    private void mostrarDialogoCrearPartido() {
+        // Crear un evento de tipo "Partido"
+        mostrarDialogoCrearEventoConTipo("Partido");
+    }
+    
+    private void mostrarDialogoCrearReunion() {
+        // Crear un evento de tipo "Reunión"
+        mostrarDialogoCrearEventoConTipo("Reunión");
+    }
+    
+    private void mostrarDialogoCrearEventoConTipo(String tipoEvento) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_crear_evento, null);
+        
+        EditText editTextTitulo = dialogView.findViewById(R.id.editTextTitulo);
+        EditText editTextDescripcion = dialogView.findViewById(R.id.editTextDescripcion);
+        EditText editTextLugar = dialogView.findViewById(R.id.editTextLugar);
+        Spinner spinnerTipo = dialogView.findViewById(R.id.spinnerTipo);
+        Spinner spinnerEquipo = dialogView.findViewById(R.id.spinnerEquipo);
+        TextView editTextFecha = dialogView.findViewById(R.id.editTextFecha);
+        TextView editTextHora = dialogView.findViewById(R.id.editTextHora);
+        
+        // Configurar spinners
+        String[] tipos = {"Entrenamiento", "Partido", "Reunión", "Otro"};
+        ArrayAdapter<String> tipoAdapter = new ArrayAdapter<>(requireContext(), 
+                android.R.layout.simple_spinner_item, tipos);
+        tipoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerTipo.setAdapter(tipoAdapter);
+        
+        // Seleccionar el tipo específico
+        for (int i = 0; i < tipos.length; i++) {
+            if (tipos[i].equals(tipoEvento)) {
+                spinnerTipo.setSelection(i);
+                break;
+            }
+        }
+        
+        // Configurar equipos
+        List<String> equipos = new ArrayList<>();
+        equipos.add("Todos los equipos");
+        if (usuarioActual != null && "entrenador".equals(usuarioActual.getRol()) && 
+            usuarioActual.getEquipo() != null) {
+            equipos.add(usuarioActual.getEquipo());
+        } else {
+            equipos.addAll(dataManager.getNombresEquipos());
+        }
+        ArrayAdapter<String> equipoAdapter = new ArrayAdapter<>(requireContext(), 
+                android.R.layout.simple_spinner_item, equipos);
+        equipoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerEquipo.setAdapter(equipoAdapter);
+        
+        // Configurar fecha y hora
+        editTextFecha.setOnClickListener(v -> mostrarDatePicker(editTextFecha));
+        editTextHora.setOnClickListener(v -> mostrarTimePicker(editTextHora));
+        
+        builder.setView(dialogView)
+                .setTitle("Crear " + tipoEvento)
+                .setPositiveButton("Crear", (dialog, which) -> {
+                    String titulo = editTextTitulo.getText().toString().trim();
+                    String descripcion = editTextDescripcion.getText().toString().trim();
+                    String lugar = editTextLugar.getText().toString().trim();
+                    String tipo = spinnerTipo.getSelectedItem().toString();
+                    String equipo = spinnerEquipo.getSelectedItem().toString();
+                    String fechaStr = editTextFecha.getText().toString();
+                    String horaStr = editTextHora.getText().toString();
+                    
+                    if (validarDatos(titulo, descripcion, lugar)) {
+                        try {
+                            java.util.Date fecha = combinarFechaHora(parsearFecha(fechaStr), horaStr);
+                            crearEventoRecurrente(titulo, descripcion, lugar, tipo, equipo, fecha, "Ninguna", "1");
+                        } catch (Exception e) {
+                            Toast.makeText(requireContext(), "Error en fecha/hora: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+    
+    private java.util.Calendar parsearFecha(String fechaStr) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            java.util.Date fecha = sdf.parse(fechaStr);
+            java.util.Calendar cal = java.util.Calendar.getInstance();
+            cal.setTime(fecha);
+            return cal;
+        } catch (Exception e) {
+            return java.util.Calendar.getInstance();
+        }
+    }
+    
+    private void abrirCalendarioEventos() {
+        // Navegar al fragmento de calendario
+        if (getActivity() != null) {
+            getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, new CalendarioFragment())
+                .addToBackStack(null)
+                .commit();
+        }
+    }
+    
+    private void exportarEventos() {
+        // Implementar exportación de eventos
+        Toast.makeText(requireContext(), "Función de exportación en desarrollo", Toast.LENGTH_SHORT).show();
     }
 } 

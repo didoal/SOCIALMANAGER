@@ -1,89 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="12dp"
     android:layout_marginHorizontal="8dp"
-    android:layout_marginBottom="12dp">
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="@color/white">
 
-    <!-- Avatar del usuario -->
-    <ImageView
-        android:id="@+id/imageViewAvatar"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:src="@drawable/ic_person"
-        android:background="@drawable/circle_background"
-        android:padding="12dp"
-        android:layout_marginEnd="16dp"
-        android:layout_gravity="top"
-        android:elevation="2dp" />
-
-    <!-- Contenido del mensaje -->
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:padding="16dp">
 
-        <!-- Header del mensaje -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="8dp">
+        <!-- Avatar del usuario -->
+        <FrameLayout
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginEnd="16dp"
+            android:layout_gravity="top"
+            android:elevation="4dp">
 
-            <TextView
-                android:id="@+id/textViewAutor"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:textColor="@color/text_primary" />
+            <View
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="@drawable/circle_background_white"
+                android:elevation="2dp" />
 
-            <!-- Ícono de destacado -->
             <ImageView
-                android:id="@+id/imageViewDestacado"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_star"
-                android:visibility="gone"
-                android:layout_marginEnd="8dp"
-                android:tint="@color/gold" />
+                android:id="@+id/imageViewAvatar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_person"
+                android:background="@drawable/circle_background"
+                android:padding="8dp"
+                android:elevation="4dp" />
 
-            <TextView
-                android:id="@+id/textViewFecha"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="13sp"
-                android:textColor="@color/text_secondary" />
-
-        </LinearLayout>
+        </FrameLayout>
 
         <!-- Contenido del mensaje -->
         <LinearLayout
-            android:id="@+id/layoutMensaje"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/mensaje_background"
-            android:padding="16dp"
-            android:maxWidth="300dp"
-            android:elevation="2dp">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/textViewMensaje"
+            <!-- Header del mensaje -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:textColor="@color/text_primary"
-                android:lineSpacingExtra="4dp"
-                android:textStyle="normal" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:id="@+id/textViewAutor"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textColor="@color/blue_profesional" />
+
+                <!-- Ícono de destacado -->
+                <ImageView
+                    android:id="@+id/imageViewDestacado"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_star"
+                    android:visibility="gone"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/circle_gold"
+                    android:padding="4dp"
+                    app:tint="@color/white" />
+
+                <TextView
+                    android:id="@+id/textViewFecha"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:textColor="@color/text_secondary"
+                    android:background="@drawable/rounded_background_white_transparent"
+                    android:padding="6dp" />
+
+            </LinearLayout>
+
+            <!-- Contenido del mensaje -->
+            <LinearLayout
+                android:id="@+id/layoutMensaje"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/mensaje_destacado_background"
+                android:padding="16dp"
+                android:maxWidth="280dp"
+                android:elevation="2dp"
+                android:minHeight="60dp">
+
+                <TextView
+                    android:id="@+id/textViewMensaje"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:textColor="@color/text_primary"
+                    android:lineSpacingExtra="6dp"
+                    android:textStyle="normal" />
+
+            </LinearLayout>
+
+            <!-- Indicador de mensaje destacado -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/badge_evento_background"
+                android:padding="6dp">
+
+                <ImageView
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/ic_star"
+                    app:tint="@color/gold"
+                    android:layout_marginEnd="4dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MENSAJE DESTACADO"
+                    android:textSize="10sp"
+                    android:textColor="@color/gold"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
     </LinearLayout>
 
-</LinearLayout> 
+</androidx.cardview.widget.CardView> 

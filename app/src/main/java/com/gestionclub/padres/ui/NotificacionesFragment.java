@@ -35,8 +35,7 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
     private RecyclerView recyclerViewNotificaciones;
     private TextView textViewNoLeidas;
     private TextView textViewTotal;
-    private Button buttonMarcarLeidas;
-    private Button buttonBorrarNotificaciones;
+
     private Button buttonFiltroTodas;
     private Button buttonFiltroNoLeidas;
     private Button buttonFiltroLeidas;
@@ -115,8 +114,6 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
         textViewEstadisticas = view.findViewById(R.id.textViewEstadisticas);
         
         // Inicializar botones con comprobación
-        buttonMarcarLeidas = view.findViewById(R.id.buttonMarcarLeidas);
-        buttonBorrarNotificaciones = view.findViewById(R.id.buttonBorrarNotificaciones);
         buttonFiltroTodas = view.findViewById(R.id.buttonFiltroTodas);
         buttonFiltroNoLeidas = view.findViewById(R.id.buttonFiltroNoLeidas);
         buttonFiltroLeidas = view.findViewById(R.id.buttonFiltroLeidas);
@@ -418,12 +415,7 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
     }
 
     private void configurarListeners() {
-        if (buttonMarcarLeidas != null) {
-            buttonMarcarLeidas.setOnClickListener(v -> marcarTodasComoLeidas());
-        }
-        if (buttonBorrarNotificaciones != null) {
-            buttonBorrarNotificaciones.setOnClickListener(v -> mostrarDialogoBorrarNotificaciones());
-        }
+
         if (buttonFiltroTodas != null) {
             buttonFiltroTodas.setOnClickListener(v -> {
                 filtroActual = "TODAS";
@@ -516,34 +508,7 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
         }
     }
 
-    private void marcarTodasComoLeidas() {
-        List<Notificacion> notificaciones = dataManager.getNotificaciones();
-        for (Notificacion notif : notificaciones) {
-            if (!notif.isLeida()) {
-                notif.setLeida(true);
-                dataManager.actualizarNotificacion(notif);
-            }
-        }
-        cargarNotificaciones();
-        actualizarEstadisticas();
-        Toast.makeText(requireContext(), "Todas las notificaciones han sido marcadas como leídas", Toast.LENGTH_SHORT).show();
-    }
 
-    private void mostrarDialogoBorrarNotificaciones() {
-        if (buttonBorrarNotificaciones != null) {
-            new AlertDialog.Builder(requireContext())
-                .setTitle("🗑️ Borrar Notificaciones")
-                .setMessage("¿Estás seguro de que quieres borrar todas las notificaciones? Esta acción no se puede deshacer.")
-                .setPositiveButton("Borrar", (dialog, which) -> {
-                    dataManager.borrarTodasNotificaciones();
-                    cargarNotificaciones();
-                    actualizarEstadisticas();
-                    Toast.makeText(requireContext(), "Todas las notificaciones han sido borradas", Toast.LENGTH_SHORT).show();
-                })
-                .setNegativeButton("Cancelar", null)
-                .show();
-        }
-    }
 
     private void limpiarFiltros() {
         filtroActual = "TODAS";
@@ -632,19 +597,17 @@ public class NotificacionesFragment extends Fragment implements NotificacionAdap
 
     @Override
     public void onBorrarClick(Notificacion notificacion) {
-        if (buttonBorrarNotificaciones != null) {
-            new AlertDialog.Builder(requireContext())
-                .setTitle("🗑️ Borrar Notificación")
-                .setMessage("¿Estás seguro de que quieres borrar esta notificación?")
-                .setPositiveButton("Borrar", (dialog, which) -> {
-                    dataManager.borrarNotificacion(notificacion.getId());
-                    cargarNotificaciones();
-                    actualizarEstadisticas();
-                    Toast.makeText(requireContext(), "Notificación borrada", Toast.LENGTH_SHORT).show();
-                })
-                .setNegativeButton("Cancelar", null)
-                .show();
-        }
+        new AlertDialog.Builder(requireContext())
+            .setTitle("🗑️ Borrar Notificación")
+            .setMessage("¿Estás seguro de que quieres borrar esta notificación?")
+            .setPositiveButton("Borrar", (dialog, which) -> {
+                dataManager.borrarNotificacion(notificacion.getId());
+                cargarNotificaciones();
+                actualizarEstadisticas();
+                Toast.makeText(requireContext(), "Notificación borrada", Toast.LENGTH_SHORT).show();
+            })
+            .setNegativeButton("Cancelar", null)
+            .show();
     }
 
     @Override

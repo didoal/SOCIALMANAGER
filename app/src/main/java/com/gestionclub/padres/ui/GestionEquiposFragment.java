@@ -43,6 +43,9 @@ import java.util.Map;
 import java.util.HashMap;
 import android.content.Intent;
 import android.net.Uri;
+import android.app.Activity;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
@@ -53,6 +56,11 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import android.widget.LinearLayout;
+import java.io.InputStream;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.io.FileOutputStream;
 
 public class GestionEquiposFragment extends Fragment {
     private static final String TAG = "GestionEquiposFragment";
@@ -80,13 +88,14 @@ public class GestionEquiposFragment extends Fragment {
     
     // Vistas de estadísticas
     private TextView textViewTotalEquipos;
-    private TextView textViewTotalJugadores;
     private TextView textViewPromedioJugadores;
     private TextView textViewTotalCategorias;
     
     // Vistas de controles
     private Button buttonExportarEquipos;
     private Button buttonCrearEquipo;
+    private Button buttonImportarExcel;
+    private Button buttonDescargarPlantilla;
     
     // Variables de filtros
     private String filtroCategoria = "TODOS";
@@ -94,93 +103,191 @@ public class GestionEquiposFragment extends Fragment {
     private String filtroNumJugadores = "TODOS";
     private String filtroEntrenador = "TODOS";
     private boolean filtrosExpandidos = false;
+    
+    // Para manejo de archivos Excel
+    private ActivityResultLauncher<Intent> filePickerLauncher;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.d(TAG, "onCreateView: Creando vista de gestión de equipos");
-        View view = inflater.inflate(R.layout.fragment_gestion_equipos, container, false);
-        
-        dataManager = new DataManager(requireContext());
-        inicializarVistas(view);
-        configurarRecyclerView();
-        cargarEquipos();
-        actualizarEstadisticas();
-        
-        return view;
+        try {
+            Log.d(TAG, "onCreateView: Creando vista de gestión de equipos");
+            View view = inflater.inflate(R.layout.fragment_gestion_equipos, container, false);
+            
+            dataManager = new DataManager(requireContext());
+            inicializarVistas(view);
+            
+            // Configurar launcher para selección de archivos
+            configurarFilePicker();
+            
+            // Solo continuar si la inicialización fue exitosa
+            if (recyclerViewEquipos != null) {
+                configurarRecyclerView();
+                cargarEquipos();
+                actualizarEstadisticas();
+            }
+            
+            return view;
+        } catch (Exception e) {
+            Log.e(TAG, "Error en onCreateView", e);
+            // Retornar una vista simple en caso de error
+            TextView errorView = new TextView(requireContext());
+            errorView.setText("Error al cargar la gestión de equipos");
+            errorView.setGravity(android.view.Gravity.CENTER);
+            errorView.setPadding(50, 50, 50, 50);
+            return errorView;
+        }
     }
 
     private void inicializarVistas(View view) {
-        Log.d(TAG, "inicializarVistas: Inicializando vistas");
-        recyclerViewEquipos = view.findViewById(R.id.recyclerViewEquipos);
-        textViewEstadisticas = view.findViewById(R.id.textViewEstadisticas);
-        fabAgregarEquipo = view.findViewById(R.id.fabAgregarEquipo);
-        recyclerViewJugadoresEquipo = view.findViewById(R.id.recyclerViewJugadoresEquipo);
-        spinnerEquipos = new Spinner(requireContext());
-        ((ViewGroup) view).addView(spinnerEquipos, 0); // Añadir el spinner arriba del RecyclerView
-        spinnerEquipos.setVisibility(View.GONE);
-        
-        // Inicializar vistas de filtros avanzados
-        layoutHeaderFiltros = view.findViewById(R.id.layoutHeaderFiltros);
-        layoutContenidoFiltros = view.findViewById(R.id.layoutContenidoFiltros);
-        imageViewExpandirFiltros = view.findViewById(R.id.imageViewExpandirFiltros);
-        spinnerFiltroCategoria = view.findViewById(R.id.spinnerFiltroCategoria);
-        spinnerFiltroEstado = view.findViewById(R.id.spinnerFiltroEstado);
-        spinnerFiltroNumJugadores = view.findViewById(R.id.spinnerFiltroNumJugadores);
-        spinnerFiltroEntrenador = view.findViewById(R.id.spinnerFiltroEntrenador);
-        buttonAplicarFiltros = view.findViewById(R.id.buttonAplicarFiltros);
-        buttonLimpiarFiltros = view.findViewById(R.id.buttonLimpiarFiltros);
-        
-        // Inicializar vistas de estadísticas
-        textViewTotalEquipos = view.findViewById(R.id.textViewTotalEquipos);
-        textViewTotalJugadores = view.findViewById(R.id.textViewTotalJugadores);
-        textViewPromedioJugadores = view.findViewById(R.id.textViewPromedioJugadores);
-        textViewTotalCategorias = view.findViewById(R.id.textViewTotalCategorias);
-        
-        // Inicializar vistas de controles
-        buttonExportarEquipos = view.findViewById(R.id.buttonExportarEquipos);
-        buttonCrearEquipo = view.findViewById(R.id.buttonCrearEquipo);
-        
-        // Configurar listeners
-        if (fabAgregarEquipo != null) {
-            fabAgregarEquipo.setOnClickListener(v -> mostrarDialogoCrearEquipo());
+        try {
+            Log.d(TAG, "inicializarVistas: Inicializando vistas");
+            
+            // Inicializar vistas principales con protección
+            recyclerViewEquipos = view.findViewById(R.id.recyclerViewEquipos);
+            if (recyclerViewEquipos == null) {
+                Log.e(TAG, "Error: recyclerViewEquipos no encontrado");
+                return;
+            }
+            
+            textViewEstadisticas = view.findViewById(R.id.textViewEstadisticas);
+            fabAgregarEquipo = view.findViewById(R.id.fabAgregarEquipo);
+            
+            // Inicializar vistas de filtros avanzados con protección
+            layoutHeaderFiltros = view.findViewById(R.id.layoutHeaderFiltros);
+            layoutContenidoFiltros = view.findViewById(R.id.layoutContenidoFiltros);
+            imageViewExpandirFiltros = view.findViewById(R.id.imageViewExpandirFiltros);
+            spinnerFiltroCategoria = view.findViewById(R.id.spinnerFiltroCategoria);
+            spinnerFiltroEstado = view.findViewById(R.id.spinnerFiltroEstado);
+            spinnerFiltroNumJugadores = view.findViewById(R.id.spinnerFiltroNumJugadores);
+            spinnerFiltroEntrenador = view.findViewById(R.id.spinnerFiltroEntrenador);
+            buttonAplicarFiltros = view.findViewById(R.id.buttonAplicarFiltros);
+            buttonLimpiarFiltros = view.findViewById(R.id.buttonLimpiarFiltros);
+            
+            // Inicializar vistas de estadísticas con protección
+            textViewTotalEquipos = view.findViewById(R.id.textViewTotalEquipos);
+            textViewPromedioJugadores = view.findViewById(R.id.textViewPromedioJugadores);
+            textViewTotalCategorias = view.findViewById(R.id.textViewTotalCategorias);
+            
+            // Inicializar vistas de controles con protección
+            buttonExportarEquipos = view.findViewById(R.id.buttonExportarEquipos);
+            buttonCrearEquipo = view.findViewById(R.id.buttonCrearEquipo);
+            buttonImportarExcel = view.findViewById(R.id.buttonImportarExcel);
+            buttonDescargarPlantilla = view.findViewById(R.id.buttonDescargarPlantilla);
+            
+            // Configurar listeners con protección
+            if (fabAgregarEquipo != null) {
+                fabAgregarEquipo.setOnClickListener(v -> {
+                    try {
+                        mostrarDialogoCrearEquipo();
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error en fabAgregarEquipo click", e);
+                        Toast.makeText(requireContext(), "Error al crear equipo", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+            
+            if (buttonCrearEquipo != null) {
+                buttonCrearEquipo.setOnClickListener(v -> {
+                    try {
+                        mostrarDialogoCrearEquipo();
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error en buttonCrearEquipo click", e);
+                        Toast.makeText(requireContext(), "Error al crear equipo", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+            
+            if (buttonExportarEquipos != null) {
+                buttonExportarEquipos.setOnClickListener(v -> {
+                    try {
+                        exportarEquiposPDF();
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error en exportarEquiposPDF", e);
+                        Toast.makeText(requireContext(), "Error al exportar equipos", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+            
+            if (buttonImportarExcel != null) {
+                buttonImportarExcel.setOnClickListener(v -> {
+                    try {
+                        importarEquiposExcel();
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error en importarEquiposExcel", e);
+                        Toast.makeText(requireContext(), "Error al importar equipos", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+            
+            if (buttonDescargarPlantilla != null) {
+                buttonDescargarPlantilla.setOnClickListener(v -> {
+                    try {
+                        descargarPlantillaExcel();
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error en descargarPlantillaExcel", e);
+                        Toast.makeText(requireContext(), "Error al descargar plantilla", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+            
+            // Configurar filtros avanzados con protección
+            configurarFiltrosAvanzados();
+            
+        } catch (Exception e) {
+            Log.e(TAG, "Error en inicializarVistas", e);
+            Toast.makeText(requireContext(), "Error al inicializar la vista", Toast.LENGTH_SHORT).show();
         }
-        
-        if (buttonCrearEquipo != null) {
-            buttonCrearEquipo.setOnClickListener(v -> mostrarDialogoCrearEquipo());
-        }
-        
-        if (buttonExportarEquipos != null) {
-            buttonExportarEquipos.setOnClickListener(v -> exportarEquiposPDF());
-        }
-        
-        // Configurar filtros avanzados
-        configurarFiltrosAvanzados();
     }
     
     private void configurarFiltrosAvanzados() {
-        // Configurar expansión/colapso de filtros
-        if (layoutHeaderFiltros != null) {
-            layoutHeaderFiltros.setOnClickListener(v -> toggleFiltros());
+        try {
+            // Configurar expansión/colapso de filtros
+            if (layoutHeaderFiltros != null) {
+                layoutHeaderFiltros.setOnClickListener(v -> {
+                    try {
+                        toggleFiltros();
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error en toggleFiltros", e);
+                    }
+                });
+            }
+            
+            // Configurar spinners con protección
+            configurarSpinnerCategoria();
+            configurarSpinnerEstado();
+            configurarSpinnerNumJugadores();
+            configurarSpinnerEntrenador();
+            
+            // Configurar botones de acción con protección
+            if (buttonAplicarFiltros != null) {
+                buttonAplicarFiltros.setOnClickListener(v -> {
+                    try {
+                        aplicarFiltros();
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error en aplicarFiltros", e);
+                        Toast.makeText(requireContext(), "Error al aplicar filtros", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+            
+            if (buttonLimpiarFiltros != null) {
+                buttonLimpiarFiltros.setOnClickListener(v -> {
+                    try {
+                        limpiarFiltros();
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error en limpiarFiltros", e);
+                        Toast.makeText(requireContext(), "Error al limpiar filtros", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+            
+            // Configurar visibilidad según rol
+            configurarVisibilidadFiltros();
+            
+        } catch (Exception e) {
+            Log.e(TAG, "Error en configurarFiltrosAvanzados", e);
         }
-        
-        // Configurar spinners
-        configurarSpinnerCategoria();
-        configurarSpinnerEstado();
-        configurarSpinnerNumJugadores();
-        configurarSpinnerEntrenador();
-        
-        // Configurar botones de acción
-        if (buttonAplicarFiltros != null) {
-            buttonAplicarFiltros.setOnClickListener(v -> aplicarFiltros());
-        }
-        
-        if (buttonLimpiarFiltros != null) {
-            buttonLimpiarFiltros.setOnClickListener(v -> limpiarFiltros());
-        }
-        
-        // Configurar visibilidad según rol
-        configurarVisibilidadFiltros();
     }
     
     private void configurarVisibilidadFiltros() {
@@ -340,20 +447,53 @@ public class GestionEquiposFragment extends Fragment {
                 this::mostrarDialogoGestionarJugadores);
             recyclerViewEquipos.setAdapter(equipoAdapter);
         }
-        recyclerViewJugadoresEquipo.setLayoutManager(new LinearLayoutManager(requireContext()));
+        
+        // Configurar jugadorAdapter solo si es necesario (se usará en diálogos)
         jugadorAdapter = new UsuarioAdapter(new ArrayList<>(), null, null);
-        recyclerViewJugadoresEquipo.setAdapter(jugadorAdapter);
     }
 
     private void cargarEquipos() {
         Log.d(TAG, "cargarEquipos: Cargando lista de equipos");
         List<Equipo> equipos = dataManager.getEquipos();
         
+        // Si no hay equipos, crear algunos de ejemplo
+        if (equipos.isEmpty()) {
+            crearEquiposEjemplo();
+            equipos = dataManager.getEquipos();
+        }
+        
         // Aplicar filtros avanzados
         equipos = aplicarFiltrosAvanzados(equipos);
         
-        equipoAdapter.actualizarEquipos(equipos);
-        Log.d(TAG, "cargarEquipos: " + equipos.size() + " equipos cargados");
+        if (equipoAdapter != null) {
+            equipoAdapter.actualizarEquipos(equipos);
+            Log.d(TAG, "cargarEquipos: " + equipos.size() + " equipos cargados");
+        } else {
+            Log.e(TAG, "Error: equipoAdapter es null");
+        }
+    }
+    
+    private void crearEquiposEjemplo() {
+        Log.d(TAG, "crearEquiposEjemplo: Creando equipos de ejemplo");
+        
+        // Crear equipos para cada categoría
+        String[] categorias = {"Biberones", "Prebenjamín", "Benjamín", "Alevín", "Infantil", "Cadete", "Juvenil"};
+        String[] nombres = {
+            "Biberones A", "Prebenjamín A", "Prebenjamín B", "Benjamín A", "Benjamín B",
+            "Alevín A", "Alevín B", "Infantil", "Cadete", "Juvenil"
+        };
+        String[] entrenadores = {
+            "Carlos López", "Miguel García", "Ana Martínez", "David Rodríguez", "Laura Sánchez",
+            "Javier Pérez", "María González", "Roberto Fernández", "Carmen Jiménez", "Antonio Ruiz"
+        };
+        
+        for (int i = 0; i < nombres.length; i++) {
+            Equipo equipo = new Equipo(nombres[i], categorias[Math.min(i, categorias.length - 1)], entrenadores[i]);
+            equipo.setJugadoresIds(new ArrayList<>());
+            dataManager.agregarEquipo(equipo);
+        }
+        
+        Log.d(TAG, "crearEquiposEjemplo: " + nombres.length + " equipos de ejemplo creados");
     }
     
     private List<Equipo> aplicarFiltrosAvanzados(List<Equipo> equipos) {
@@ -444,10 +584,6 @@ public class GestionEquiposFragment extends Fragment {
         // Actualizar vistas de estadísticas
         if (textViewTotalEquipos != null) {
             textViewTotalEquipos.setText(String.valueOf(totalEquipos));
-        }
-        
-        if (textViewTotalJugadores != null) {
-            textViewTotalJugadores.setText(String.valueOf(totalJugadores));
         }
         
         if (textViewPromedioJugadores != null) {
@@ -721,9 +857,11 @@ public class GestionEquiposFragment extends Fragment {
         Log.d(TAG, "onResume: Fragmento resumido");
         cargarEquipos();
         actualizarEstadisticas();
-        cargarJugadoresEquipo();
+        // cargarJugadoresEquipo(); // Método comentado porque no existe en este fragmento
     }
 
+    // Método comentado porque usa elementos que no existen en este fragmento
+    /*
     private void cargarJugadoresEquipo() {
         Usuario usuarioActual = dataManager.getUsuarioActual();
         if (usuarioActual != null && usuarioActual.isEsAdmin()) {
@@ -761,6 +899,7 @@ public class GestionEquiposFragment extends Fragment {
             jugadorAdapter.actualizarUsuarios(new ArrayList<>());
         }
     }
+    */
     
     private void exportarEquiposPDF() {
         try {
@@ -960,5 +1099,136 @@ public class GestionEquiposFragment extends Fragment {
         
         table.addCell(cell1);
         table.addCell(cell2);
+    }
+    
+    // Métodos para importación de Excel
+    private void configurarFilePicker() {
+        filePickerLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Intent data = result.getData();
+                    if (data != null && data.getData() != null) {
+                        Uri uri = data.getData();
+                        procesarArchivoExcel(uri);
+                    }
+                }
+            }
+        );
+    }
+    
+    private void importarEquiposExcel() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{
+            "application/vnd.ms-excel",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "text/csv"
+        });
+        filePickerLauncher.launch(Intent.createChooser(intent, "Seleccionar archivo Excel"));
+    }
+    
+    private void procesarArchivoExcel(Uri uri) {
+        try {
+            InputStream inputStream = requireContext().getContentResolver().openInputStream(uri);
+            if (inputStream == null) {
+                Toast.makeText(requireContext(), "No se pudo abrir el archivo", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
+            int lineNumber = 0;
+            int equiposCreados = 0;
+            int equiposExistentes = 0;
+            
+            // Saltar la primera línea (encabezados)
+            reader.readLine();
+            lineNumber++;
+            
+            while ((line = reader.readLine()) != null) {
+                lineNumber++;
+                try {
+                    String[] columns = line.split(",");
+                    if (columns.length >= 3) {
+                        String nombre = columns[0].trim();
+                        String categoria = columns[1].trim();
+                        String entrenador = columns[2].trim();
+                        
+                        // Validar datos
+                        if (!nombre.isEmpty() && !categoria.isEmpty()) {
+                            // Verificar si el equipo ya existe
+                            if (!dataManager.existeEquipo(nombre)) {
+                                Equipo nuevoEquipo = new Equipo(nombre, categoria, entrenador);
+                                nuevoEquipo.setJugadoresIds(new ArrayList<>());
+                                dataManager.agregarEquipo(nuevoEquipo);
+                                equiposCreados++;
+                            } else {
+                                equiposExistentes++;
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Error procesando línea " + lineNumber + ": " + line, e);
+                }
+            }
+            
+            reader.close();
+            inputStream.close();
+            
+            // Actualizar la vista
+            cargarEquipos();
+            actualizarEstadisticas();
+            
+            // Mostrar resultado
+            String mensaje = String.format("Importación completada:\n%d equipos creados\n%d equipos existentes", 
+                equiposCreados, equiposExistentes);
+            Toast.makeText(requireContext(), mensaje, Toast.LENGTH_LONG).show();
+            
+        } catch (Exception e) {
+            Log.e(TAG, "Error procesando archivo Excel", e);
+            Toast.makeText(requireContext(), "Error al procesar el archivo: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+    
+    private void descargarPlantillaExcel() {
+        try {
+            // Crear contenido de la plantilla
+            StringBuilder plantilla = new StringBuilder();
+            plantilla.append("Nombre,Categoría,Entrenador\n");
+            plantilla.append("Biberones A,Biberones,Carlos López\n");
+            plantilla.append("Prebenjamín A,Prebenjamín,Miguel García\n");
+            plantilla.append("Benjamín A,Benjamín,Ana Martínez\n");
+            plantilla.append("Alevín A,Alevín,David Rodríguez\n");
+            plantilla.append("Infantil,Infantil,Laura Sánchez\n");
+            plantilla.append("Cadete,Cadete,Javier Pérez\n");
+            plantilla.append("Juvenil,Juvenil,María González\n");
+            
+            // Crear archivo temporal
+            File archivo = new File(requireContext().getExternalFilesDir(null), "plantilla_equipos.csv");
+            FileOutputStream fos = new FileOutputStream(archivo);
+            fos.write(plantilla.toString().getBytes());
+            fos.close();
+            
+            // Compartir archivo
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/csv");
+            Uri uri = androidx.core.content.FileProvider.getUriForFile(
+                requireContext(), 
+                requireContext().getPackageName() + ".provider", 
+                archivo
+            );
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Plantilla Equipos - CD Santiaguino Guizán");
+            intent.putExtra(Intent.EXTRA_TEXT, "Plantilla para importar equipos al sistema");
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            
+            startActivity(Intent.createChooser(intent, "Compartir plantilla"));
+            
+        } catch (Exception e) {
+            Log.e(TAG, "Error creando plantilla", e);
+            Toast.makeText(requireContext(), "Error al crear la plantilla: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 } 

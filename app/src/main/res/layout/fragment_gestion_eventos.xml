@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@drawable/background_with_logo">
 
     <!-- Marca de agua: logo auténtico de fondo -->
     <ImageView
@@ -21,90 +21,16 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Header profesional -->
-        <androidx.cardview.widget.CardView
+        <!-- Cabecero reducido -->
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="12dp"
-            app:cardBackgroundColor="@color/blue_profesional">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="24dp">
-
-                <!-- Logo del Club -->
-                <FrameLayout
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="12dp"
-                    android:elevation="8dp">
-
-                    <View
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:background="@drawable/circle_background_white"
-                        android:elevation="6dp" />
-
-                    <ImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/logo_santiaguino"
-                        android:elevation="8dp" />
-
-                </FrameLayout>
-
-                <!-- Nombre del Club -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="CD SANTIAGUIÑO GUIZÁN"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:layout_marginBottom="4dp" />
-
-                <!-- Lema del Club -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="SANTIAGUIÑO, A NOSA FAMILIA"
-                    android:textColor="@color/gold"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:layout_marginBottom="16dp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="📅 Gestión de Eventos"
-                    android:textColor="@color/white"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:layout_marginBottom="16dp" />
-
-                <TextView
-                    android:id="@+id/textViewEstadisticas"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Total: 0 | Hoy: 0 | Esta semana: 0 | Este mes: 0"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    android:gravity="center"
-                    android:background="@drawable/rounded_background_white_transparent"
-                    android:padding="12dp" />
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
+            android:text="Gestión de Eventos"
+            android:textColor="@color/blue_profesional"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="8dp" />
 
         <!-- Tarjetas de estadísticas rápidas (opcional, puedes añadir más) -->
         <!-- ... aquí puedes añadir tarjetas como en notificaciones si lo deseas ... -->
@@ -116,19 +42,127 @@
             android:orientation="vertical"
             android:layout_marginBottom="16dp">
 
-            <!-- Botón exportar eventos (solo admin) -->
-            <Button
-                android:id="@+id/buttonExportarEventos"
+            <!-- Primera fila de botones -->
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:text="📊 Exportar Reporte"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:background="@drawable/button_green_background"
-                android:layout_marginBottom="12dp"
-                android:padding="12dp"
-                android:visibility="gone" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+
+                <Button
+                    android:id="@+id/buttonCrearEvento"
+                    android:layout_width="0dp"
+                    android:layout_height="70dp"
+                    android:layout_weight="1"
+                    android:text="🎯 CREAR\nEVENTO"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_blue_selector"
+                    android:layout_marginEnd="8dp"
+                    android:padding="12dp"
+                    android:gravity="center"
+                    android:lineSpacingExtra="4dp"
+                    android:elevation="4dp" />
+
+                <Button
+                    android:id="@+id/buttonCrearEntrenamiento"
+                    android:layout_width="0dp"
+                    android:layout_height="70dp"
+                    android:layout_weight="1"
+                    android:text="🏃 CREAR\nENTRENAMIENTO"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_blue_selector"
+                    android:layout_marginStart="8dp"
+                    android:padding="12dp"
+                    android:gravity="center"
+                    android:lineSpacingExtra="4dp"
+                    android:elevation="4dp" />
+
+            </LinearLayout>
+
+            <!-- Segunda fila de botones -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+
+                <Button
+                    android:id="@+id/buttonCrearPartido"
+                    android:layout_width="0dp"
+                    android:layout_height="70dp"
+                    android:layout_weight="1"
+                    android:text="⚽ CREAR\nPARTIDO"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_blue_selector"
+                    android:layout_marginEnd="8dp"
+                    android:padding="12dp"
+                    android:gravity="center"
+                    android:lineSpacingExtra="4dp"
+                    android:elevation="4dp" />
+
+                <Button
+                    android:id="@+id/buttonCrearReunion"
+                    android:layout_width="0dp"
+                    android:layout_height="70dp"
+                    android:layout_weight="1"
+                    android:text="👥 CREAR\nREUNIÓN"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_blue_selector"
+                    android:layout_marginStart="8dp"
+                    android:padding="12dp"
+                    android:gravity="center"
+                    android:lineSpacingExtra="4dp"
+                    android:elevation="4dp" />
+
+            </LinearLayout>
+
+            <!-- Tercera fila de botones -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/buttonExportarEventos"
+                    android:layout_width="0dp"
+                    android:layout_height="70dp"
+                    android:layout_weight="1"
+                    android:text="📊 EXPORTAR\nREPORTE"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_green_selector"
+                    android:layout_marginEnd="8dp"
+                    android:padding="12dp"
+                    android:gravity="center"
+                    android:lineSpacingExtra="4dp"
+                    android:elevation="4dp" />
+
+                <Button
+                    android:id="@+id/buttonCalendarioEventos"
+                    android:layout_width="0dp"
+                    android:layout_height="70dp"
+                    android:layout_weight="1"
+                    android:text="📅 VER\nCALENDARIO"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_gold_selector"
+                    android:layout_marginStart="8dp"
+                    android:padding="12dp"
+                    android:gravity="center"
+                    android:lineSpacingExtra="4dp"
+                    android:elevation="4dp" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -355,5 +389,12 @@
         app:backgroundTint="@color/blue_profesional"
         app:tint="@color/white"
         app:fabSize="normal" />
+
+    <!-- TextView requerido por el código Java -->
+    <TextView
+        android:id="@+id/textViewEstadisticas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
 
 </FrameLayout> 

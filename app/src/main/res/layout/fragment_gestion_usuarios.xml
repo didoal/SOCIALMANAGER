@@ -21,90 +21,16 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Header profesional -->
-        <androidx.cardview.widget.CardView
+        <!-- Cabecero reducido -->
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="12dp"
-            app:cardBackgroundColor="@color/blue_profesional">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="24dp">
-
-                <!-- Logo del Club -->
-                <FrameLayout
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="12dp"
-                    android:elevation="8dp">
-
-                    <View
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:background="@drawable/circle_background_white"
-                        android:elevation="6dp" />
-
-                    <ImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/logo_santiaguino"
-                        android:elevation="8dp" />
-
-                </FrameLayout>
-
-                <!-- Nombre del Club -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="CD SANTIAGUIÑO GUIZÁN"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:layout_marginBottom="4dp" />
-
-                <!-- Lema del Club -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="SANTIAGUIÑO, A NOSA FAMILIA"
-                    android:textColor="@color/gold"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:layout_marginBottom="16dp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="👥 Gestión de Usuarios"
-                    android:textColor="@color/white"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:layout_marginBottom="16dp" />
-
-                <TextView
-                    android:id="@+id/textViewEstadisticas"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Total: 0 | Admins: 0 | Padres: 0 | Madres: 0 | Tutores: 0 | Jugadores: 0"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    android:gravity="center"
-                    android:background="@drawable/rounded_background_white_transparent"
-                    android:padding="12dp" />
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
+            android:text="Gestión de Usuarios"
+            android:textColor="@color/blue_profesional"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="8dp" />
 
         <!-- Botones de acción principales -->
         <LinearLayout
@@ -317,6 +243,13 @@
             android:scrollbars="vertical"
             android:clipToPadding="false"
             android:paddingBottom="80dp" />
+
+        <!-- TextView requerido por el código Java -->
+        <TextView
+            android:id="@+id/textViewEstadisticas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
 
     </LinearLayout>
 

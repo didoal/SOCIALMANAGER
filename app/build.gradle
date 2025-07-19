@@ -31,7 +31,6 @@ android {
             // Configuración de memoria para release
             debuggable false
             jniDebuggable false
-            renderscriptDebuggable false
             pseudoLocalesEnabled false
             zipAlignEnabled true
         }
@@ -49,11 +48,7 @@ android {
         targetCompatibility JavaVersion.VERSION_11
     }
     
-    // Configuración para evitar problemas de memoria
-    dexOptions {
-        javaMaxHeapSize "2g"
-        preDexLibraries = false
-    }
+
     
     // Configuración de packaging para evitar conflictos
     packagingOptions {

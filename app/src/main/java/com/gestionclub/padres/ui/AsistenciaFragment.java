@@ -56,7 +56,7 @@ public class AsistenciaFragment extends Fragment {
     private AsistenciaAdapter asistenciaAdapter;
     private TextView textViewConfirmados, textViewNoAsisten, textViewPorcentaje, textViewResumenFiltros;
     private Button btnFechaDesde, btnFechaHasta, btnAplicarFiltros;
-    private Button btnExportarPdf;
+    private TextView btnExportarPdf;
     private Spinner spinnerTipoFiltro, spinnerEquipo, spinnerCategoria, spinnerJugador;
     private LinearLayout layoutFiltroEquipo, layoutFiltroCategoria, layoutFiltroJugador;
     private PieChart chartAsistencias;
