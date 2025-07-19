@@ -56,16 +56,28 @@ public class DataManager {
             List<Mensaje> mensajesEjemplo = new ArrayList<>();
             
             // Mensaje de bienvenida destacado
-            Mensaje mensajeBienvenida = new Mensaje("admin1", "Administrador", 
+            Mensaje mensajeBienvenida = new Mensaje("admin1", "José Antonio Suarez González", 
                 "¡Bienvenidos al club CD Santiaguiño de Guizán! Este es el chat general para todos los miembros.", true);
             mensajeBienvenida.setDestacado(true);
             mensajesEjemplo.add(mensajeBienvenida);
             
             // Mensaje sobre horarios destacado
-            Mensaje mensajeHorarios = new Mensaje("admin1", "Administrador", 
+            Mensaje mensajeHorarios = new Mensaje("admin1", "José Antonio Suarez González", 
                 "📅 Horarios de entrenamiento: Lunes y Miércoles de 18:00 a 20:00. ¡No falten!", true);
             mensajeHorarios.setDestacado(true);
             mensajesEjemplo.add(mensajeHorarios);
+            
+            // Mensaje sobre inicio de temporada destacado
+            Mensaje mensajeTemporada = new Mensaje("admin1", "José Antonio Suarez González", 
+                "Inicio dos Adestramentos Tempada 2025/2026", true);
+            mensajeTemporada.setDestacado(true);
+            mensajesEjemplo.add(mensajeTemporada);
+            
+            // Mensaje sobre partido destacado
+            Mensaje mensajePartido = new Mensaje("admin1", "José Antonio Suarez González", 
+                "⚽ Próximo partido: Sábado 15 de febrero vs Club Deportivo Local. ¡Vamos equipo!", true);
+            mensajePartido.setDestacado(true);
+            mensajesEjemplo.add(mensajePartido);
             
             // Mensaje normal
             mensajesEjemplo.add(new Mensaje("user1", "Juan Pérez", 
@@ -906,5 +918,38 @@ public class DataManager {
         } catch (Exception e) {
             android.util.Log.e("DataManager", "Error creando solicitudes de confirmación: " + e.getMessage());
         }
+    }
+
+    // Método para crear mensajes destacados de ejemplo
+    public void crearMensajesDestacadosEjemplo() {
+        List<Mensaje> mensajes = getMensajes();
+        
+        // Limpiar mensajes destacados existentes
+        for (Mensaje mensaje : mensajes) {
+            mensaje.setDestacado(false);
+        }
+        
+        // Crear nuevos mensajes destacados
+        Mensaje mensaje1 = new Mensaje("admin1", "José Antonio Suarez González", 
+            "¡Bienvenidos al club CD Santiaguiño de Guizán! Este es el chat general para todos los miembros.", true);
+        mensaje1.setDestacado(true);
+        mensajes.add(mensaje1);
+        
+        Mensaje mensaje2 = new Mensaje("admin1", "José Antonio Suarez González", 
+            "📅 Horarios de entrenamiento: Lunes y Miércoles de 18:00 a 20:00. ¡No falten!", true);
+        mensaje2.setDestacado(true);
+        mensajes.add(mensaje2);
+        
+        Mensaje mensaje3 = new Mensaje("admin1", "José Antonio Suarez González", 
+            "Inicio dos Adestramentos Tempada 2025/2026", true);
+        mensaje3.setDestacado(true);
+        mensajes.add(mensaje3);
+        
+        Mensaje mensaje4 = new Mensaje("admin1", "José Antonio Suarez González", 
+            "⚽ Próximo partido: Sábado 15 de febrero vs Club Deportivo Local. ¡Vamos equipo!", true);
+        mensaje4.setDestacado(true);
+        mensajes.add(mensaje4);
+        
+        guardarMensajes(mensajes);
     }
 } 

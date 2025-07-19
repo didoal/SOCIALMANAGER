@@ -112,9 +112,12 @@ dependencies {
     // PDF (versión más simple y estable)
     implementation 'com.itextpdf:itextpdf:5.5.13.3'
     
-    // Android Auto support
-    implementation 'androidx.car.app:app:1.4.0'
-    implementation 'androidx.car.app:app-automotive:1.4.0'
+    // Excel y CSV
+    implementation 'org.apache.poi:poi:5.2.3'
+    implementation 'org.apache.poi:poi-ooxml:5.2.3'
+    implementation 'org.apache.poi:poi-ooxml-schemas:4.1.2'
+    implementation 'org.apache.xmlbeans:xmlbeans:5.1.1'
+    implementation 'org.apache.commons:commons-csv:1.9.0'
 
     // Dependencias para pruebas unitarias y de instrumentación
     testImplementation 'junit:junit:4.13.2'

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -10,134 +11,175 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Crear Nuevo Usuario"
+        android:text="Agregar Resultado de Partido"
         android:textColor="@color/text_primary"
         android:textSize="20sp"
         android:textStyle="bold"
         android:gravity="center"
         android:layout_marginBottom="24dp" />
 
-    <!-- Nombre de Usuario -->
+    <!-- Fecha del partido -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Nombre de Usuario *"
+        android:text="Fecha del partido:"
         android:textColor="@color/text_primary"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         android:layout_marginBottom="8dp" />
 
     <EditText
-        android:id="@+id/editTextUsername"
+        android:id="@+id/editTextFecha"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:hint="Ingrese nombre de usuario"
+        android:layout_height="wrap_content"
+        android:hint="Seleccionar fecha"
+        android:background="@drawable/edit_text_background"
+        android:padding="12dp"
+        android:textColor="@color/text_primary"
+        android:textColorHint="@color/text_secondary"
+        android:layout_marginBottom="16dp"
+        android:focusable="false"
+        android:clickable="true" />
+
+    <!-- Equipo Local -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Equipo Local:"
+        android:textColor="@color/text_primary"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/editTextEquipoLocal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nombre del equipo local"
         android:background="@drawable/edit_text_background"
         android:padding="12dp"
         android:textColor="@color/text_primary"
         android:textColorHint="@color/text_secondary"
         android:layout_marginBottom="16dp" />
 
-    <!-- Contraseña -->
+    <!-- Goles Local -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Contraseña *"
+        android:text="Goles Local:"
         android:textColor="@color/text_primary"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         android:layout_marginBottom="8dp" />
 
     <EditText
-        android:id="@+id/editTextPassword"
+        android:id="@+id/editTextGolesLocal"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:hint="Ingrese contraseña"
-        android:inputType="textPassword"
+        android:layout_height="wrap_content"
+        android:hint="0"
+        android:inputType="number"
         android:background="@drawable/edit_text_background"
         android:padding="12dp"
         android:textColor="@color/text_primary"
         android:textColorHint="@color/text_secondary"
         android:layout_marginBottom="16dp" />
 
-    <!-- Nombre Completo -->
+    <!-- Equipo Visitante -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Nombre Completo *"
+        android:text="Equipo Visitante:"
         android:textColor="@color/text_primary"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         android:layout_marginBottom="8dp" />
 
     <EditText
-        android:id="@+id/editTextNombreCompleto"
+        android:id="@+id/editTextEquipoVisitante"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:hint="Ingrese nombre completo"
+        android:layout_height="wrap_content"
+        android:hint="Nombre del equipo visitante"
         android:background="@drawable/edit_text_background"
         android:padding="12dp"
         android:textColor="@color/text_primary"
         android:textColorHint="@color/text_secondary"
         android:layout_marginBottom="16dp" />
 
-    <!-- Email -->
+    <!-- Goles Visitante -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Email"
+        android:text="Goles Visitante:"
         android:textColor="@color/text_primary"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         android:layout_marginBottom="8dp" />
 
     <EditText
-        android:id="@+id/editTextEmail"
+        android:id="@+id/editTextGolesVisitante"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:hint="Ingrese email (opcional)"
-        android:inputType="textEmailAddress"
+        android:layout_height="wrap_content"
+        android:hint="0"
+        android:inputType="number"
         android:background="@drawable/edit_text_background"
         android:padding="12dp"
         android:textColor="@color/text_primary"
         android:textColorHint="@color/text_secondary"
         android:layout_marginBottom="16dp" />
 
-    <!-- Rol -->
+    <!-- Goles en la primera parte -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Rol *"
+        android:text="Goles Primera Parte (Local - Visitante):"
         android:textColor="@color/text_primary"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         android:layout_marginBottom="8dp" />
 
-    <Spinner
-        android:id="@+id/spinnerRol"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@drawable/spinner_background"
-        android:padding="12dp"
-        android:layout_marginBottom="16dp" />
-
-    <!-- Equipo -->
-    <TextView
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Equipo"
-        android:textColor="@color/text_primary"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="24dp">
 
-    <Spinner
-        android:id="@+id/spinnerEquipo"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@drawable/spinner_background"
-        android:padding="12dp"
-        android:layout_marginBottom="24dp" />
+        <EditText
+            android:id="@+id/editTextGolesLocalPrimera"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="0"
+            android:inputType="number"
+            android:background="@drawable/edit_text_background"
+            android:padding="12dp"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_secondary"
+            android:gravity="center" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" - "
+            android:textColor="@color/text_primary"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginHorizontal="16dp" />
+
+        <EditText
+            android:id="@+id/editTextGolesVisitantePrimera"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="0"
+            android:inputType="number"
+            android:background="@drawable/edit_text_background"
+            android:padding="12dp"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_secondary"
+            android:gravity="center" />
+
+    </LinearLayout>
 
     <!-- Botones -->
     <LinearLayout
@@ -157,12 +199,13 @@
             android:layout_marginEnd="12dp" />
 
         <Button
-            android:id="@+id/btnCrear"
+            android:id="@+id/btnGuardar"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
-            android:text="Crear Usuario"
+            android:text="Guardar"
             android:textColor="@color/white"
             android:textSize="16sp"
+            android:textStyle="bold"
             android:background="@drawable/button_blue_background" />
 
     </LinearLayout>
