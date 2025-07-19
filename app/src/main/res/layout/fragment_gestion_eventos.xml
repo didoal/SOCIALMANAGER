@@ -21,16 +21,20 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Cabecero reducido -->
+        <!-- Cabecero mejorado -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Gestión de Eventos"
+            android:text="🎯 GESTIÓN DE EVENTOS"
             android:textColor="@color/blue_profesional"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             android:gravity="center"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/gradient_blue_light"
+            android:padding="16dp"
+            android:elevation="4dp" />
 
         <!-- Tarjetas de estadísticas rápidas (opcional, puedes añadir más) -->
         <!-- ... aquí puedes añadir tarjetas como en notificaciones si lo deseas ... -->
@@ -47,39 +51,39 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="12dp">
+                android:layout_marginBottom="16dp">
 
                 <Button
                     android:id="@+id/buttonCrearEvento"
                     android:layout_width="0dp"
-                    android:layout_height="70dp"
+                    android:layout_height="80dp"
                     android:layout_weight="1"
-                    android:text="🎯 CREAR\nEVENTO"
+                    android:text="🎯 CREAR EVENTO"
                     android:textColor="@color/white"
-                    android:textSize="16sp"
+                    android:textSize="15sp"
                     android:textStyle="bold"
                     android:background="@drawable/button_blue_selector"
                     android:layout_marginEnd="8dp"
-                    android:padding="12dp"
+                    android:padding="16dp"
                     android:gravity="center"
-                    android:lineSpacingExtra="4dp"
-                    android:elevation="4dp" />
+                    android:elevation="6dp"
+                    android:stateListAnimator="@null" />
 
                 <Button
                     android:id="@+id/buttonCrearEntrenamiento"
                     android:layout_width="0dp"
-                    android:layout_height="70dp"
+                    android:layout_height="80dp"
                     android:layout_weight="1"
-                    android:text="🏃 CREAR\nENTRENAMIENTO"
+                    android:text="🏃 CREAR ENTRENAMIENTO"
                     android:textColor="@color/white"
-                    android:textSize="16sp"
+                    android:textSize="15sp"
                     android:textStyle="bold"
                     android:background="@drawable/button_blue_selector"
                     android:layout_marginStart="8dp"
-                    android:padding="12dp"
+                    android:padding="16dp"
                     android:gravity="center"
-                    android:lineSpacingExtra="4dp"
-                    android:elevation="4dp" />
+                    android:elevation="6dp"
+                    android:stateListAnimator="@null" />
 
             </LinearLayout>
 
@@ -88,39 +92,39 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="12dp">
+                android:layout_marginBottom="16dp">
 
                 <Button
                     android:id="@+id/buttonCrearPartido"
                     android:layout_width="0dp"
-                    android:layout_height="70dp"
+                    android:layout_height="80dp"
                     android:layout_weight="1"
-                    android:text="⚽ CREAR\nPARTIDO"
+                    android:text="⚽ CREAR PARTIDO"
                     android:textColor="@color/white"
-                    android:textSize="16sp"
+                    android:textSize="15sp"
                     android:textStyle="bold"
                     android:background="@drawable/button_blue_selector"
                     android:layout_marginEnd="8dp"
-                    android:padding="12dp"
+                    android:padding="16dp"
                     android:gravity="center"
-                    android:lineSpacingExtra="4dp"
-                    android:elevation="4dp" />
+                    android:elevation="6dp"
+                    android:stateListAnimator="@null" />
 
                 <Button
                     android:id="@+id/buttonCrearReunion"
                     android:layout_width="0dp"
-                    android:layout_height="70dp"
+                    android:layout_height="80dp"
                     android:layout_weight="1"
-                    android:text="👥 CREAR\nREUNIÓN"
+                    android:text="👥 CREAR REUNIÓN"
                     android:textColor="@color/white"
-                    android:textSize="16sp"
+                    android:textSize="15sp"
                     android:textStyle="bold"
                     android:background="@drawable/button_blue_selector"
                     android:layout_marginStart="8dp"
-                    android:padding="12dp"
+                    android:padding="16dp"
                     android:gravity="center"
-                    android:lineSpacingExtra="4dp"
-                    android:elevation="4dp" />
+                    android:elevation="6dp"
+                    android:stateListAnimator="@null" />
 
             </LinearLayout>
 
@@ -133,34 +137,34 @@
                 <Button
                     android:id="@+id/buttonExportarEventos"
                     android:layout_width="0dp"
-                    android:layout_height="70dp"
+                    android:layout_height="80dp"
                     android:layout_weight="1"
-                    android:text="📊 EXPORTAR\nREPORTE"
+                    android:text="📊 EXPORTAR REPORTE"
                     android:textColor="@color/white"
-                    android:textSize="16sp"
+                    android:textSize="15sp"
                     android:textStyle="bold"
                     android:background="@drawable/button_green_selector"
                     android:layout_marginEnd="8dp"
-                    android:padding="12dp"
+                    android:padding="16dp"
                     android:gravity="center"
-                    android:lineSpacingExtra="4dp"
-                    android:elevation="4dp" />
+                    android:elevation="6dp"
+                    android:stateListAnimator="@null" />
 
                 <Button
                     android:id="@+id/buttonCalendarioEventos"
                     android:layout_width="0dp"
-                    android:layout_height="70dp"
+                    android:layout_height="80dp"
                     android:layout_weight="1"
-                    android:text="📅 VER\nCALENDARIO"
+                    android:text="📅 VER CALENDARIO"
                     android:textColor="@color/white"
-                    android:textSize="16sp"
+                    android:textSize="15sp"
                     android:textStyle="bold"
                     android:background="@drawable/button_gold_selector"
                     android:layout_marginStart="8dp"
-                    android:padding="12dp"
+                    android:padding="16dp"
                     android:gravity="center"
-                    android:lineSpacingExtra="4dp"
-                    android:elevation="4dp" />
+                    android:elevation="6dp"
+                    android:stateListAnimator="@null" />
 
             </LinearLayout>
 
@@ -172,32 +176,37 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="20dp">
 
             <Button
                 android:id="@+id/buttonMostrarFiltrosAvanzados"
                 android:layout_width="0dp"
-                android:layout_height="40dp"
+                android:layout_height="50dp"
                 android:layout_weight="1"
-                android:text="🔍 Filtros Avanzados"
+                android:text="🔍 FILTROS AVANZADOS"
                 android:textColor="@color/white"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:background="@drawable/button_gold_background"
+                android:background="@drawable/button_gold_selector"
                 android:layout_marginEnd="8dp"
-                android:padding="12dp" />
+                android:padding="16dp"
+                android:elevation="4dp"
+                android:stateListAnimator="@null" />
 
             <Button
                 android:id="@+id/buttonLimpiarFiltros"
                 android:layout_width="0dp"
-                android:layout_height="40dp"
+                android:layout_height="50dp"
                 android:layout_weight="1"
-                android:text="🔄 Limpiar"
+                android:text="🔄 LIMPIAR FILTROS"
                 android:textColor="@color/white"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:background="@drawable/button_secondary_background"
-                android:padding="12dp" />
+                android:background="@drawable/button_gray_selector"
+                android:layout_marginStart="8dp"
+                android:padding="16dp"
+                android:elevation="4dp"
+                android:stateListAnimator="@null" />
 
         </LinearLayout>
 
@@ -215,12 +224,15 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="⚙️ Filtros Avanzados"
+                android:text="⚙️ FILTROS AVANZADOS"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@color/blue_profesional"
                 android:gravity="center"
-                android:layout_marginBottom="16dp" />
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/gradient_gold_light"
+                android:padding="12dp"
+                android:elevation="2dp" />
 
             <!-- Filtro por tipo -->
             <LinearLayout

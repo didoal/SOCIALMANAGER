@@ -1148,8 +1148,8 @@ public class GestionEventosFragment extends Fragment {
         EditText editTextLugar = dialogView.findViewById(R.id.editTextLugar);
         Spinner spinnerTipo = dialogView.findViewById(R.id.spinnerTipo);
         Spinner spinnerEquipo = dialogView.findViewById(R.id.spinnerEquipo);
-        TextView editTextFecha = dialogView.findViewById(R.id.editTextFecha);
-        TextView editTextHora = dialogView.findViewById(R.id.editTextHora);
+        TextView editTextFecha = dialogView.findViewById(R.id.textViewFecha);
+        TextView editTextHora = dialogView.findViewById(R.id.textViewHora);
         
         // Configurar spinners
         String[] tipos = {"Entrenamiento", "Partido", "Reunión", "Otro"};
