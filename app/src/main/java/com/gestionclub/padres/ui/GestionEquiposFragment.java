@@ -28,12 +28,12 @@ public class GestionEquiposFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_gestion_equipos, container, false);
         try {
-            dataManager = new DataManager(requireContext());
+        dataManager = new DataManager(requireContext());
             usuarioActual = dataManager.getUsuarioActual();
-            inicializarVistas(view);
+        inicializarVistas(view);
             configurarBotones(view);
-            cargarEquipos();
-            actualizarEstadisticas();
+        cargarEquipos();
+        actualizarEstadisticas();
         } catch (Exception e) {
             Log.e("GestionEquiposFragment", "Error al cargar gestión de equipos", e);
             Toast.makeText(requireContext(), "Error al cargar la gestión de equipos", Toast.LENGTH_SHORT).show();
@@ -63,7 +63,7 @@ public class GestionEquiposFragment extends Fragment {
                 btnAddTeam.setOnClickListener(v -> {
                     mostrarDialogoCrearEquipo();
                 });
-            } else {
+        } else {
                 btnAddTeam.setVisibility(View.GONE);
             }
         }
@@ -76,7 +76,7 @@ public class GestionEquiposFragment extends Fragment {
 
     private void cargarEquipos() {
         try {
-            List<Equipo> equipos = dataManager.getEquipos();
+        List<Equipo> equipos = dataManager.getEquipos();
             // Aquí se cargarían los equipos en el layout
             // Por ahora, los equipos están hardcodeados en el layout XML
             
@@ -88,23 +88,23 @@ public class GestionEquiposFragment extends Fragment {
 
     private void actualizarEstadisticas() {
         try {
-            List<Equipo> equipos = dataManager.getEquipos();
-            
+        List<Equipo> equipos = dataManager.getEquipos();
+        
             // Actualizar total de equipos
             if (textViewTotalEquipos != null) {
                 textViewTotalEquipos.setText(String.valueOf(equipos.size()));
             }
             
             // Calcular total de jugadores
-            int totalJugadores = 0;
+        int totalJugadores = 0;
             for (Equipo equipo : equipos) {
                 totalJugadores += equipo.getJugadoresIds().size();
-            }
-            
-            if (textViewTotalJugadores != null) {
-                textViewTotalJugadores.setText(String.valueOf(totalJugadores));
-            }
-            
+        }
+        
+        if (textViewTotalJugadores != null) {
+            textViewTotalJugadores.setText(String.valueOf(totalJugadores));
+        }
+        
         } catch (Exception e) {
             Log.e("GestionEquiposFragment", "Error al actualizar estadísticas", e);
         }

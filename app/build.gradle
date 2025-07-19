@@ -61,6 +61,12 @@ android {
         exclude 'META-INF/notice.txt'
         exclude 'META-INF/ASL2.0'
         exclude 'META-INF/*.kotlin_module'
+        exclude 'META-INF/versions/9/previous-compilation-data.bin'
+        exclude 'META-INF/services/javax.xml.transform.TransformerFactory'
+        exclude 'META-INF/services/javax.xml.parsers.DocumentBuilderFactory'
+        exclude 'META-INF/services/javax.xml.parsers.SAXParserFactory'
+        pickFirst 'META-INF/INDEX.LIST'
+        pickFirst 'META-INF/io.netty.versions.properties'
     }
     
     // Configuración para evitar problemas de recursos
@@ -112,10 +118,15 @@ dependencies {
     // PDF (versión más simple y estable)
     implementation 'com.itextpdf:itextpdf:5.5.13.3'
     
-    // Excel y CSV
-    implementation 'org.apache.poi:poi:5.2.3'
-    implementation 'org.apache.poi:poi-ooxml:5.2.3'
-    implementation 'org.apache.poi:poi-ooxml-schemas:4.1.2'
+    // Excel y CSV (versiones optimizadas para Android)
+    implementation('org.apache.poi:poi:5.2.3') {
+        exclude group: 'org.apache.logging.log4j', module: 'log4j-api'
+        exclude group: 'org.apache.logging.log4j', module: 'log4j-core'
+    }
+    implementation('org.apache.poi:poi-ooxml:5.2.3') {
+        exclude group: 'org.apache.logging.log4j', module: 'log4j-api'
+        exclude group: 'org.apache.logging.log4j', module: 'log4j-core'
+    }
     implementation 'org.apache.xmlbeans:xmlbeans:5.1.1'
     implementation 'org.apache.commons:commons-csv:1.9.0'
 

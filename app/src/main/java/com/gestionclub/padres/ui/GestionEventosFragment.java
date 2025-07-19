@@ -28,12 +28,12 @@ public class GestionEventosFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_gestion_eventos, container, false);
         try {
-            dataManager = new DataManager(requireContext());
-            usuarioActual = dataManager.getUsuarioActual();
-            inicializarVistas(view);
+        dataManager = new DataManager(requireContext());
+        usuarioActual = dataManager.getUsuarioActual();
+        inicializarVistas(view);
             configurarBotones(view);
-            cargarEventos();
-            actualizarEstadisticas();
+        cargarEventos();
+        actualizarEstadisticas();
         } catch (Exception e) {
             Log.e("GestionEventosFragment", "Error al cargar gestión de eventos", e);
             Toast.makeText(requireContext(), "Error al cargar la gestión de eventos", Toast.LENGTH_SHORT).show();
