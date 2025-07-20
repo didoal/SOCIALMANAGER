@@ -51,6 +51,12 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
+        <!-- Separador de sección - Muro -->
+        <include
+            layout="@layout/item_section_separator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <!-- Sección del Muro -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -102,6 +108,12 @@
                 android:nestedScrollingEnabled="false" />
 
         </LinearLayout>
+
+        <!-- Separador de sección - Partidos -->
+        <include
+            layout="@layout/item_section_separator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <!-- Sección de Últimos partidos -->
         <LinearLayout

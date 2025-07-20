@@ -11,23 +11,39 @@ import androidx.fragment.app.Fragment;
 import com.gestionclub.padres.R;
 import android.widget.TextView;
 import android.widget.LinearLayout;
+import android.widget.ImageView;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.gestionclub.padres.data.DataManager;
 import com.gestionclub.padres.model.Evento;
 import java.util.List;
 import java.util.Calendar;
+import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 public class CalendarioFragment extends Fragment {
     
-    // Vistas del nuevo layout
+    // Vistas del layout
     private TextView tabListado, tabDia, tabSemana, tabMes, tabAno;
     private LinearLayout viewDia, viewSemana, viewMes, viewAno;
     private RecyclerView recyclerViewListado;
+    
+    // Elementos de navegación
+    private ImageView btnPrevDay, btnPrevWeek, btnPrevMonth, btnPrevYear;
+    private ImageView btnNextMonth, btnNextYear;
+    private TextView btnHoy, btnHoyWeek, btnHoyMonth, btnHoyYear;
+    private ImageView btnFilter, btnFilterWeek;
+    
+    // Elementos de fecha
     private TextView textCurrentDate, textWeekInfo;
+    private TextView textCurrentWeek, textWeekYear;
+    private TextView textCurrentMonth;
+    private TextView textCurrentYear;
+    
     private DataManager dataManager;
+    private Calendar currentDate;
+    private SimpleDateFormat dateFormat, weekFormat, monthFormat;
 
     @Nullable
     @Override
@@ -36,8 +52,16 @@ public class CalendarioFragment extends Fragment {
             View view = inflater.inflate(R.layout.fragment_calendario, container, false);
             
             dataManager = new DataManager(requireContext());
+            currentDate = Calendar.getInstance();
+            
+            // Inicializar formatos de fecha
+            dateFormat = new SimpleDateFormat("EEE, d MMM", new Locale("es"));
+            weekFormat = new SimpleDateFormat("d - d MMM", new Locale("es"));
+            monthFormat = new SimpleDateFormat("MMMM yyyy", new Locale("es"));
+            
             inicializarVistas(view);
             configurarTabs(view);
+            configurarNavegacion(view);
             cargarVistaListado();
             actualizarFechaActual();
             
@@ -67,9 +91,29 @@ public class CalendarioFragment extends Fragment {
         // RecyclerView para listado
         recyclerViewListado = view.findViewById(R.id.recyclerViewListado);
         
-        // Elementos de la vista día
+        // Elementos de navegación
+        btnPrevDay = view.findViewById(R.id.btnPrevDay);
+        btnPrevWeek = view.findViewById(R.id.btnPrevWeek);
+        btnPrevMonth = view.findViewById(R.id.btnPrevMonth);
+        btnPrevYear = view.findViewById(R.id.btnPrevYear);
+        btnNextMonth = view.findViewById(R.id.btnNextMonth);
+        btnNextYear = view.findViewById(R.id.btnNextYear);
+        
+        btnHoy = view.findViewById(R.id.btnHoy);
+        btnHoyWeek = view.findViewById(R.id.btnHoyWeek);
+        btnHoyMonth = view.findViewById(R.id.btnHoyMonth);
+        btnHoyYear = view.findViewById(R.id.btnHoyYear);
+        
+        btnFilter = view.findViewById(R.id.btnFilter);
+        btnFilterWeek = view.findViewById(R.id.btnFilterWeek);
+        
+        // Elementos de fecha
         textCurrentDate = view.findViewById(R.id.textCurrentDate);
         textWeekInfo = view.findViewById(R.id.textWeekInfo);
+        textCurrentWeek = view.findViewById(R.id.textCurrentWeek);
+        textWeekYear = view.findViewById(R.id.textWeekYear);
+        textCurrentMonth = view.findViewById(R.id.textCurrentMonth);
+        textCurrentYear = view.findViewById(R.id.textCurrentYear);
     }
 
     private void configurarTabs(View view) {
@@ -91,6 +135,82 @@ public class CalendarioFragment extends Fragment {
         }
     }
 
+    private void configurarNavegacion(View view) {
+        // Navegación de día
+        if (btnPrevDay != null) {
+            btnPrevDay.setOnClickListener(v -> {
+                currentDate.add(Calendar.DAY_OF_MONTH, -1);
+                actualizarFechaActual();
+            });
+        }
+        
+        if (btnHoy != null) {
+            btnHoy.setOnClickListener(v -> {
+                currentDate = Calendar.getInstance();
+                actualizarFechaActual();
+            });
+        }
+        
+        // Navegación de semana
+        if (btnPrevWeek != null) {
+            btnPrevWeek.setOnClickListener(v -> {
+                currentDate.add(Calendar.WEEK_OF_YEAR, -1);
+                actualizarFechaActual();
+            });
+        }
+        
+        if (btnHoyWeek != null) {
+            btnHoyWeek.setOnClickListener(v -> {
+                currentDate = Calendar.getInstance();
+                actualizarFechaActual();
+            });
+        }
+        
+        // Navegación de mes
+        if (btnPrevMonth != null) {
+            btnPrevMonth.setOnClickListener(v -> {
+                currentDate.add(Calendar.MONTH, -1);
+                actualizarFechaActual();
+            });
+        }
+        
+        if (btnNextMonth != null) {
+            btnNextMonth.setOnClickListener(v -> {
+                currentDate.add(Calendar.MONTH, 1);
+                actualizarFechaActual();
+            });
+        }
+        
+        if (btnHoyMonth != null) {
+            btnHoyMonth.setOnClickListener(v -> {
+                currentDate = Calendar.getInstance();
+                actualizarFechaActual();
+            });
+        }
+        
+        // Navegación de año
+        if (btnPrevYear != null) {
+            btnPrevYear.setOnClickListener(v -> {
+                currentDate.add(Calendar.YEAR, -1);
+                actualizarFechaActual();
+            });
+        }
+        
+        if (btnNextYear != null) {
+            btnNextYear.setOnClickListener(v -> {
+                currentDate.add(Calendar.YEAR, 1);
+                actualizarFechaActual();
+            });
+        }
+        
+        if (btnHoyYear != null) {
+            btnHoyYear.setOnClickListener(v -> {
+                currentDate = Calendar.getInstance();
+                actualizarFechaActual();
+            });
+        }
+    }
+
     private void mostrarVistaListado() {
         ocultarTodasLasVistas();
         recyclerViewListado.setVisibility(View.VISIBLE);
@@ -109,18 +229,21 @@ public class CalendarioFragment extends Fragment {
         ocultarTodasLasVistas();
         viewSemana.setVisibility(View.VISIBLE);
         actualizarTabSeleccionado(tabSemana);
+        actualizarFechaActual();
     }
 
     private void mostrarVistaMes() {
         ocultarTodasLasVistas();
         viewMes.setVisibility(View.VISIBLE);
         actualizarTabSeleccionado(tabMes);
+        actualizarFechaActual();
     }
 
     private void mostrarVistaAno() {
         ocultarTodasLasVistas();
         viewAno.setVisibility(View.VISIBLE);
         actualizarTabSeleccionado(tabAno);
+        actualizarFechaActual();
     }
 
     private void ocultarTodasLasVistas() {
@@ -155,18 +278,46 @@ public class CalendarioFragment extends Fragment {
     }
 
     private void actualizarFechaActual() {
+        // Actualizar vista de día
         if (textCurrentDate != null) {
-            Calendar calendar = Calendar.getInstance();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM", new Locale("es"));
-            String fechaActual = dateFormat.format(calendar.getTime());
+            String fechaActual = dateFormat.format(currentDate.getTime());
             textCurrentDate.setText(fechaActual);
         }
         
         if (textWeekInfo != null) {
-            Calendar calendar = Calendar.getInstance();
-            int semana = calendar.get(Calendar.WEEK_OF_YEAR);
-            int año = calendar.get(Calendar.YEAR);
+            int semana = currentDate.get(Calendar.WEEK_OF_YEAR);
+            int año = currentDate.get(Calendar.YEAR);
             textWeekInfo.setText("Semana " + semana + ", " + año);
+        }
+        
+        // Actualizar vista de semana
+        if (textCurrentWeek != null) {
+            Calendar inicioSemana = (Calendar) currentDate.clone();
+            inicioSemana.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+            Calendar finSemana = (Calendar) inicioSemana.clone();
+            finSemana.add(Calendar.DAY_OF_WEEK, 6);
+            
+            String rangoSemana = weekFormat.format(inicioSemana.getTime()) + " " + 
+                               new SimpleDateFormat("MMM", new Locale("es")).format(finSemana.getTime());
+            textCurrentWeek.setText(rangoSemana);
+        }
+        
+        if (textWeekYear != null) {
+            int semana = currentDate.get(Calendar.WEEK_OF_YEAR);
+            int año = currentDate.get(Calendar.YEAR);
+            textWeekYear.setText("Semana " + semana + ", " + año);
+        }
+        
+        // Actualizar vista de mes
+        if (textCurrentMonth != null) {
+            String mesActual = monthFormat.format(currentDate.getTime());
+            textCurrentMonth.setText(mesActual);
+        }
+        
+        // Actualizar vista de año
+        if (textCurrentYear != null) {
+            int año = currentDate.get(Calendar.YEAR);
+            textCurrentYear.setText(String.valueOf(año));
         }
     }
 } 

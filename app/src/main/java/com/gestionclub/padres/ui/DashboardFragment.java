@@ -40,6 +40,10 @@ public class DashboardFragment extends Fragment {
     private ResultadoPartidoAdapter resultadoPartidoAdapter;
     private FloatingActionButton fabAgregarMensaje;
     
+    // Separadores de sección
+    private TextView textSectionTitleMuro, textSectionSubtitleMuro;
+    private TextView textSectionTitlePartidos, textSectionSubtitlePartidos;
+    
 
 
     @Nullable
@@ -61,6 +65,9 @@ public class DashboardFragment extends Fragment {
     }
 
     private void inicializarVistas(View view) {
+        // Configurar separadores de sección
+        configurarSeparadoresSeccion(view);
+        
         textViewVerTodoMuro = view.findViewById(R.id.textViewVerTodoMuro);
         recyclerViewMuro = view.findViewById(R.id.containerMuroDashboard);
         
@@ -120,7 +127,35 @@ public class DashboardFragment extends Fragment {
         }
     }
 
-
+    private void configurarSeparadoresSeccion(View view) {
+        // Configurar separador del muro
+        View separatorMuro = view.findViewById(R.id.item_section_separator);
+        if (separatorMuro != null) {
+            textSectionTitleMuro = separatorMuro.findViewById(R.id.textSectionTitle);
+            textSectionSubtitleMuro = separatorMuro.findViewById(R.id.textSectionSubtitle);
+            
+            if (textSectionTitleMuro != null) {
+                textSectionTitleMuro.setText("Comunicación");
+            }
+            if (textSectionSubtitleMuro != null) {
+                textSectionSubtitleMuro.setText("Mensajes del equipo");
+            }
+        }
+        
+        // Configurar separador de partidos
+        View separatorPartidos = view.findViewById(R.id.item_section_separator);
+        if (separatorPartidos != null) {
+            textSectionTitlePartidos = separatorPartidos.findViewById(R.id.textSectionTitle);
+            textSectionSubtitlePartidos = separatorPartidos.findViewById(R.id.textSectionSubtitle);
+            
+            if (textSectionTitlePartidos != null) {
+                textSectionTitlePartidos.setText("Resultados");
+            }
+            if (textSectionSubtitlePartidos != null) {
+                textSectionSubtitlePartidos.setText("Últimos partidos");
+            }
+        }
+    }
 
     private void cargarDatosUsuario() {
         // El dashboard no muestra el nombre del usuario directamente

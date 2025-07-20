@@ -111,11 +111,11 @@ public class ResultadoPartidoAdapter extends RecyclerView.Adapter<ResultadoParti
                     viewEstado.setBackgroundResource(R.drawable.circle_button_green);
                     textViewEquipoLocal.setTextColor(context.getResources().getColor(R.color.green));
                 } else if (resultado.isEmpate()) {
-                    viewEstado.setBackgroundResource(R.drawable.circle_button_gold);
+                    viewEstado.setBackgroundResource(R.drawable.circle_gold);
                     textViewEquipoLocal.setTextColor(context.getResources().getColor(R.color.gold));
                 } else {
-                    viewEstado.setBackgroundResource(R.drawable.circle_button_red);
-                    textViewEquipoLocal.setTextColor(context.getResources().getColor(R.color.red));
+                    viewEstado.setBackgroundResource(R.drawable.circle_red);
+                    textViewEquipoLocal.setTextColor(context.getResources().getColor(R.color.red_error));
                 }
             } else if (resultado.isEnCurso()) {
                 textViewResultado.setText("EN CURSO");
@@ -125,7 +125,7 @@ public class ResultadoPartidoAdapter extends RecyclerView.Adapter<ResultadoParti
             } else {
                 textViewResultado.setText("PENDIENTE");
                 textViewResultadoPrimera.setText("");
-                viewEstado.setBackgroundResource(R.drawable.circle_button_gray);
+                viewEstado.setBackgroundResource(R.drawable.circle_background);
                 textViewEquipoLocal.setTextColor(context.getResources().getColor(R.color.text_secondary));
             }
 
