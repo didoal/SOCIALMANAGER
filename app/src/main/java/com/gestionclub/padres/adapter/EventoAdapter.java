@@ -1,9 +1,9 @@
 package com.gestionclub.padres.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,19 +18,19 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.EventoView
     private SimpleDateFormat dateFormat;
     private SimpleDateFormat timeFormat;
     private OnEventoClickListener listener;
-    private boolean mostrarAcciones;
 
     public interface OnEventoClickListener {
-        void onEditarClick(Evento evento);
-        void onEliminarClick(Evento evento);
+        void onEventoClick(Evento evento);
     }
 
-    public EventoAdapter(List<Evento> eventos, OnEventoClickListener listener, boolean mostrarAcciones) {
+    public EventoAdapter(List<Evento> eventos) {
         this.eventos = eventos;
+        this.dateFormat = new SimpleDateFormat("EEE, d MMM", new Locale("es"));
+        this.timeFormat = new SimpleDateFormat("HH:mm", new Locale("es"));
+    }
+
+    public void setOnEventoClickListener(OnEventoClickListener listener) {
         this.listener = listener;
-        this.mostrarAcciones = mostrarAcciones;
-        this.dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        this.timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
     }
 
     @NonNull
@@ -57,79 +57,84 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.EventoView
         notifyDataSetChanged();
     }
 
-    class EventoViewHolder extends RecyclerView.ViewHolder {
+    public class EventoViewHolder extends RecyclerView.ViewHolder {
         private TextView textViewTitulo;
-        private TextView textViewTipo;
-        private TextView textViewDescripcion;
         private TextView textViewFecha;
+        private TextView textViewHora;
         private TextView textViewUbicacion;
-        private Button buttonEditar;
-        private Button buttonEliminar;
+        private TextView textViewTipo;
 
         public EventoViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewTitulo = itemView.findViewById(R.id.textViewTitulo);
-            textViewTipo = itemView.findViewById(R.id.textViewTipo);
-            textViewDescripcion = itemView.findViewById(R.id.textViewDescripcion);
             textViewFecha = itemView.findViewById(R.id.textViewFecha);
+            textViewHora = itemView.findViewById(R.id.textViewHora);
             textViewUbicacion = itemView.findViewById(R.id.textViewUbicacion);
-            buttonEditar = itemView.findViewById(R.id.buttonEditar);
-            buttonEliminar = itemView.findViewById(R.id.buttonEliminar);
+            textViewTipo = itemView.findViewById(R.id.textViewTipo);
+
+            // Configurar click en el item
+            itemView.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION && listener != null) {
+                    listener.onEventoClick(eventos.get(position));
+                }
+            });
         }
 
         public void bind(Evento evento) {
-            textViewTitulo.setText(evento.getTitulo());
-            textViewTipo.setText(evento.getTipo());
-            textViewDescripcion.setText(evento.getDescripcion());
-            
-            String fechaHora = dateFormat.format(evento.getFechaInicio()) + " " + 
-                             timeFormat.format(evento.getFechaInicio());
-            textViewFecha.setText(fechaHora);
-            textViewUbicacion.setText(evento.getUbicacion());
+            Context context = itemView.getContext();
 
-            // Configurar color del tipo según el tipo de evento
-            switch (evento.getTipo()) {
-                case "ENTRENAMIENTO":
-                    textViewTipo.setBackgroundResource(R.drawable.tipo_entrenamiento_background);
-                    textViewTipo.setTextColor(0xFFFFFFFF); // Blanco
-                    break;
-                case "PARTIDO":
-                    textViewTipo.setBackgroundResource(R.drawable.tipo_partido_background);
-                    textViewTipo.setTextColor(0xFFFFFFFF); // Blanco
-                    break;
-                case "EVENTO":
-                    textViewTipo.setBackgroundResource(R.drawable.tipo_evento_background);
-                    textViewTipo.setTextColor(0xFFFFFFFF); // Blanco
-                    break;
-                case "REUNION":
-                    textViewTipo.setBackgroundResource(R.drawable.tipo_reunion_background);
-                    textViewTipo.setTextColor(0xFFFFFFFF); // Blanco
-                    break;
-                default:
-                    textViewTipo.setBackgroundResource(R.drawable.tipo_background);
-                    textViewTipo.setTextColor(0xFF000000); // Negro
-                    break;
+            // Configurar título
+            textViewTitulo.setText(evento.getTitulo());
+
+            // Configurar fecha
+            if (evento.getFechaInicio() != null) {
+                String fecha = dateFormat.format(evento.getFechaInicio());
+                textViewFecha.setText(fecha);
+            } else {
+                textViewFecha.setText("Fecha no disponible");
             }
 
-            // Mostrar/ocultar botones de acción
-            if (mostrarAcciones && evento.isEsAdmin()) {
-                buttonEditar.setVisibility(View.VISIBLE);
-                buttonEliminar.setVisibility(View.VISIBLE);
-                
-                buttonEditar.setOnClickListener(v -> {
-                    if (listener != null) {
-                        listener.onEditarClick(evento);
-                    }
-                });
-                
-                buttonEliminar.setOnClickListener(v -> {
-                    if (listener != null) {
-                        listener.onEliminarClick(evento);
-                    }
-                });
+            // Configurar hora
+            if (evento.getFechaInicio() != null) {
+                String horaInicio = timeFormat.format(evento.getFechaInicio());
+                String horaFin = evento.getFechaFin() != null ? timeFormat.format(evento.getFechaFin()) : "";
+                String hora = horaInicio + (horaFin.isEmpty() ? "" : " - " + horaFin);
+                textViewHora.setText(hora);
             } else {
-                buttonEditar.setVisibility(View.GONE);
-                buttonEliminar.setVisibility(View.GONE);
+                textViewHora.setText("Hora no disponible");
+            }
+
+            // Configurar ubicación
+            if (evento.getUbicacion() != null && !evento.getUbicacion().isEmpty()) {
+                textViewUbicacion.setText(evento.getUbicacion());
+                textViewUbicacion.setVisibility(View.VISIBLE);
+            } else {
+                textViewUbicacion.setVisibility(View.GONE);
+            }
+
+            // Configurar tipo de evento
+            if (evento.getTipo() != null && !evento.getTipo().isEmpty()) {
+                textViewTipo.setText(evento.getTipo());
+                textViewTipo.setVisibility(View.VISIBLE);
+                
+                // Configurar color según el tipo
+                switch (evento.getTipo().toLowerCase()) {
+                    case "partido":
+                        textViewTipo.setBackgroundResource(R.drawable.tipo_partido_background);
+                        break;
+                    case "entrenamiento":
+                        textViewTipo.setBackgroundResource(R.drawable.tipo_entrenamiento_background);
+                        break;
+                    case "reunión":
+                        textViewTipo.setBackgroundResource(R.drawable.tipo_reunion_background);
+                        break;
+                    default:
+                        textViewTipo.setBackgroundResource(R.drawable.tipo_evento_background);
+                        break;
+                }
+            } else {
+                textViewTipo.setVisibility(View.GONE);
             }
         }
     }

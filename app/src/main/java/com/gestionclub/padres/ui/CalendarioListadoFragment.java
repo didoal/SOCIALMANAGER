@@ -78,25 +78,11 @@ public class CalendarioListadoFragment extends Fragment {
         Context context = getContext();
         if (context != null && recyclerViewEventos != null) {
             recyclerViewEventos.setLayoutManager(new LinearLayoutManager(context));
-            eventoAdapter = new EventoAdapter(new ArrayList<>(), new EventoAdapter.OnEventoClickListener() {
-                @Override
-                public void onEditarClick(Evento evento) {
-                    // Solo permitir editar si es admin o entrenador
-                    if (usuarioActual != null && (usuarioActual.isEsAdmin() || "entrenador".equals(usuarioActual.getRol()))) {
-                        // Aquí podrías abrir el diálogo de edición
-                        Toast.makeText(requireContext(), "Clic en evento: " + evento.getTitulo(), Toast.LENGTH_SHORT).show();
-                    }
-                }
-                
-                @Override
-                public void onEliminarClick(Evento evento) {
-                    // Solo permitir eliminar si es admin
-                    if (usuarioActual != null && usuarioActual.isEsAdmin()) {
-                        // Aquí podrías mostrar el diálogo de confirmación
-                        Toast.makeText(requireContext(), "Eliminar evento: " + evento.getTitulo(), Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }, false); // false para no mostrar botones de edición/eliminación por defecto
+            eventoAdapter = new EventoAdapter(new ArrayList<>());
+            eventoAdapter.setOnEventoClickListener(evento -> {
+                // Mostrar detalles del evento
+                Toast.makeText(requireContext(), "Evento: " + evento.getTitulo(), Toast.LENGTH_SHORT).show();
+            });
             recyclerViewEventos.setAdapter(eventoAdapter);
         } else {
             Log.e(TAG, "Error: Context o RecyclerView es null");

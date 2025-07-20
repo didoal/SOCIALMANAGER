@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.gestionclub.padres.data.DataManager;
 import com.gestionclub.padres.model.Evento;
+import com.gestionclub.padres.adapter.EventoAdapter;
 import java.util.List;
 import java.util.Calendar;
 import java.util.Date;
@@ -28,6 +29,7 @@ public class CalendarioFragment extends Fragment {
     private TextView tabListado, tabDia, tabSemana, tabMes, tabAno;
     private LinearLayout viewDia, viewSemana, viewMes, viewAno;
     private RecyclerView recyclerViewListado;
+    private EventoAdapter eventoAdapter;
     
     // Elementos de navegación
     private ImageView btnPrevDay, btnPrevWeek, btnPrevMonth, btnPrevYear;
@@ -272,9 +274,23 @@ public class CalendarioFragment extends Fragment {
         if (recyclerViewListado != null) {
             List<Evento> eventos = dataManager.getEventos();
             recyclerViewListado.setLayoutManager(new LinearLayoutManager(requireContext()));
-            // Aquí puedes configurar un adaptador para mostrar los eventos
-            // recyclerViewListado.setAdapter(new EventoAdapter(eventos));
+            
+            eventoAdapter = new EventoAdapter(eventos);
+            recyclerViewListado.setAdapter(eventoAdapter);
+            
+            // Configurar listener del adaptador
+            eventoAdapter.setOnEventoClickListener(evento -> {
+                mostrarDetallesEvento(evento);
+            });
         }
+    }
+
+    private void mostrarDetallesEvento(Evento evento) {
+        // Aquí puedes mostrar un diálogo con los detalles del evento
+        // Por ahora solo mostraremos un Toast
+        android.widget.Toast.makeText(requireContext(), 
+            "Evento: " + evento.getTitulo(), 
+            android.widget.Toast.LENGTH_SHORT).show();
     }
 
     private void actualizarFechaActual() {

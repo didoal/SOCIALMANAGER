@@ -1,106 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="16dp"
     android:layout_marginBottom="8dp"
-    android:background="@drawable/card_profesional">
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@color/white">
 
-    <!-- Header del evento -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="8dp">
-
-        <TextView
-            android:id="@+id/textViewTitulo"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            style="@style/SubtitleText"
-            android:textStyle="bold"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/textViewTipo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="4dp"
-            android:textSize="10sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_primary"
-            android:background="@drawable/tipo_background" />
-
-    </LinearLayout>
-
-    <!-- Descripción -->
-    <TextView
-        android:id="@+id/textViewDescripcion"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/BodyText"
-        android:textSize="14sp"
-        android:layout_marginBottom="8dp" />
-
-    <!-- Información del evento -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginBottom="8dp">
+        android:padding="16dp">
 
-        <TextView
-            android:id="@+id/textViewFecha"
+        <!-- Header del evento -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/BodyText"
-            android:textSize="14sp"
-            android:drawableStart="@drawable/ic_calendar"
-            android:drawablePadding="8dp"
-            android:layout_marginBottom="4dp" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
 
-        <TextView
-            android:id="@+id/textViewUbicacion"
+            <TextView
+                android:id="@+id/textViewTitulo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Título del Evento"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textViewTipo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TIPO"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:background="@drawable/tipo_evento_background"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp" />
+
+        </LinearLayout>
+
+        <!-- Información del evento -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/BodyText"
-            android:textSize="14sp"
-            android:drawableStart="@drawable/ic_location"
-            android:drawablePadding="8dp" />
+            android:orientation="vertical">
+
+            <!-- Fecha y hora -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="4dp">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_calendar"
+                    android:layout_marginEnd="8dp"
+                    app:tint="@color/text_secondary" />
+
+                <TextView
+                    android:id="@+id/textViewFecha"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Fecha del evento"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp" />
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_clock"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="8dp"
+                    app:tint="@color/text_secondary" />
+
+                <TextView
+                    android:id="@+id/textViewHora"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hora"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+            <!-- Ubicación -->
+            <LinearLayout
+                android:id="@+id/layoutUbicacion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="visible">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_location"
+                    android:layout_marginEnd="8dp"
+                    app:tint="@color/text_secondary" />
+
+                <TextView
+                    android:id="@+id/textViewUbicacion"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Ubicación del evento"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
 
     </LinearLayout>
 
-    <!-- Botones de acción -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="end">
-
-        <Button
-            android:id="@+id/buttonEditar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Editar"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/button_gold_background"
-            android:textColor="@color/black"
-            android:textStyle="bold"
-            android:visibility="gone" />
-
-        <Button
-            android:id="@+id/buttonEliminar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Eliminar"
-            android:background="@drawable/button_danger_background"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            android:visibility="gone" />
-
-    </LinearLayout>
-
-</LinearLayout> 
+</androidx.cardview.widget.CardView> 

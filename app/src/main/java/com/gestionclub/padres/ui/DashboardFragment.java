@@ -30,7 +30,7 @@ import java.util.ArrayList;
 public class DashboardFragment extends Fragment {
     private DataManager dataManager;
     private Usuario usuarioActual;
-    
+
     // Vistas del layout
     private TextView textViewVerTodoMuro;
     private TextView textViewVerTodoPartidos;
@@ -51,9 +51,9 @@ public class DashboardFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
         try {
-            dataManager = new DataManager(requireContext());
-            usuarioActual = dataManager.getUsuarioActual();
-                    inicializarVistas(view);
+        dataManager = new DataManager(requireContext());
+        usuarioActual = dataManager.getUsuarioActual();
+        inicializarVistas(view);
         cargarDatosUsuario();
         cargarMuro();
         cargarUltimosPartidos();
@@ -129,7 +129,7 @@ public class DashboardFragment extends Fragment {
 
     private void configurarSeparadoresSeccion(View view) {
         // Configurar separador del muro
-        View separatorMuro = view.findViewById(R.id.item_section_separator);
+        View separatorMuro = view.findViewById(R.id.separatorMuro);
         if (separatorMuro != null) {
             textSectionTitleMuro = separatorMuro.findViewById(R.id.textSectionTitle);
             textSectionSubtitleMuro = separatorMuro.findViewById(R.id.textSectionSubtitle);
@@ -143,7 +143,7 @@ public class DashboardFragment extends Fragment {
         }
         
         // Configurar separador de partidos
-        View separatorPartidos = view.findViewById(R.id.item_section_separator);
+        View separatorPartidos = view.findViewById(R.id.separatorPartidos);
         if (separatorPartidos != null) {
             textSectionTitlePartidos = separatorPartidos.findViewById(R.id.textSectionTitle);
             textSectionSubtitlePartidos = separatorPartidos.findViewById(R.id.textSectionSubtitle);
