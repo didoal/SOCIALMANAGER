@@ -8,6 +8,7 @@ import com.gestionclub.padres.model.Mensaje;
 import com.gestionclub.padres.model.Notificacion;
 import com.gestionclub.padres.model.Evento;
 import com.gestionclub.padres.model.Asistencia;
+import com.gestionclub.padres.model.ResultadoPartido;
 import com.gestionclub.padres.model.Usuario;
 import com.gestionclub.padres.model.Equipo;
 
@@ -26,6 +27,7 @@ public class DataManager {
     private static final String KEY_USUARIOS = "usuarios";
     private static final String KEY_USUARIO_ACTUAL = "usuario_actual";
     private static final String KEY_EQUIPOS = "equipos";
+    private static final String KEY_RESULTADOS_PARTIDOS = "resultados_partidos";
 
     private SharedPreferences sharedPreferences;
     private Gson gson;
@@ -228,6 +230,12 @@ public class DataManager {
                 break;
             }
         }
+        guardarMensajes(mensajes);
+    }
+
+    public void eliminarMensaje(String mensajeId) {
+        List<Mensaje> mensajes = getMensajes();
+        mensajes.removeIf(mensaje -> mensaje.getId().equals(mensajeId));
         guardarMensajes(mensajes);
     }
 
@@ -951,5 +959,148 @@ public class DataManager {
         mensajes.add(mensaje4);
         
         guardarMensajes(mensajes);
+    }
+
+    // Métodos para gestionar resultados de partidos
+    public List<ResultadoPartido> getResultadosPartidos() {
+        if (sharedPreferences == null) return new ArrayList<>();
+        
+        String json = sharedPreferences.getString(KEY_RESULTADOS_PARTIDOS, "[]");
+        Type type = new TypeToken<ArrayList<ResultadoPartido>>(){}.getType();
+        try {
+            return gson.fromJson(json, type);
+        } catch (Exception e) {
+            android.util.Log.e("DataManager", "Error al cargar resultados de partidos", e);
+            return new ArrayList<>();
+        }
+    }
+
+    public void guardarResultadosPartidos(List<ResultadoPartido> resultados) {
+        if (sharedPreferences == null) return;
+        
+        String json = gson.toJson(resultados);
+        sharedPreferences.edit().putString(KEY_RESULTADOS_PARTIDOS, json).apply();
+    }
+
+    public void agregarResultadoPartido(ResultadoPartido resultado) {
+        List<ResultadoPartido> resultados = getResultadosPartidos();
+        resultados.add(resultado);
+        guardarResultadosPartidos(resultados);
+    }
+
+    public void actualizarResultadoPartido(ResultadoPartido resultadoActualizado) {
+        List<ResultadoPartido> resultados = getResultadosPartidos();
+        for (int i = 0; i < resultados.size(); i++) {
+            if (resultados.get(i).getId().equals(resultadoActualizado.getId())) {
+                resultados.set(i, resultadoActualizado);
+                break;
+            }
+        }
+        guardarResultadosPartidos(resultados);
+    }
+
+    public void eliminarResultadoPartido(String resultadoId) {
+        List<ResultadoPartido> resultados = getResultadosPartidos();
+        resultados.removeIf(resultado -> resultado.getId().equals(resultadoId));
+        guardarResultadosPartidos(resultados);
+    }
+
+    public List<ResultadoPartido> getResultadosPorEquipo(String equipoId) {
+        List<ResultadoPartido> todosLosResultados = getResultadosPartidos();
+        List<ResultadoPartido> resultadosEquipo = new ArrayList<>();
+        
+        for (ResultadoPartido resultado : todosLosResultados) {
+            if (resultado.getEquipoId() != null && resultado.getEquipoId().equals(equipoId)) {
+                resultadosEquipo.add(resultado);
+            }
+        }
+        
+        // Ordenar por fecha (más recientes primero)
+        resultadosEquipo.sort((r1, r2) -> {
+            if (r1.getFechaPartido() == null && r2.getFechaPartido() == null) return 0;
+            if (r1.getFechaPartido() == null) return 1;
+            if (r2.getFechaPartido() == null) return -1;
+            return r2.getFechaPartido().compareTo(r1.getFechaPartido());
+        });
+        
+        return resultadosEquipo;
+    }
+
+    public List<ResultadoPartido> getUltimosResultados(int cantidad) {
+        List<ResultadoPartido> todosLosResultados = getResultadosPartidos();
+        
+        // Ordenar por fecha (más recientes primero)
+        todosLosResultados.sort((r1, r2) -> {
+            if (r1.getFechaPartido() == null && r2.getFechaPartido() == null) return 0;
+            if (r1.getFechaPartido() == null) return 1;
+            if (r2.getFechaPartido() == null) return -1;
+            return r2.getFechaPartido().compareTo(r1.getFechaPartido());
+        });
+        
+        // Retornar solo los primeros 'cantidad' resultados
+        if (todosLosResultados.size() <= cantidad) {
+            return todosLosResultados;
+        } else {
+            return todosLosResultados.subList(0, cantidad);
+        }
+    }
+
+    public void crearResultadosPartidosEjemplo() {
+        List<ResultadoPartido> resultados = new ArrayList<>();
+        
+        // Crear algunos resultados de ejemplo
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_MONTH, -7);
+        Date fecha1 = cal.getTime();
+        
+        cal.add(Calendar.DAY_OF_MONTH, -14);
+        Date fecha2 = cal.getTime();
+        
+        cal.add(Calendar.DAY_OF_MONTH, -21);
+        Date fecha3 = cal.getTime();
+        
+        // Resultado 1: Victoria
+        ResultadoPartido resultado1 = new ResultadoPartido(
+            "evento_partido_1", "Santiaguiño", "Club Deportivo Local", 
+            "equipo_alevin_a", fecha1, "Campo de futbol A Bouza"
+        );
+        resultado1.setGolesLocal(4);
+        resultado1.setGolesVisitante(2);
+        resultado1.setGolesLocalPrimera(2);
+        resultado1.setGolesVisitantePrimera(1);
+        resultado1.setEstado("FINALIZADO");
+        resultado1.setCreadorId("admin1");
+        resultado1.setCreadorNombre("José Antonio Suarez González");
+        resultados.add(resultado1);
+        
+        // Resultado 2: Empate
+        ResultadoPartido resultado2 = new ResultadoPartido(
+            "evento_partido_2", "Santiaguiño", "Xuvenil C", 
+            "equipo_infantil_b", fecha2, "Estadio Municipal"
+        );
+        resultado2.setGolesLocal(2);
+        resultado2.setGolesVisitante(2);
+        resultado2.setGolesLocalPrimera(1);
+        resultado2.setGolesVisitantePrimera(1);
+        resultado2.setEstado("FINALIZADO");
+        resultado2.setCreadorId("admin1");
+        resultado2.setCreadorNombre("José Antonio Suarez González");
+        resultados.add(resultado2);
+        
+        // Resultado 3: Derrota
+        ResultadoPartido resultado3 = new ResultadoPartido(
+            "evento_partido_3", "Santiaguiño", "Club Atlético", 
+            "equipo_cadete_a", fecha3, "Cancha Municipal"
+        );
+        resultado3.setGolesLocal(1);
+        resultado3.setGolesVisitante(3);
+        resultado3.setGolesLocalPrimera(0);
+        resultado3.setGolesVisitantePrimera(2);
+        resultado3.setEstado("FINALIZADO");
+        resultado3.setCreadorId("admin1");
+        resultado3.setCreadorNombre("José Antonio Suarez González");
+        resultados.add(resultado3);
+        
+        guardarResultadosPartidos(resultados);
     }
 } 
