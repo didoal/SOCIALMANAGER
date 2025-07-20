@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace 'com.gestionclub.padres'
-    compileSdk 34
+    compileSdk 36
     
     defaultConfig {
         applicationId "com.gestionclub.padres"
         minSdk 29
-        targetSdk 34
+        targetSdk 36
         versionCode 1
         versionName "1.0"
         
@@ -32,7 +32,6 @@ android {
             debuggable false
             jniDebuggable false
             pseudoLocalesEnabled false
-            zipAlignEnabled true
         }
         
         debug {
@@ -47,8 +46,6 @@ android {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
-    
-
     
     // Configuración de packaging para evitar conflictos
     packagingOptions {
@@ -67,6 +64,7 @@ android {
         exclude 'META-INF/services/javax.xml.parsers.SAXParserFactory'
         pickFirst 'META-INF/INDEX.LIST'
         pickFirst 'META-INF/io.netty.versions.properties'
+        pickFirst 'META-INF/versions/9/previous-compilation-data.bin'
     }
     
     // Configuración para evitar problemas de recursos
@@ -122,12 +120,17 @@ dependencies {
     implementation('org.apache.poi:poi:5.2.3') {
         exclude group: 'org.apache.logging.log4j', module: 'log4j-api'
         exclude group: 'org.apache.logging.log4j', module: 'log4j-core'
+        exclude group: 'org.apache.commons', module: 'commons-collections4'
     }
     implementation('org.apache.poi:poi-ooxml:5.2.3') {
         exclude group: 'org.apache.logging.log4j', module: 'log4j-api'
         exclude group: 'org.apache.logging.log4j', module: 'log4j-core'
+        exclude group: 'org.apache.commons', module: 'commons-collections4'
     }
-    implementation 'org.apache.xmlbeans:xmlbeans:5.1.1'
+    implementation('org.apache.xmlbeans:xmlbeans:5.1.1') {
+        exclude group: 'org.apache.logging.log4j', module: 'log4j-api'
+        exclude group: 'org.apache.logging.log4j', module: 'log4j-core'
+    }
     implementation 'org.apache.commons:commons-csv:1.9.0'
 
     // Dependencias para pruebas unitarias y de instrumentación
