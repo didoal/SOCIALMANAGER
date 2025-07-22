@@ -44,13 +44,7 @@ public class EquipoFragment extends Fragment {
     }
 
     private void configurarBotones(View view) {
-        // Configurar botón de retroceso
-        View btnBack = view.findViewById(R.id.btnBack);
-        if (btnBack != null) {
-            btnBack.setOnClickListener(v -> {
-                requireActivity().getSupportFragmentManager().popBackStack();
-            });
-        }
+
 
         // Configurar botón de agregar miembro (solo para admins)
         View btnAddMember = view.findViewById(R.id.btnAddMember);

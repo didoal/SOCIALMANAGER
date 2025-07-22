@@ -332,6 +332,17 @@ public class DataManager {
         guardarNotificaciones(notificaciones);
     }
 
+    public void eliminarNotificacion(String notificacionId) {
+        List<Notificacion> notificaciones = getNotificaciones();
+        List<Notificacion> notificacionesFiltradas = new ArrayList<>();
+        for (Notificacion notificacion : notificaciones) {
+            if (!notificacion.getId().equals(notificacionId)) {
+                notificacionesFiltradas.add(notificacion);
+            }
+        }
+        guardarNotificaciones(notificacionesFiltradas);
+    }
+
     public int getNotificacionesNoLeidas() {
         List<Notificacion> notificaciones = getNotificaciones();
         int count = 0;

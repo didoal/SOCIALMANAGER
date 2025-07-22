@@ -38,13 +38,7 @@ public class ChatFragment extends Fragment {
     }
 
     private void configurarBotones(View view) {
-        // Configurar botón de retroceso
-        View btnBack = view.findViewById(R.id.btnBack);
-        if (btnBack != null) {
-            btnBack.setOnClickListener(v -> {
-                requireActivity().getSupportFragmentManager().popBackStack();
-            });
-        }
+
 
         // Configurar botón de agregar chat
         View btnAddChat = view.findViewById(R.id.btnAddChat);

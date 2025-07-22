@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.gestionclub.padres.R;
 import com.gestionclub.padres.model.Evento;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -59,18 +60,24 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.EventoView
 
     public class EventoViewHolder extends RecyclerView.ViewHolder {
         private TextView textViewTitulo;
-        private TextView textViewFecha;
+        private TextView textViewDia;
+        private TextView textViewEvento;
         private TextView textViewHora;
+        private TextView textViewConvocatoria;
         private TextView textViewUbicacion;
         private TextView textViewTipo;
+        private View layoutConvocatoria;
 
         public EventoViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewTitulo = itemView.findViewById(R.id.textViewTitulo);
-            textViewFecha = itemView.findViewById(R.id.textViewFecha);
+            textViewDia = itemView.findViewById(R.id.textViewDia);
+            textViewEvento = itemView.findViewById(R.id.textViewEvento);
             textViewHora = itemView.findViewById(R.id.textViewHora);
+            textViewConvocatoria = itemView.findViewById(R.id.textViewConvocatoria);
             textViewUbicacion = itemView.findViewById(R.id.textViewUbicacion);
             textViewTipo = itemView.findViewById(R.id.textViewTipo);
+            layoutConvocatoria = itemView.findViewById(R.id.layoutConvocatoria);
 
             // Configurar click en el item
             itemView.setOnClickListener(v -> {
@@ -87,12 +94,58 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.EventoView
             // Configurar título
             textViewTitulo.setText(evento.getTitulo());
 
-            // Configurar fecha
+            // Configurar día
             if (evento.getFechaInicio() != null) {
-                String fecha = dateFormat.format(evento.getFechaInicio());
-                textViewFecha.setText(fecha);
+                SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE, d 'de' MMMM", new Locale("es"));
+                String dia = dayFormat.format(evento.getFechaInicio());
+                textViewDia.setText(dia);
             } else {
-                textViewFecha.setText("Fecha no disponible");
+                textViewDia.setText("Día no disponible");
+            }
+
+            // Configurar tipo de evento y fondo del card
+            if (evento.getTipo() != null && !evento.getTipo().isEmpty()) {
+                textViewEvento.setText(evento.getTipo());
+                textViewTipo.setText(evento.getTipo().toUpperCase());
+                textViewTipo.setVisibility(View.VISIBLE);
+                
+                // Configurar color según el tipo
+                switch (evento.getTipo().toLowerCase()) {
+                    case "partido":
+                        textViewTipo.setBackgroundResource(R.drawable.tipo_partido_background);
+                        itemView.setBackgroundResource(R.drawable.evento_partido_background);
+                        // Mostrar convocatoria para partidos
+                        layoutConvocatoria.setVisibility(View.VISIBLE);
+                        if (evento.getFechaInicio() != null) {
+                            // Calcular hora de convocatoria (1 hora antes)
+                            Calendar convocatoria = Calendar.getInstance();
+                            convocatoria.setTime(evento.getFechaInicio());
+                            convocatoria.add(Calendar.HOUR, -1);
+                            String horaConvocatoria = timeFormat.format(convocatoria.getTime());
+                            textViewConvocatoria.setText("Convocatoria: " + horaConvocatoria);
+                        }
+                        break;
+                    case "entrenamiento":
+                        textViewTipo.setBackgroundResource(R.drawable.tipo_entrenamiento_background);
+                        itemView.setBackgroundResource(R.drawable.evento_entrenamiento_background);
+                        layoutConvocatoria.setVisibility(View.GONE);
+                        break;
+                    case "reunión":
+                        textViewTipo.setBackgroundResource(R.drawable.tipo_reunion_background);
+                        itemView.setBackgroundResource(R.drawable.evento_reunion_background);
+                        layoutConvocatoria.setVisibility(View.GONE);
+                        break;
+                    default:
+                        textViewTipo.setBackgroundResource(R.drawable.tipo_evento_background);
+                        itemView.setBackgroundResource(R.drawable.evento_general_background);
+                        layoutConvocatoria.setVisibility(View.GONE);
+                        break;
+                }
+            } else {
+                textViewEvento.setText("Evento");
+                textViewTipo.setVisibility(View.GONE);
+                layoutConvocatoria.setVisibility(View.GONE);
+                itemView.setBackgroundResource(R.drawable.evento_general_background);
             }
 
             // Configurar hora
@@ -100,41 +153,17 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.EventoView
                 String horaInicio = timeFormat.format(evento.getFechaInicio());
                 String horaFin = evento.getFechaFin() != null ? timeFormat.format(evento.getFechaFin()) : "";
                 String hora = horaInicio + (horaFin.isEmpty() ? "" : " - " + horaFin);
-                textViewHora.setText(hora);
+                textViewHora.setText("Hora: " + hora);
             } else {
                 textViewHora.setText("Hora no disponible");
             }
 
             // Configurar ubicación
             if (evento.getUbicacion() != null && !evento.getUbicacion().isEmpty()) {
-                textViewUbicacion.setText(evento.getUbicacion());
+                textViewUbicacion.setText("Ubicación: " + evento.getUbicacion());
                 textViewUbicacion.setVisibility(View.VISIBLE);
             } else {
                 textViewUbicacion.setVisibility(View.GONE);
-            }
-
-            // Configurar tipo de evento
-            if (evento.getTipo() != null && !evento.getTipo().isEmpty()) {
-                textViewTipo.setText(evento.getTipo());
-                textViewTipo.setVisibility(View.VISIBLE);
-                
-                // Configurar color según el tipo
-                switch (evento.getTipo().toLowerCase()) {
-                    case "partido":
-                        textViewTipo.setBackgroundResource(R.drawable.tipo_partido_background);
-                        break;
-                    case "entrenamiento":
-                        textViewTipo.setBackgroundResource(R.drawable.tipo_entrenamiento_background);
-                        break;
-                    case "reunión":
-                        textViewTipo.setBackgroundResource(R.drawable.tipo_reunion_background);
-                        break;
-                    default:
-                        textViewTipo.setBackgroundResource(R.drawable.tipo_evento_background);
-                        break;
-                }
-            } else {
-                textViewTipo.setVisibility(View.GONE);
             }
         }
     }

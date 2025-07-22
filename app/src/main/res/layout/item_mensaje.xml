@@ -118,7 +118,7 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:layout_marginTop="8dp"
-                android:background="@drawable/badge_evento_background"
+                android:background="@drawable/badge_muro_background"
                 android:padding="6dp">
 
                 <ImageView

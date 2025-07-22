@@ -47,19 +47,19 @@ public class NotificacionesFragment extends Fragment {
     }
 
     private void configurarBotones(View view) {
-        // Configurar botón de retroceso
-        View btnBack = view.findViewById(R.id.btnBack);
-        if (btnBack != null) {
-            btnBack.setOnClickListener(v -> {
-                requireActivity().getSupportFragmentManager().popBackStack();
-            });
-        }
-
         // Configurar botón de marcar todo como leído
         View btnMarcarTodoLeido = view.findViewById(R.id.btnMarcarTodoLeido);
         if (btnMarcarTodoLeido != null) {
             btnMarcarTodoLeido.setOnClickListener(v -> {
                 marcarTodoComoLeido();
+            });
+        }
+
+        // Configurar botón de borrar leídas
+        View btnBorrarLeidas = view.findViewById(R.id.btnBorrarLeidas);
+        if (btnBorrarLeidas != null) {
+            btnBorrarLeidas.setOnClickListener(v -> {
+                confirmarBorrarLeidas();
             });
         }
     }
@@ -116,6 +116,42 @@ public class NotificacionesFragment extends Fragment {
         } catch (Exception e) {
             Log.e("NotificacionesFragment", "Error al marcar notificaciones como leídas", e);
             Toast.makeText(requireContext(), "Error al marcar notificaciones", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void confirmarBorrarLeidas() {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(requireContext());
+        builder.setTitle("Confirmar borrado")
+               .setMessage("¿Estás seguro de que quieres borrar todas las notificaciones leídas?")
+               .setPositiveButton("Borrar", (dialog, which) -> {
+                   borrarNotificacionesLeidas();
+               })
+               .setNegativeButton("Cancelar", null)
+               .show();
+    }
+
+    private void borrarNotificacionesLeidas() {
+        try {
+            List<Notificacion> notificaciones = dataManager.getNotificaciones();
+            int contadorBorradas = 0;
+            
+            for (Notificacion notificacion : notificaciones) {
+                if (notificacion.isLeida()) {
+                    dataManager.eliminarNotificacion(notificacion.getId());
+                    contadorBorradas++;
+                }
+            }
+            
+            if (contadorBorradas > 0) {
+                Toast.makeText(requireContext(), contadorBorradas + " notificaciones leídas borradas", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(requireContext(), "No hay notificaciones leídas para borrar", Toast.LENGTH_SHORT).show();
+            }
+            
+            cargarNotificaciones();
+        } catch (Exception e) {
+            Log.e("NotificacionesFragment", "Error al borrar notificaciones leídas", e);
+            Toast.makeText(requireContext(), "Error al borrar notificaciones", Toast.LENGTH_SHORT).show();
         }
     }
 

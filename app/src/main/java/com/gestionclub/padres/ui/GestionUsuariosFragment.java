@@ -63,13 +63,7 @@ public class GestionUsuariosFragment extends Fragment {
     }
 
     private void configurarBotones(View view) {
-        // Configurar botón de retroceso
-        View btnBack = view.findViewById(R.id.btnBack);
-        if (btnBack != null) {
-            btnBack.setOnClickListener(v -> {
-                requireActivity().getSupportFragmentManager().popBackStack();
-            });
-        }
+
 
         // Configurar botón de agregar usuario
         View btnAddUser = view.findViewById(R.id.btnAddUser);

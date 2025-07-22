@@ -22,13 +22,7 @@
             android:gravity="center_vertical"
             android:layout_marginBottom="16dp">
 
-            <ImageView
-                android:id="@+id/btnBack"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_arrow_back"
-                android:layout_marginEnd="16dp"
-                app:tint="@color/white" />
+
 
             <TextView
                 android:layout_width="0dp"
@@ -194,13 +188,13 @@
                     android:layout_marginEnd="16dp" />
 
                 <ImageView
-                    android:id="@+id/btnFilter"
+                    android:id="@+id/btnNextDay"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/ic_more_vert"
-                    android:background="@drawable/rounded_background"
+                    android:src="@drawable/ic_arrow_forward"
+                    android:background="@drawable/circle_button_blue"
                     android:padding="8dp"
-                    app:tint="@color/text_secondary" />
+                    app:tint="@color/white" />
 
             </LinearLayout>
 
@@ -279,81 +273,14 @@
             </LinearLayout>
 
             <!-- Fechas de la semana -->
-            <LinearLayout
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewDias"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:background="@color/white"
                 android:paddingHorizontal="16dp"
-                android:paddingBottom="16dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="6"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="16sp"
-                    android:gravity="center" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="7"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="16sp"
-                    android:gravity="center" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="8"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:background="@drawable/circle_button_blue"
-                    android:padding="8dp" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="9"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="16sp"
-                    android:gravity="center" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="10"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="16sp"
-                    android:gravity="center" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="11"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="16sp"
-                    android:gravity="center" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="12"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="16sp"
-                    android:gravity="center" />
-
-            </LinearLayout>
+                android:paddingBottom="16dp"
+                android:orientation="horizontal" />
 
             <!-- Grid de tiempo -->
             <ScrollView
@@ -480,13 +407,13 @@
                     android:layout_marginEnd="16dp" />
 
                 <ImageView
-                    android:id="@+id/btnFilterWeek"
+                    android:id="@+id/btnNextWeek"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/ic_more_vert"
-                    android:background="@drawable/rounded_background"
+                    android:src="@drawable/ic_arrow_forward"
+                    android:background="@drawable/circle_button_blue"
                     android:padding="8dp"
-                    app:tint="@color/text_secondary" />
+                    app:tint="@color/white" />
 
             </LinearLayout>
 
@@ -1274,6 +1201,16 @@
 
     </FrameLayout>
 
-
+    <!-- Botón flotante para agregar evento (solo para admins) -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAgregarEvento"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_add"
+        app:backgroundTint="@color/blue_profesional"
+        app:tint="@color/white"
+        android:visibility="gone" />
 
 </LinearLayout> 

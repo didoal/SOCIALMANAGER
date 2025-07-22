@@ -46,13 +46,24 @@
 
         </LinearLayout>
 
+        <!-- Día del evento -->
+        <TextView
+            android:id="@+id/textViewDia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Día del evento"
+            android:textColor="@color/blue_profesional"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
         <!-- Información del evento -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Fecha y hora -->
+            <!-- Tipo de evento -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -62,32 +73,68 @@
                 <ImageView
                     android:layout_width="16dp"
                     android:layout_height="16dp"
-                    android:src="@drawable/ic_calendar"
+                    android:src="@drawable/ic_event"
                     android:layout_marginEnd="8dp"
                     app:tint="@color/text_secondary" />
 
                 <TextView
-                    android:id="@+id/textViewFecha"
+                    android:id="@+id/textViewEvento"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Fecha del evento"
+                    android:text="Tipo de evento"
                     android:textColor="@color/text_secondary"
                     android:textSize="14sp" />
+
+            </LinearLayout>
+
+            <!-- Hora del evento -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="4dp">
 
                 <ImageView
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:src="@drawable/ic_clock"
-                    android:layout_marginStart="16dp"
                     android:layout_marginEnd="8dp"
                     app:tint="@color/text_secondary" />
 
                 <TextView
                     android:id="@+id/textViewHora"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Hora"
+                    android:layout_weight="1"
+                    android:text="Hora del evento"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+            <!-- Hora de convocatoria (solo para partidos) -->
+            <LinearLayout
+                android:id="@+id/layoutConvocatoria"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="4dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_notification"
+                    android:layout_marginEnd="8dp"
+                    app:tint="@color/text_secondary" />
+
+                <TextView
+                    android:id="@+id/textViewConvocatoria"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Hora de convocatoria"
                     android:textColor="@color/text_secondary"
                     android:textSize="14sp" />
 
